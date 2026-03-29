@@ -4,6 +4,18 @@
     <meta charset="UTF-8">
     <title>FlightInn | Aviation Dashboard</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <div id="editor-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:1000;">
+    <div style="background:#1a1a1a; color:white; width:300px; margin:100px auto; padding:20px; border-radius:10px; border:1px solid #333;">
+        <h3>Add New Aircraft ✈️</h3>
+        <input type="text" id="plane-name" placeholder="Name (e.g. 747SP)" style="width:90%; margin-bottom:10px; padding:8px;">
+        <textarea id="plane-info" placeholder="Details..." style="width:90%; height:100px; margin-bottom:10px; padding:8px;"></textarea>
+        
+        <div style="display:flex; justify-content:space-between;">
+            <button onclick="saveNewPlane()" style="background:#2ecc71; color:white; border:none; padding:10px; cursor:pointer;">Save to Cloud</button>
+            <button onclick="closeEditor()" style="background:#e74c3c; color:white; border:none; padding:10px; cursor:pointer;">Cancel</button>
+        </div>
+    </div>
+    </div>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
