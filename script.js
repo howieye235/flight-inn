@@ -101,8 +101,13 @@ function openEntry(cat, item) {
             var pathOptions = {color: '#0066cc', weight: 4, dashArray: '8, 8'};
             var curvePath = ["M", data.coords[0], "Q", [midpointLat, midpointLng], data.coords[1]];
             
-            // If standard Leaflet Curve isn't there, we use a nice dashed straight line fallback
-            var path = L.polyline([data.coords[0], data.coords[1]], pathOptions).addTo(m);
+            // DELETE any "L.Polyline.Arc" lines and use this instead:
+            var path = L.polyline([data.coords[0], data.coords[1]], {
+                color: '#0066cc', 
+                weight: 4,
+                dashArray: '10, 10', // This makes it a dotted line
+                opacity: 0.8
+            }).addTo(m);
 
             // --- IATA LABELS ---
             const codes = item.split('-'); 
