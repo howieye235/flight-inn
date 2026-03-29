@@ -68,26 +68,45 @@ function openEntry(cat, item) {
     }
 }
 
-// 5. Home Screen (WITH COUNTERS)
 function renderHome() {
-    const fleetSize = flightInnData.Fleets ? Object.keys(flightInnData.Fleets).length : 0;
-    const airlineSize = flightInnData.Airlines ? Object.keys(flightInnData.Airlines).length : 0;
-    const routeSize = flightInnData.Routes ? Object.keys(flightInnData.Routes).length : 0;
+    // 1. Calculate the numbers (Safety checks included)
+    const fleetCount = flightInnData.Fleets ? Object.keys(flightInnData.Fleets).length : 0;
+    const airlineCount = flightInnData.Airlines ? Object.keys(flightInnData.Airlines).length : 0;
+    const airportCount = flightInnData.Airports ? Object.keys(flightInnData.Airports).length : 0;
+    const routeCount = flightInnData.Routes ? Object.keys(flightInnData.Routes).length : 0;
 
+    // 2. The "Glow-Up" HTML
     document.getElementById('view-port').innerHTML = `
-        <div style="display:flex; gap:15px; margin-bottom:30px;">
-            <div style="background:#1a1a1a; padding:15px; border-radius:8px; flex:1; border-left:4px solid #0066cc;">
-                <small style="color:#888;">FLEET</small><br><strong>${fleetSize} Aircraft</strong>
+        <h1 style="margin-bottom: 10px; color: #f0f0f0; letter-spacing: 1px;">SYSTEM OVERVIEW</h1>
+        <p style="color: #888; margin-bottom: 30px;">Cloud Database: Connected ✅</p>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; margin-bottom: 40px;">
+            
+            <div style="background: #111; border: 1px solid #222; padding: 20px; border-radius: 12px; text-align: center;">
+                <span style="color: #0066cc; font-size: 12px; font-weight: bold; text-transform: uppercase;">Fleets</span>
+                <div style="font-size: 32px; font-weight: 800; margin-top: 10px;">${fleetCount}</div>
             </div>
-            <div style="background:#1a1a1a; padding:15px; border-radius:8px; flex:1; border-left:4px solid #2ecc71;">
-                <small style="color:#888;">AIRLINES</small><br><strong>${airlineSize} Operators</strong>
+
+            <div style="background: #111; border: 1px solid #222; padding: 20px; border-radius: 12px; text-align: center;">
+                <span style="color: #2ecc71; font-size: 12px; font-weight: bold; text-transform: uppercase;">Airlines</span>
+                <div style="font-size: 32px; font-weight: 800; margin-top: 10px;">${airlineCount}</div>
             </div>
-            <div style="background:#1a1a1a; padding:15px; border-radius:8px; flex:1; border-left:4px solid #f1c40f;">
-                <small style="color:#888;">ROUTES</small><br><strong>${routeSize} Active</strong>
+
+            <div style="background: #111; border: 1px solid #222; padding: 20px; border-radius: 12px; text-align: center;">
+                <span style="color: #f1c40f; font-size: 12px; font-weight: bold; text-transform: uppercase;">Airports</span>
+                <div style="font-size: 32px; font-weight: 800; margin-top: 10px;">${airportCount}</div>
             </div>
+
+            <div style="background: #111; border: 1px solid #222; padding: 20px; border-radius: 12px; text-align: center;">
+                <span style="color: #e74c3c; font-size: 12px; font-weight: bold; text-transform: uppercase;">Routes</span>
+                <div style="font-size: 32px; font-weight: 800; margin-top: 10px;">${routeCount}</div>
+            </div>
+
         </div>
-        <h2>WELCOME TO FLIGHTINN</h2>
-        <p>Your cloud-synced aviation database is online.</p>
+
+        <div style="background: rgba(0, 102, 204, 0.1); border: 1px solid #0066cc; padding: 15px; border-radius: 8px;">
+            <p style="margin: 0; color: #0066cc; font-size: 14px;"><strong>Log:</strong> Welcome back. Select a directory to manage your assets.</p>
+        </div>
     `;
 }
 
