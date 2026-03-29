@@ -1,4 +1,4 @@
-// 1. Firebase Configuration
+// 1. Firebase Config
 const firebaseConfig = {
     apiKey: "AIzaSyCkid-KKHmHUUuR0oikBjPGMkha0FJB5Dc",
     authDomain: "flightinn-cb4ba.firebaseapp.com",
@@ -9,154 +9,124 @@ const firebaseConfig = {
     databaseURL: "https://flightinn-cb4ba-default-rtdb.firebaseio.com"
 };
 
-// 2. Initialize Firebase
-if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-}
+firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
+let flightInnData = {};
 
-// 3. Global Variables
-let flightInnData = {
-    "Airlines": {},
-    "Fleets": {},
-    "Airports": {},
-    "Routes": {}
-};
-
-// 4. Cloud Sync
+// 2. Cloud Sync
 function syncWithCloud() {
     database.ref('flightData').on('value', (snapshot) => {
-        const cloudData = snapshot.val();
-        if (cloudData) {
-            flightInnData = cloudData;
+        const data = snapshot.val();
+        if (data) { 
+            flightInnData = data; 
+            // If we are on the home screen, refresh the counters live
+            if (document.getElementById('view-port').innerHTML.includes('WELCOME')) {
+                renderHome();
+            }
         }
     });
 }
 
-// 5. Navigation & Directory Display
+// 3. Navigation & Directory
 function loadDirectory(cat) {
     const list = flightInnData[cat];
     let html = `<h2>${cat} Directory</h2><hr>`;
-    
-    if (list && Object.keys(list).length > 0) {
+    if (list) {
         for (let item in list) {
             html += `<span class="result-link" onclick="openEntry('${cat}', '${item}')">${item}</span>`;
         }
     } else {
-        html += `<p>No data found. Click "+ Edit" to add a ${cat}!</p>`;
+        html += `<p>No data found in ${cat}.</p>`;
     }
     document.getElementById('view-port').innerHTML = html;
 }
 
+// 4. Detailed View (WITH EDIT BUTTON)
 function openEntry(cat, item) {
     const data = flightInnData[cat][item];
     let contentHTML = `
         <div style="display:flex; justify-content:space-between; align-items:center;">
             <button class="back-btn" onclick="loadDirectory('${cat}')">← Back</button>
-            <button onclick="editItem('${cat}', '${item}')" style="background:#34495e; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer; font-size:12px;">Edit Details</button>
+            <button onclick="editItem('${cat}', '${item}')" style="background:#34495e; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer;">[ Edit ]</button>
         </div>
         <h2>${item}</h2>
     `;
 
-    // (Keep your existing Map/Text logic here)
     if (cat === "Routes" && data.coords) {
-        // ... (your existing map code)
+        contentHTML += `<div class="info-card"><p>${data.info}</p></div><div id="map" style="height:400px; margin-top:20px;"></div>`;
+        document.getElementById('view-port').innerHTML = contentHTML;
+        setTimeout(() => {
+            var map = L.map('map').setView(data.coords[0], 3);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(map);
+            L.polyline(data.coords, {color: '#0066cc', weight: 3, dashArray: '8, 8'}).addTo(map);
+            map.fitBounds(L.polyline(data.coords).getBounds(), {padding: [50, 50]});
+        }, 200);
     } else {
         let desc = (typeof data === 'object') ? data.info : data;
-        contentHTML += `<div class="info-card"><p>${desc}</p></div>`;
+        contentHTML += `<div class="info-card"><p>${desc || "No details."}</p></div>`;
         document.getElementById('view-port').innerHTML = contentHTML;
     }
 }
 
-// 6. Modal / Editor Logic
-function openEditor() {
-    document.getElementById('editor-modal').style.display = 'block';
-}
-
-function closeEditor() {
-    document.getElementById('editor-modal').style.display = 'none';
-}
-
-function saveEntry() {
-    const category = document.getElementById('entry-category').value;
-    const name = document.getElementById('entry-name').value;
-    const info = document.getElementById('entry-info').value;
-
-    if (!name || !info) {
-        alert("Fill in both boxes!");
-        return;
-    }
-
-    if (category === "Routes") {
-        const parts = info.split('|');
-        if (parts.length < 3) {
-            alert("Routes need: Info | Lat, Lng | Lat, Lng");
-            return;
-        }
-        flightInnData[category][name] = {
-            info: parts[0].trim(),
-            coords: [
-                parts[1].split(',').map(Number),
-                parts[2].split(',').map(Number)
-            ]
-        };
-    } else {
-        flightInnData[category][name] = info;
-    }
-
-    database.ref('flightData').set(flightInnData).then(() => {
-        alert(name + " saved! 🚀");
-        closeEditor();
-        loadDirectory(category);
-    });
-}
-
+// 5. Home Screen (WITH COUNTERS)
 function renderHome() {
-    // Count the items
-    const airlineCount = flightInnData.Airlines ? Object.keys(flightInnData.Airlines).length : 0;
-    const fleetCount = flightInnData.Fleets ? Object.keys(flightInnData.Fleets).length : 0;
-    const airportCount = flightInnData.Airports ? Object.keys(flightInnData.Airports).length : 0;
+    const fleetSize = flightInnData.Fleets ? Object.keys(flightInnData.Fleets).length : 0;
+    const airlineSize = flightInnData.Airlines ? Object.keys(flightInnData.Airlines).length : 0;
+    const routeSize = flightInnData.Routes ? Object.keys(flightInnData.Routes).length : 0;
 
     document.getElementById('view-port').innerHTML = `
-        <div class="stats-container" style="display:flex; gap:20px; margin-bottom:20px;">
-            <div class="stat-card" style="background:#1a1a1a; padding:15px; border-radius:8px; border-left:4px solid #0066cc; flex:1;">
-                <h4 style="margin:0; color:#888; font-size:12px;">FLEET SIZE</h4>
-                <p style="margin:5px 0 0; font-size:24px; font-weight:bold;">${fleetCount}</p>
+        <div style="display:flex; gap:15px; margin-bottom:30px;">
+            <div style="background:#1a1a1a; padding:15px; border-radius:8px; flex:1; border-left:4px solid #0066cc;">
+                <small style="color:#888;">FLEET</small><br><strong>${fleetSize} Aircraft</strong>
             </div>
-            <div class="stat-card" style="background:#1a1a1a; padding:15px; border-radius:8px; border-left:4px solid #2ecc71; flex:1;">
-                <h4 style="margin:0; color:#888; font-size:12px;">AIRLINES</h4>
-                <p style="margin:5px 0 0; font-size:24px; font-weight:bold;">${airlineCount}</p>
+            <div style="background:#1a1a1a; padding:15px; border-radius:8px; flex:1; border-left:4px solid #2ecc71;">
+                <small style="color:#888;">AIRLINES</small><br><strong>${airlineSize} Operators</strong>
             </div>
-            <div class="stat-card" style="background:#1a1a1a; padding:15px; border-radius:8px; border-left:4px solid #f1c40f; flex:1;">
-                <h4 style="margin:0; color:#888; font-size:12px;">AIRPORTS</h4>
-                <p style="margin:5px 0 0; font-size:24px; font-weight:bold;">${airportCount}</p>
+            <div style="background:#1a1a1a; padding:15px; border-radius:8px; flex:1; border-left:4px solid #f1c40f;">
+                <small style="color:#888;">ROUTES</small><br><strong>${routeSize} Active</strong>
             </div>
         </div>
-        <h2>Welcome to FlightInn</h2>
-        <p>Select a category from the sidebar to view your aviation database.</p>
+        <h2>WELCOME TO FLIGHTINN</h2>
+        <p>Your cloud-synced aviation database is online.</p>
     `;
 }
 
+// 6. Editor & Save Logic
+function openEditor() { document.getElementById('editor-modal').style.display = 'block'; }
+function closeEditor() { document.getElementById('editor-modal').style.display = 'none'; }
+
 function editItem(cat, item) {
     const data = flightInnData[cat][item];
-    
-    // Fill the modal with current data
     document.getElementById('entry-category').value = cat;
     document.getElementById('entry-name').value = item;
-    
-    // If it's a route, we need to format it back to "Info | Lat,Lng | Lat,Lng"
     if (cat === "Routes" && data.coords) {
-        document.getElementById('entry-info').value = `${data.info} | ${data.coords[0].join(',')} | ${data.coords[1].join(',')}`;
+        document.getElementById('entry-info').value = `${data.info} | ${data.coords[0]} | ${data.coords[1]}`;
     } else {
         document.getElementById('entry-info').value = (typeof data === 'object') ? data.info : data;
     }
-
-    // Show the modal
     openEditor();
 }
 
-// 7. Startup
-window.onload = function() {
-    renderHome();
-    syncWithCloud();
-};
+function saveEntry() {
+    const cat = document.getElementById('entry-category').value;
+    const name = document.getElementById('entry-name').value;
+    const info = document.getElementById('entry-info').value;
+
+    if (!flightInnData[cat]) flightInnData[cat] = {};
+
+    if (cat === "Routes") {
+        const p = info.split('|');
+        flightInnData[cat][name] = { info: p[0], coords: [p[1].split(',').map(Number), p[2].split(',').map(Number)] };
+    } else {
+        flightInnData[cat][name] = info;
+    }
+
+    database.ref('flightData').set(flightInnData).then(() => {
+        alert("Sync Complete!");
+        closeEditor();
+        loadDirectory(cat);
+    });
+}
+
+// 7. Launch
+window.onload = function() { syncWithCloud(); renderHome(); };
