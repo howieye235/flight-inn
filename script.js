@@ -120,25 +120,50 @@ function saveEntry() {
     const img = document.getElementById('entry-image').value;
     const info = document.getElementById('entry-info').value;
 
-    if (!name) return alert("Enter a name!");
+    // 1. Validation
+    if (!name) return alert("Please enter a name (e.g., JFK-LHR)");
     if (!flightInnData[cat]) flightInnData[cat] = {};
 
+    // 2. Specialized Logic for Routes (Coordinates)
     if (cat === "Routes") {
         const parts = info.split('|');
-        if (parts.length < 3) return alert("Use: Info | Lat,Lng | Lat,Lng");
+        if (parts.length < 3) {
+            alert("Format Error! Use: Description | Lat,Lng | Lat,Lng");
+            return;
+        }
+        
         try {
+            // Convert strings like "40.6, -73.7" into real Numbers [40.6, -73.7]
             const start = parts[1].trim().split(',').map(Number);
             const end = parts[2].trim().split(',').map(Number);
-            flightInnData[cat][name] = { info: parts[0].trim(), image: img, coords: [start, end] };
-        } catch (e) { return alert("Coordinate error!"); }
+            
+            flightInnData[cat][name] = { 
+                info: parts[0].trim(), 
+                image: img, 
+                coords: [start, end] 
+            };
+        } catch (e) {
+            alert("Coordinate error! Make sure they are numbers separated by commas.");
+            return;
+        }
     } else {
-        flightInnData[cat][name] = { info: info, image: img };
+        // 3. Standard save for Fleets, Airlines, and Airports
+        flightInnData[cat][name] = { 
+            info: info, 
+            image: img 
+        };
     }
 
-    database.ref('flightData').set(flightInnData).then(() => {
-        closeEditor();
-        loadDirectory(cat);
-    });
+    // 4. Push to Firebase Cloud
+    database.ref('flightData').set(flightInnData)
+        .then(() => {
+            closeEditor();
+            loadDirectory(cat);
+        })
+        .catch((error) => {
+            console.error("Firebase Error:", error);
+            alert("Cloud Save Failed!");
+        });
 }
 
 function deleteItem(cat, item) {
