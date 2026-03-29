@@ -157,39 +157,67 @@ function renderHome() {
 
 window.onload = renderHome;
 
-// Function to show the box
+// --- DATABASE SYNC LOGIC ---
+
+// This function tells the website to "listen" to the cloud
+function syncWithCloud() {
+    database.ref('flightData').on('value', (snapshot) => {
+        const cloudData = snapshot.val();
+        if (cloudData) {
+            flightInnData = cloudData;
+            // This refreshes the screen automatically if you're on a list page
+            if (window.currentCategory) {
+                loadDirectory(window.currentCategory);
+            }
+        }
+    });
+}
+
+// --- MODAL CONTROLS ---
+
 function openEditor() {
     document.getElementById('editor-modal').style.display = 'block';
 }
 
-// Function to hide the box
 function closeEditor() {
     document.getElementById('editor-modal').style.display = 'none';
 }
 
-// The 'Brain' that saves to Firebase
+// --- SAVING LOGIC ---
+
 function saveNewPlane() {
     const name = document.getElementById('plane-name').value;
     const info = document.getElementById('plane-info').value;
 
     if (name && info) {
-        // Use "Fleets" to match your data structure
+        // Ensure the "Fleets" category exists
         if (!flightInnData.Fleets) flightInnData.Fleets = {}; 
-        flightInnData.Fleets[name] = info; // Simplified for your current layout
+        
+        flightInnData.Fleets[name] = info;
 
+        // Push to Firebase
         database.ref('flightData').set(flightInnData).then(() => {
-            alert(name + " added! 🚀");
+            alert(name + " added to Cloud! 🚀");
             closeEditor();
             document.getElementById('plane-name').value = "";
             document.getElementById('plane-info').value = "";
+        }).catch((error) => {
+            alert("Firebase Error: Check your 'Rules' tab!");
+            console.error(error);
         });
     } else {
         alert("Fill in both boxes first!");
     }
 }
-// This tells the website to start looking at the cloud as soon as it opens
+
+// --- STARTUP ---
+
+// Initialize Firebase (Using the config you already have at the top)
+firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
+
+// Start the cloud listener
 syncWithCloud();
-    } else {
-        alert("Fill in both boxes first!");
-    }
-}
+
+// Initial home screen
+window.onload = renderHome;
