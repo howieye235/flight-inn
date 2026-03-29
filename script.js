@@ -18,10 +18,8 @@ let flightInnData = {};
 function sync() {
     database.ref('flightData').on('value', (s) => {
         flightInnData = s.val() || {};
-        const vp = document.getElementById('view-port');
-        if (!vp.innerHTML.trim() || vp.innerHTML.includes('System Overview')) {
-            renderHome();
-        }
+        // This ensures the dashboard updates whenever the data changes
+        renderHome(); 
     });
 }
 
