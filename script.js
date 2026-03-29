@@ -82,7 +82,7 @@ function openEntry(cat, item) {
 
             // The Arc logic
             var flightPath = L.Polyline.Arc(data.coords[0], data.coords[1], {
-                color: '#0066cc', weight: 4, vertices: 100
+            color: '#0066cc', weight: 4, vertices: 100
             }).addTo(m);
 
             // The Label logic (Box-Killer version)
