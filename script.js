@@ -80,12 +80,15 @@ function openEntry(cat, item) {
             var m = L.map('map').setView(data.coords[0], 3);
             L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(m);
 
-            // 1. DRAW THE LINE (Dashed style)
-            var flightPath = L.polyline([data.coords[0], data.coords[1]], {
-                color: '#0066cc', weight: 4, dashArray: '10, 10'
+            // --- THE ARC FIX ---
+            // We use L.Polyline.Arc instead of L.polyline
+            var flightPath = L.Polyline.Arc(L.latLng(data.coords[0]), L.latLng(data.coords[1]), {
+                color: '#0066cc', 
+                weight: 4, 
+                vertices: 100
             }).addTo(m);
 
-            // 2. IATA LABELS (No white boxes!)
+            // --- IATA LABELS ---
             const codes = item.split('-'); 
             if(codes.length === 2) {
                 L.marker(data.coords[0], {
