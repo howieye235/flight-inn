@@ -140,10 +140,13 @@ function saveEntry() {
     }
 
     database.ref('flightData').set(flightInnData).then(() => {
+        // We use the 'cat' variable defined at the top of this function
+        console.log("Saved successfully to:", cat); 
         closeEditor();
-        loadDirectory(cat); // This fixes the 'cat' error!
-    }).catch((e) => console.error("Firebase Error:", e));
-}
+        loadDirectory(cat); 
+    }).catch((e) => {
+        console.error("Firebase Error:", e);
+    });
 
 function deleteItem(cat, item) {
     if(confirm("Delete " + item + "?")) {
