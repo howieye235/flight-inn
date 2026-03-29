@@ -80,77 +80,66 @@ function openEntry(cat, item) {
             var m = L.map('map').setView(data.coords[0], 3);
             L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(m);
 
-            // --- 1. MANUAL ARC MATH (No Plugin Needed!) ---
-            const lat1 = data.coords[0][0], lon1 = data.coords[0][1];
-            const lat2 = data.coords[1][0], lon2 = data.coords[1][1];
-            
-            // Create 50 small points to make a smooth curve
-            let arcPoints = [];
-            for (let i = 0; i <= 50; i++) {
-                let f = i / 50;
-                let lat = lat1 + (lat2 - lat1) * f;
-                let lon = lon1 + (lon2 - lon1) * f;
-                // This "Math.sin" line creates the curve height
-                let offset = Math.sin(Math.PI * f) * 5; 
-                arcPoints.push([lat + offset, lon]);
+            var flightPath = L.Polyline.Arc(data.coords[0], data.coords[1], {
+                color: '#0066cc', weight: 4, vertices: 100
+            }).addTo(m);
+
+            const codes = item.split('-'); 
+            if(codes.length === 2) {
+                [data.coords[0], data.coords[1]].forEach((pos, i) => {
+                    L.marker(pos, {
+                        icon: L.divIcon({
+                            className: 'no-box',
+                            html: `<span class="badge-style">${codes[i].trim()}</span>`, 
+                            iconSize: [0, 0], 
+                            iconAnchor: [20, 10]
+                        })
+                    }).addTo(m);
+                });
             }
-
-           // 1. Draw the Arc (using the numbers we just cleaned up)
-var flightPath = L.Polyline.Arc(data.coords[0], data.coords[1], {
-    color: '#0066cc', 
-    weight: 4, 
-    vertices: 100
-}).addTo(m);
-
-// Inside your openEntry function...
-const codes = item.split('-'); 
-if(codes.length === 2) {
-    [data.coords[0], data.coords[1]].forEach((pos, i) => {
-        L.marker(pos, {
-            icon: L.divIcon({
-                className: 'no-box', // Matches the CSS above
-                html: `<span class="badge-style">${codes[i].trim()}</span>`, 
-                iconSize: [0, 0], // Makes the container 0px so it can't show a box
-                iconAnchor: [20, 10] // Centers the text over the coordinate
-            })
-        }).addTo(m);
-    });
-}
-            
-    L.marker(data.coords[0], {
-        icon: L.divIcon({
-            className: 'no-box',
-            html: `<span style="${labelStyle}">${codes[0].trim()}</span>`, 
-            iconSize: [1, 1], 
-            iconAnchor: [20, 10]
-        })
-    }).addTo(m);
-
-    L.marker(data.coords[1], {
-        icon: L.divIcon({
-            className: 'no-box',
-            html: `<span style="${labelStyle}">${codes[1].trim()}</span>`, 
-            iconSize: [1, 1], 
-            iconAnchor: [20, 10]
-        })
-    }).addTo(m);
-}
-                L.marker(data.coords[1], {
-                    icon: L.divIcon({ 
-                        className: '', 
-                        html: `<span style="${badge}">${codes[1].trim()}</span>`, 
-                        iconSize: [0, 0] // 0 size = NO WHITE BOX
-                    })
-                }).addTo(m);
-            }
-
             m.invalidateSize();
             m.fitBounds(flightPath.getBounds(), {padding: [50, 50]});
-        }, 400); // Closes the setTimeout
+        }, 400);
     } else {
         document.getElementById('view-port').innerHTML = html;
     }
-} // Closes the openEntry function <--- MAKE SURE THIS IS HERE!
+}
+
+function saveEntry() {
+    const cat = document.getElementById('entry-category').value;
+    const name = document.getElementById('entry-name').value;
+    const img = document.getElementById('entry-image').value;
+    const info = document.getElementById('entry-info').value;
+
+    if (!name) return alert("Please enter a name");
+    if (!flightInnData[cat]) flightInnData[cat] = {};
+
+    if (cat === "Routes") {
+        const parts = info.split('|');
+        if (parts.length < 3) return alert("Format: Info | Lat,Lng | Lat,Lng");
+        
+        try {
+            const start = parts[1].split(',').map(num => parseFloat(num.trim()));
+            const end = parts[2].split(',').map(num => parseFloat(num.trim()));
+            
+            flightInnData[cat][name] = { 
+                info: parts[0].trim(), 
+                image: img, 
+                coords: [start, end] 
+            };
+        } catch (e) {
+            return alert("Coordinate error!");
+        }
+    } else {
+        flightInnData[cat][name] = { info: info, image: img };
+    }
+
+    database.ref('flightData').set(flightInnData).then(() => {
+        closeEditor();
+        loadDirectory(cat);
+    });
+}
+
 // --- ACTIONS & SEARCH ---
 function openEditor() { document.getElementById('editor-modal').style.display='flex'; }
 function closeEditor() { document.getElementById('editor-modal').style.display='none'; }
