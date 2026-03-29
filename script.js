@@ -53,7 +53,7 @@ function loadDirectory(cat) {
 
 function openEntry(cat, item) {
     const data = flightInnData[cat][item];
-    // Fixed the image link since via.placeholder is down
+    // Use placehold.co because via.placeholder is having server issues
     const img = data.image || "https://placehold.co/800x400?text=No+Photo";
     
     let html = `
@@ -82,23 +82,32 @@ function openEntry(cat, item) {
             var m = L.map('map').setView(data.coords[0], 3);
             L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(m);
 
-            // DRAW THE LINE (Straight line for now since Arc is blocked)
+            // 1. DRAW THE LINE (Dashed style looks like a flight path!)
             var path = L.polyline([data.coords[0], data.coords[1]], {
                 color: '#0066cc', 
                 weight: 4,
-                dashArray: '10, 10' // Makes it look like a cool flight path!
+                dashArray: '10, 10' 
             }).addTo(m);
 
-            // IATA LABELS (Bringing them back!)
+            // 2. IATA LABELS (Manually drawing them back)
             const codes = item.split('-'); 
             if(codes.length === 2) {
-                // Label 1
+                // Origin Label
                 L.marker(data.coords[0], {
-                    icon: L.divIcon({className: 'iata-label-navy', html: `<span>${codes[0].trim()}</span>`, iconSize:[40,20]})
+                    icon: L.divIcon({
+                        className: 'iata-label-navy', 
+                        html: `<span>${codes[0].trim()}</span>`, 
+                        iconSize:[40,20]
+                    })
                 }).addTo(m);
-                // Label 2
+
+                // Destination Label
                 L.marker(data.coords[1], {
-                    icon: L.divIcon({className: 'iata-label-navy', html: `<span>${codes[1].trim()}</span>`, iconSize:[40,20]})
+                    icon: L.divIcon({
+                        className: 'iata-label-navy', 
+                        html: `<span>${codes[1].trim()}</span>`, 
+                        iconSize:[40,20]
+                    })
                 }).addTo(m);
             }
 
