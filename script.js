@@ -77,30 +77,30 @@ function openEntry(cat, item) {
             var container = L.DomUtil.get('map');
             if (container != null) { container._leaflet_id = null; }
 
+            // Init Map - No Plugins Required
             var m = L.map('map').setView(data.coords[0], 3);
             L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(m);
 
-            // --- THE ARC FIX ---
-            // We use L.Polyline.Arc instead of L.polyline
-            var flightPath = L.Polyline.Arc(L.latLng(data.coords[0]), L.latLng(data.coords[1]), {
-                color: '#0066cc', 
-                weight: 4, 
-                vertices: 100
+            // 1. Standard Dashed Line (Reliable on all networks)
+            var flightPath = L.polyline([data.coords[0], data.coords[1]], {
+                color: '#0066cc', weight: 4, dashArray: '10, 10'
             }).addTo(m);
 
-            // --- IATA LABELS ---
+            // 2. IATA Labels
             const codes = item.split('-'); 
             if(codes.length === 2) {
+                // Origin
                 L.marker(data.coords[0], {
                     icon: L.divIcon({
-                        className: 'iata-clean', 
+                        className: 'iata-clean-marker', 
                         html: `<span class="badge">${codes[0].trim()}</span>`, 
                         iconSize:[40,20]
                     })
                 }).addTo(m);
+                // Destination
                 L.marker(data.coords[1], {
                     icon: L.divIcon({
-                        className: 'iata-clean', 
+                        className: 'iata-clean-marker', 
                         html: `<span class="badge">${codes[1].trim()}</span>`, 
                         iconSize:[40,20]
                     })
