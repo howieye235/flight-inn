@@ -93,3 +93,16 @@ body { display: flex; margin: 0; height: 100vh; font-family: 'Inter', sans-serif
     display: inline-block !important;
     box-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
+.wiki-link {
+    color: #3182ce;
+    text-decoration: underline;
+    cursor: pointer;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.wiki-link:hover {
+    color: #63b3ed;
+    background: rgba(49, 130, 206, 0.1);
+    border-radius: 2px;
+}
