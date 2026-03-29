@@ -73,19 +73,18 @@ body { display: flex; margin: 0; height: 100vh; font-family: 'Inter', sans-serif
     display: inline-block;
 }
 
-/* Targets the Leaflet container to remove the white square and shadow */
-/* KILL the white boxes and shadows */
+/* This strips the default Leaflet styles from your markers */
 .leaflet-marker-icon.iata-clean-marker {
     background: none !important;
     border: none !important;
     box-shadow: none !important;
 }
 
-/* Style the Navy Badge */
+/* This styles your navy blue badges */
 .badge {
     background: #002244 !important;
     color: white !important;
-    padding: 3px 7px !important;
+    padding: 3px 8px !important;
     border-radius: 4px !important;
     font-weight: bold !important;
     font-size: 11px !important;
