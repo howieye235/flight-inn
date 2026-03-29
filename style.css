@@ -53,21 +53,22 @@ body { display: flex; margin: 0; height: 100vh; font-family: 'Inter', sans-serif
     box-shadow: none !important;
 }
 
-/* Remove the default Leaflet square box */
-.leaflet-div-icon {
+/* This targets the Leaflet container itself to kill the white box */
+.leaflet-marker-icon.iata-label-navy {
     background: none !important;
     border: none !important;
+    box-shadow: none !important;
 }
 
-/* Style your custom label */
+/* This styles the text inside */
 .iata-label-navy span {
-    background: #002244;
-    color: white;
+    background: #002244 !important;
+    color: white !important;
     padding: 4px 8px;
     border-radius: 4px;
-    font-weight: 800;
-    font-size: 13px;
-    border: 1px solid #fff;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    font-weight: bold;
+    font-size: 12px;
+    border: 1px solid white;
     white-space: nowrap;
+    display: inline-block;
 }
