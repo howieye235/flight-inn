@@ -84,7 +84,7 @@ function openEntry(cat, item) {
             var flightPath = L.Polyline.Arc(data.coords[0], data.coords[1], {
             color: '#0066cc', weight: 4, vertices: 100
             }).addTo(m);
-
+    
             // The Label logic (Box-Killer version)
             const codes = item.split('-'); 
             if(codes.length === 2) {
@@ -147,6 +147,7 @@ function saveEntry() {
     }).catch((e) => {
         console.error("Firebase Error:", e);
     });
+}
 
 function deleteItem(cat, item) {
     if(confirm("Delete " + item + "?")) {
