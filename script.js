@@ -12,16 +12,13 @@ if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 let flightInnData = {};
 
-// Sync Data
 function sync() {
     database.ref('flightData').on('value', (s) => {
         flightInnData = s.val() || {};
-        // If we are on the Home screen, refresh the counters
         if (document.getElementById('view-port').innerHTML.includes('OVERVIEW')) renderHome();
     });
 }
 
-// Home Dashboard with Counters
 function renderHome() {
     const f = flightInnData.Fleets ? Object.keys(flightInnData.Fleets).length : 0;
     const a = flightInnData.Airlines ? Object.keys(flightInnData.Airlines).length : 0;
@@ -34,11 +31,9 @@ function renderHome() {
             <div class="stat-box"><h4>AIRLINES</h4><p>${a}</p></div>
             <div class="stat-box"><h4>ROUTES</h4><p>${r}</p></div>
         </div>
-        <p style="color:#666;">Select a category to manage your database.</p>
     `;
 }
 
-// Directory Listing
 function loadDirectory(cat) {
     let html = `<h2 style="color:white;">${cat}</h2><hr style="border:1px solid #222;">`;
     const list = flightInnData[cat];
@@ -50,7 +45,6 @@ function loadDirectory(cat) {
     document.getElementById('view-port').innerHTML = html;
 }
 
-// Entry Detailed View
 function openEntry(cat, item) {
     const d = flightInnData[cat][item];
     const img = d.image || "https://via.placeholder.com/800x300?text=No+Photo+Added";
@@ -60,16 +54,16 @@ function openEntry(cat, item) {
         <div style="display:flex; justify-content:space-between; align-items:center; margin:15px 0;">
             <h2 style="color:white; margin:0;">${item}</h2>
             <div>
-                <button onclick="editItem('${cat}', '${item}')" style="background:#555; color:white; border-radius:4px; cursor:pointer;">Edit</button>
-                <button onclick="deleteItem('${cat}', '${item}')" style="background:#900; color:white; border-radius:4px; margin-left:5px; cursor:pointer;">Delete</button>
+                <button onclick="editItem('${cat}', '${item}')" style="background:#333; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer;">Edit</button>
+                <button onclick="deleteItem('${cat}', '${item}')" style="background:#700; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer; margin-left:5px;">Delete</button>
             </div>
         </div>
-        <img src="${img}" style="width:100%; height:320px; object-fit:cover; border-radius:10px; border:1px solid #333; margin-bottom:20px;">
-        <div class="info-card"><p>${d.info || "No details available."}</p></div>
+        <img src="${img}" style="width:100%; height:300px; object-fit:cover; border-radius:8px; border:1px solid #333; margin-bottom:20px;">
+        <div style="background:#0a0a0a; padding:20px; border-radius:8px; border:1px solid #222;"><p>${d.info || "No details."}</p></div>
     `;
 
     if (cat === "Routes" && d.coords) {
-        html += `<div id="map" style="height:350px; border-radius:10px; margin-top:20px; border:1px solid #333;"></div>`;
+        html += `<div id="map" style="height:350px; border-radius:8px; margin-top:20px; border:1px solid #333;"></div>`;
         document.getElementById('view-port').innerHTML = html;
         setTimeout(() => {
             var m = L.map('map').setView(d.coords[0], 3);
@@ -82,8 +76,7 @@ function openEntry(cat, item) {
     }
 }
 
-// Modal Controls
-function openEditor() { document.getElementById('editor-modal').style.display='flex'; }
+function openEditor() { document.getElementById('editor-modal').style.display='block'; }
 function closeEditor() { document.getElementById('editor-modal').style.display='none'; }
 
 function saveEntry() {
@@ -96,7 +89,6 @@ function saveEntry() {
 
     if (cat === "Routes") {
         const p = info.split('|');
-        if (p.length < 3) return alert("Use format: Info | Lat,Lng | Lat,Lng");
         flightInnData[cat][name] = { 
             info: p[0], image: img, 
             coords: [p[1].split(',').map(Number), p[2].split(',').map(Number)] 
