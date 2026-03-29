@@ -80,44 +80,32 @@ function openEntry(cat, item) {
             var m = L.map('map').setView(data.coords[0], 3);
             L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(m);
 
-            // --- THE PLUGIN-FREE CURVE ---
-            // We calculate a "Midpoint" and nudge it up to create an arc
-            var latlng1 = L.latLng(data.coords[0]);
-            var latlng2 = L.latLng(data.coords[1]);
-            
-            var offsetX = latlng2.lng - latlng1.lng;
-            var offsetY = latlng2.lat - latlng1.lat;
-            var r = Math.sqrt(Math.pow(offsetX, 2) + Math.pow(offsetY, 2));
-            var theta = Math.atan2(offsetY, offsetX);
-            var thetaOffset = (3.14 / 10); // This controls the "height" of the curve
-
-            var r2 = (r / 2) / (Math.cos(thetaOffset));
-            var theta2 = theta + thetaOffset;
-            
-            var midpointLat = (latlng1.lat + (r2 * Math.sin(theta2)));
-            var midpointLng = (latlng1.lng + (r2 * Math.cos(theta2)));
-
-            // Draw the curve using a Bezier Path
-            var pathOptions = {color: '#0066cc', weight: 4, dashArray: '8, 8'};
-            var curvePath = ["M", data.coords[0], "Q", [midpointLat, midpointLng], data.coords[1]];
-            
-            // DELETE any "L.Polyline.Arc" lines and use this instead:
-            var path = L.polyline([data.coords[0], data.coords[1]], {
-                color: '#0066cc', 
-                weight: 4,
-                dashArray: '10, 10', // This makes it a dotted line
-                opacity: 0.8
+            // 1. DRAW THE LINE (Dashed style)
+            var flightPath = L.polyline([data.coords[0], data.coords[1]], {
+                color: '#0066cc', weight: 4, dashArray: '10, 10'
             }).addTo(m);
 
-            // --- IATA LABELS ---
+            // 2. IATA LABELS (No white boxes!)
             const codes = item.split('-'); 
             if(codes.length === 2) {
-                L.marker(data.coords[0], {icon: L.divIcon({className: 'iata-label-navy', html: `<span>${codes[0].trim()}</span>` , iconSize:[40,20]})}).addTo(m);
-                L.marker(data.coords[1], {icon: L.divIcon({className: 'iata-label-navy', html: `<span>${codes[1].trim()}</span>` , iconSize:[40,20]})}).addTo(m);
+                L.marker(data.coords[0], {
+                    icon: L.divIcon({
+                        className: 'iata-clean', 
+                        html: `<span class="badge">${codes[0].trim()}</span>`, 
+                        iconSize:[40,20]
+                    })
+                }).addTo(m);
+                L.marker(data.coords[1], {
+                    icon: L.divIcon({
+                        className: 'iata-clean', 
+                        html: `<span class="badge">${codes[1].trim()}</span>`, 
+                        iconSize:[40,20]
+                    })
+                }).addTo(m);
             }
 
             m.invalidateSize();
-            m.fitBounds(path.getBounds(), {padding: [50, 50]});
+            m.fitBounds(flightPath.getBounds(), {padding: [50, 50]});
         }, 400);
     } else {
         document.getElementById('view-port').innerHTML = html;
