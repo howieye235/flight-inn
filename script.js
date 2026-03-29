@@ -95,23 +95,36 @@ function openEntry(cat, item) {
                 arcPoints.push([lat + offset, lon]);
             }
 
-            var flightPath = L.polyline(arcPoints, {
-                color: '#0066cc', weight: 4, opacity: 0.7, dashArray: '8, 8'
-            }).addTo(m);
+           // 1. Draw the Arc (using the numbers we just cleaned up)
+var flightPath = L.Polyline.Arc(data.coords[0], data.coords[1], {
+    color: '#0066cc', 
+    weight: 4, 
+    vertices: 100
+}).addTo(m);
 
-            // --- 2. BOX-KREATING KILLER (Direct Styling) ---
-            const codes = item.split('-'); 
-            if(codes.length === 2) {
-                const badge = "background:#002244; color:white; padding:3px 8px; border-radius:4px; font-weight:bold; font-size:11px; border:1px solid white; white-space:nowrap;";
-                
-                L.marker(data.coords[0], {
-                    icon: L.divIcon({ 
-                        className: '', 
-                        html: `<span style="${badge}">${codes[0].trim()}</span>`, 
-                        iconSize: [0, 0] // 0 size = NO WHITE BOX
-                    })
-                }).addTo(m);
+// 2. Kill the boxes (setting iconSize to 1,1 hides the white square)
+const codes = item.split('-'); 
+if(codes.length === 2) {
+    const labelStyle = "background:#002244; color:white; padding:4px 8px; border-radius:4px; font-weight:bold; font-size:12px; border:1px solid white; white-space:nowrap; display:inline-block;";
+    
+    L.marker(data.coords[0], {
+        icon: L.divIcon({
+            className: 'no-box',
+            html: `<span style="${labelStyle}">${codes[0].trim()}</span>`, 
+            iconSize: [1, 1], 
+            iconAnchor: [20, 10]
+        })
+    }).addTo(m);
 
+    L.marker(data.coords[1], {
+        icon: L.divIcon({
+            className: 'no-box',
+            html: `<span style="${labelStyle}">${codes[1].trim()}</span>`, 
+            iconSize: [1, 1], 
+            iconAnchor: [20, 10]
+        })
+    }).addTo(m);
+}
                 L.marker(data.coords[1], {
                     icon: L.divIcon({ 
                         className: '', 
@@ -138,40 +151,31 @@ function saveEntry() {
     const img = document.getElementById('entry-image').value;
     const info = document.getElementById('entry-info').value;
 
-    // 1. Validation
-    if (!name) return alert("Please enter a name (e.g., JFK-LHR)");
+    if (!name) return alert("Please enter a name");
     if (!flightInnData[cat]) flightInnData[cat] = {};
 
-    // 2. Specialized Logic for Routes (Coordinates)
     if (cat === "Routes") {
         const parts = info.split('|');
-        if (parts.length < 3) {
-            alert("Format Error! Use: Description | Lat,Lng | Lat,Lng");
-            return;
-        }
+        if (parts.length < 3) return alert("Format: Info | Lat,Lng | Lat,Lng");
         
-        try {
-            // Convert strings like "40.6, -73.7" into real Numbers [40.6, -73.7]
-            const start = parts[1].split(',').map(num => parseFloat(num.trim()));
-            const end = parts[2].split(',').map(num => parseFloat(num.trim()));
-            
-            flightInnData[cat][name] = { 
-                info: parts[0].trim(), 
-                image: img, 
-                coords: [start, end] 
-            };
-        } catch (e) {
-            alert("Coordinate error! Make sure they are numbers separated by commas.");
-            return;
-        }
-    } else {
-        // 3. Standard save for Fleets, Airlines, and Airports
+        // This part converts the text into REAL numbers for the Arc math
+        const start = parts[1].split(',').map(num => parseFloat(num.trim()));
+        const end = parts[2].split(',').map(num => parseFloat(num.trim()));
+        
         flightInnData[cat][name] = { 
-            info: info, 
-            image: img 
+            info: parts[0].trim(), 
+            image: img, 
+            coords: [start, end] 
         };
+    } else {
+        flightInnData[cat][name] = { info: info, image: img };
     }
 
+    database.ref('flightData').set(flightInnData).then(() => {
+        closeEditor();
+        loadDirectory(cat);
+    });
+}
     // 4. Push to Firebase Cloud
     database.ref('flightData').set(flightInnData)
         .then(() => {
