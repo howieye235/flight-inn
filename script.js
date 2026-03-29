@@ -53,7 +53,8 @@ function loadDirectory(cat) {
 
 function openEntry(cat, item) {
     const data = flightInnData[cat][item];
-    const img = data.image || "https://via.placeholder.com/800x400?text=No+Photo";
+    // Fixed the image link since via.placeholder is down
+    const img = data.image || "https://placehold.co/800x400?text=No+Photo";
     
     let html = `
         <button class="back-btn" onclick="loadDirectory('${cat}')">← Back</button>
@@ -77,25 +78,32 @@ function openEntry(cat, item) {
             var container = L.DomUtil.get('map');
             if (container != null) { container._leaflet_id = null; }
 
+            // Initialize Map
             var m = L.map('map').setView(data.coords[0], 3);
             L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(m);
 
-// Check if the plugin is actually ready before using it
-if (L.Polyline.Arc) {
-    var path = L.Polyline.Arc(L.latLng(data.coords[0]), L.latLng(data.coords[1]), {
-        color: '#0066cc', 
-        weight: 4, 
-        vertices: 100 
-    }).addTo(m);
-    
-    m.fitBounds(path.getBounds(), {padding: [50, 50]});
-} else {
-    // If it STILL fails, draw a straight red line so the map isn't empty!
-    console.warn("Arc plugin failed to load. Drawing straight line instead.");
-    var path = L.polyline([data.coords[0], data.coords[1]], {color: 'red', weight: 3}).addTo(m);
-    m.fitBounds(path.getBounds());
-}
+            // DRAW THE LINE (Straight line for now since Arc is blocked)
+            var path = L.polyline([data.coords[0], data.coords[1]], {
+                color: '#0066cc', 
+                weight: 4,
+                dashArray: '10, 10' // Makes it look like a cool flight path!
+            }).addTo(m);
+
+            // IATA LABELS (Bringing them back!)
+            const codes = item.split('-'); 
+            if(codes.length === 2) {
+                // Label 1
+                L.marker(data.coords[0], {
+                    icon: L.divIcon({className: 'iata-label-navy', html: `<span>${codes[0].trim()}</span>`, iconSize:[40,20]})
+                }).addTo(m);
+                // Label 2
+                L.marker(data.coords[1], {
+                    icon: L.divIcon({className: 'iata-label-navy', html: `<span>${codes[1].trim()}</span>`, iconSize:[40,20]})
+                }).addTo(m);
+            }
+
             m.invalidateSize();
+            m.fitBounds(path.getBounds(), {padding: [50, 50]});
         }, 400);
     } else {
         document.getElementById('view-port').innerHTML = html;
