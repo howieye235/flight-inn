@@ -257,3 +257,4 @@ function searchDatabase() {
 }
 
 window.onload = sync;
+// --- NO EXTRA BRACKETS AFTER THIS LINE ---
