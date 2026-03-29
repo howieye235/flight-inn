@@ -73,22 +73,23 @@ body { display: flex; margin: 0; height: 100vh; font-family: 'Inter', sans-serif
     display: inline-block;
 }
 
-/* This strips the default Leaflet styles from your markers */
-.leaflet-marker-icon.iata-clean-marker {
+/* This is the magic part that kills the white square */
+.leaflet-marker-icon.no-box {
     background: none !important;
     border: none !important;
     box-shadow: none !important;
 }
 
-/* This styles your navy blue badges */
-.badge {
+/* This makes sure your navy badge looks sharp */
+.badge-style {
     background: #002244 !important;
     color: white !important;
-    padding: 3px 8px !important;
+    padding: 4px 8px !important;
     border-radius: 4px !important;
     font-weight: bold !important;
     font-size: 11px !important;
     border: 1px solid white !important;
     white-space: nowrap !important;
     display: inline-block !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
