@@ -185,5 +185,16 @@ function searchDatabase() {
     });
     viewport.innerHTML = found ? html + `</div>` : `<p>No results found.</p>`;
 }
+function wikiLinker(text) {
+    // We look through all categories in your data
+    for (let cat in flightInnData) {
+        for (let itemName in flightInnData[cat]) {
+            // If we find a match, wrap it in a span that calls loadAsset
+            const regex = new RegExp(`\\b${itemName}\\b`, 'gi');
+            text = text.replace(regex, `<span class="wiki-link" onclick="openEntry('${cat}', '${itemName}')">${itemName}</span>`);
+        }
+    }
+    return text;
+}
 
 window.onload = sync;
