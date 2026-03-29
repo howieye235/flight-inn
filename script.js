@@ -53,10 +53,17 @@ function loadDirectory(cat) {
 // 6. Detailed Entry View (Includes Map Logic for Routes)
 function openEntry(cat, item) {
     const data = flightInnData[cat][item];
-    let contentHTML = `
-        <button class="back-btn" onclick="loadDirectory('${cat}')">← Back to ${cat}</button>
-        <h2 style="color: #001a33; margin-top:0;">${item}</h2>
+    let displayDescription = (typeof data === 'object') ? (data.info || "No details") : data;
+    
+    document.getElementById('view-port').innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <button class="back-btn" onclick="loadDirectory('${cat}')">← Back</button>
+            <button onclick="editCurrentEntry('${cat}', '${item}')" style="background:none; border:1px solid #ccc; color:#666; padding:5px; cursor:pointer; font-size:12px;">[ Edit Info ]</button>
+        </div>
+        <h2>${item}</h2>
+        <div class="info-card"><p>${displayDescription}</p></div>
     `;
+}
 
     // Check if it's a Route with Coordinates
     if (cat === "Routes" && data.coords) {
@@ -113,34 +120,50 @@ function runQuery() {
     document.getElementById('view-port').innerHTML = html;
 }
 
-// 8. Modal & Saving Controls
+// Open the editor (Reset for "New" entry)
 function openEditor() {
+    document.getElementById('modal-title').innerText = "Add New Entry ✈️";
+    document.getElementById('entry-name').value = "";
+    document.getElementById('entry-info').value = "";
     document.getElementById('editor-modal').style.display = 'block';
 }
 
-function closeEditor() {
-    document.getElementById('editor-modal').style.display = 'none';
-}
-
-function saveNewPlane() {
-    const name = document.getElementById('plane-name').value;
-    const info = document.getElementById('plane-info').value;
+// THE UNIVERSAL SAVE (Handles Airlines, Fleets, and Airports)
+function saveEntry() {
+    const category = document.getElementById('entry-category').value;
+    const name = document.getElementById('entry-name').value;
+    const info = document.getElementById('entry-info').value;
 
     if (name && info) {
-        // Update local data first
-        if (!flightInnData.Fleets) flightInnData.Fleets = {}; 
-        flightInnData.Fleets[name] = info;
+        // Ensure the category exists in our data
+        if (!flightInnData[category]) {
+            flightInnData[category] = {};
+        }
 
-        // Push everything to Firebase
+        // Save the data
+        flightInnData[category][name] = info;
+
+        // Sync to Firebase
         database.ref('flightData').set(flightInnData).then(() => {
-            alert(name + " saved to the cloud! 🛫");
+            alert(name + " saved to " + category + "! 🚀");
             closeEditor();
-            document.getElementById('plane-name').value = "";
-            document.getElementById('plane-info').value = "";
+            loadDirectory(category); // Refresh the view immediately
         });
     } else {
-        alert("Fill in both boxes!");
+        alert("Please fill in both Name and Details!");
     }
+}
+
+// THE EDIT OPTION (Call this from an entry page)
+function editCurrentEntry(cat, name) {
+    const currentData = flightInnData[cat][name];
+    
+    document.getElementById('modal-title').innerText = "Editing: " + name;
+    document.getElementById('entry-category').value = cat;
+    document.getElementById('entry-name').value = name;
+    document.getElementById('entry-info').value = (typeof currentData === 'object') ? currentData.info : currentData;
+    
+    document.getElementById('editor-modal').style.display = 'block';
 }
 
 function renderHome() {
