@@ -77,32 +77,40 @@ function openEntry(cat, item) {
             var container = L.DomUtil.get('map');
             if (container != null) { container._leaflet_id = null; }
 
-            // Init Map - No Plugins Required
+            // 1. Initialize Map
             var m = L.map('map').setView(data.coords[0], 3);
             L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(m);
 
-            // 1. DRAW THE LINE (Dashed style - No plugin needed!)
+            // 2. The Flight Path (Dashed makes it look like a route map)
             var flightPath = L.polyline([data.coords[0], data.coords[1]], {
                 color: '#0066cc', 
                 weight: 4, 
-                dashArray: '10, 10' // This creates the "flight track" look
+                dashArray: '10, 15', 
+                opacity: 0.8
             }).addTo(m);
 
-            // 2. IATA LABELS (Using a specific class to kill the boxes)
+            // 3. IATA LABELS (STYLING INJECTED DIRECTLY TO KILL BOXES)
             const codes = item.split('-'); 
             if(codes.length === 2) {
+                const labelStyle = "background:#002244; color:white; padding:4px 8px; border-radius:4px; font-weight:bold; font-size:12px; border:1px solid white; white-space:nowrap; display:inline-block; box-shadow: 0 2px 4px rgba(0,0,0,0.3);";
+                
+                // Origin
                 L.marker(data.coords[0], {
                     icon: L.divIcon({
-                        className: 'iata-clean-marker', 
-                        html: `<span class="badge">${codes[0].trim()}</span>`, 
-                        iconSize:[40,20]
+                        className: 'no-box', // This class name doesn't matter now
+                        html: `<span style="${labelStyle}">${codes[0].trim()}</span>`, 
+                        iconSize: [0, 0], // Setting size to 0 kills the default white box!
+                        iconAnchor: [20, 10]
                     })
                 }).addTo(m);
+
+                // Destination
                 L.marker(data.coords[1], {
                     icon: L.divIcon({
-                        className: 'iata-clean-marker', 
-                        html: `<span class="badge">${codes[1].trim()}</span>`, 
-                        iconSize:[40,20]
+                        className: 'no-box',
+                        html: `<span style="${labelStyle}">${codes[1].trim()}</span>`, 
+                        iconSize: [0, 0], // Setting size to 0 kills the default white box!
+                        iconAnchor: [20, 10]
                     })
                 }).addTo(m);
             }
