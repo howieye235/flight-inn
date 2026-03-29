@@ -218,7 +218,6 @@ function saveEntry() {
             console.error("Firebase Error:", error);
             alert("Cloud Save Failed!");
         });
-}
 
 function deleteItem(cat, item) {
     if(confirm("Delete " + item + "?")) {
