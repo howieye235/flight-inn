@@ -80,25 +80,21 @@ function openEntry(cat, item) {
             var m = L.map('map').setView(data.coords[0], 3);
             L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(m);
 
-            // --- THE ARC CHECK ---
-            if (typeof L.Polyline.Arc === 'function') {
-                var path = L.Polyline.Arc(L.latLng(data.coords[0]), L.latLng(data.coords[1]), {
-                    color: '#0066cc', weight: 4, vertices: 100 
-                }).addTo(m);
-                
-                // IATA LABELS
-                const codes = item.split('-'); 
-                if(codes.length === 2) {
-                    L.marker(data.coords[0], {icon: L.divIcon({className: 'iata-label-navy', html: `<span>${codes[0].trim()}</span>` , iconSize:[40,20]})}).addTo(m);
-                    L.marker(data.coords[1], {icon: L.divIcon({className: 'iata-label-navy', html: `<span>${codes[1].trim()}</span>` , iconSize:[40,20]})}).addTo(m);
-                }
-                
-                m.fitBounds(path.getBounds(), {padding: [50, 50]});
-            } else {
-                console.error("ARC PLUGIN MISSING! Check your index.html scripts.");
-                // Fallback to straight line if Arc fails
-                L.polyline([data.coords[0], data.coords[1]], {color: 'red'}).addTo(m);
-            }
+// Check if the plugin is actually ready before using it
+if (L.Polyline.Arc) {
+    var path = L.Polyline.Arc(L.latLng(data.coords[0]), L.latLng(data.coords[1]), {
+        color: '#0066cc', 
+        weight: 4, 
+        vertices: 100 
+    }).addTo(m);
+    
+    m.fitBounds(path.getBounds(), {padding: [50, 50]});
+} else {
+    // If it STILL fails, draw a straight red line so the map isn't empty!
+    console.warn("Arc plugin failed to load. Drawing straight line instead.");
+    var path = L.polyline([data.coords[0], data.coords[1]], {color: 'red', weight: 3}).addTo(m);
+    m.fitBounds(path.getBounds());
+}
             m.invalidateSize();
         }, 400);
     } else {
