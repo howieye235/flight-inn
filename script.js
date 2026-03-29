@@ -102,11 +102,21 @@ var flightPath = L.Polyline.Arc(data.coords[0], data.coords[1], {
     vertices: 100
 }).addTo(m);
 
-// 2. Kill the boxes (setting iconSize to 1,1 hides the white square)
+// Inside your openEntry function...
 const codes = item.split('-'); 
 if(codes.length === 2) {
-    const labelStyle = "background:#002244; color:white; padding:4px 8px; border-radius:4px; font-weight:bold; font-size:12px; border:1px solid white; white-space:nowrap; display:inline-block;";
-    
+    [data.coords[0], data.coords[1]].forEach((pos, i) => {
+        L.marker(pos, {
+            icon: L.divIcon({
+                className: 'no-box', // Matches the CSS above
+                html: `<span class="badge-style">${codes[i].trim()}</span>`, 
+                iconSize: [0, 0], // Makes the container 0px so it can't show a box
+                iconAnchor: [20, 10] // Centers the text over the coordinate
+            })
+        }).addTo(m);
+    });
+}
+            
     L.marker(data.coords[0], {
         icon: L.divIcon({
             className: 'no-box',
