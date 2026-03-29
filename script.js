@@ -105,11 +105,11 @@ function openEntry(cat, item) {
         m.invalidateSize();
         m.fitBounds(path.getBounds(), {padding: [50, 50]});
     }, 400); // 400ms gives it plenty of time to render the white theme container
-}
-    else {
-    document.getElementById('view-port').innerHTML = html;
-} // <--- ADD THIS (Closes the "else" block)
-} // <--- ADD THIS (Closes the "openEntry" function)
+} else {
+        // This part handles Fleets, Airlines, and Airports so they still show up!
+        document.getElementById('view-port').innerHTML = html;
+    }
+} // <--- THIS BRACKET CLOSES THE WHOLE openEntry FUNCTION
 // --- ACTIONS & SEARCH ---
 function openEditor() { document.getElementById('editor-modal').style.display='flex'; }
 function closeEditor() { document.getElementById('editor-modal').style.display='none'; }
