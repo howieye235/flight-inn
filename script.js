@@ -80,10 +80,12 @@ function openEntry(cat, item) {
             var m = L.map('map').setView(data.coords[0], 3);
             L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(m);
 
+            // The Arc logic
             var flightPath = L.Polyline.Arc(data.coords[0], data.coords[1], {
                 color: '#0066cc', weight: 4, vertices: 100
             }).addTo(m);
 
+            // The Label logic (Box-Killer version)
             const codes = item.split('-'); 
             if(codes.length === 2) {
                 [data.coords[0], data.coords[1]].forEach((pos, i) => {
@@ -99,11 +101,42 @@ function openEntry(cat, item) {
             }
             m.invalidateSize();
             m.fitBounds(flightPath.getBounds(), {padding: [50, 50]});
-        }, 400);
+        }, 400); // End of timeout
     } else {
         document.getElementById('view-port').innerHTML = html;
     }
-}
+} // End of openEntry
+
+function saveEntry() {
+    const cat = document.getElementById('entry-category').value;
+    const name = document.getElementById('entry-name').value;
+    const img = document.getElementById('entry-image').value;
+    const info = document.getElementById('entry-info').value;
+
+    if (!name) return alert("Please enter a name");
+    if (!flightInnData[cat]) flightInnData[cat] = {};
+
+    if (cat === "Routes") {
+        const parts = info.split('|');
+        if (parts.length < 3) return alert("Format: Info | Lat,Lng | Lat,Lng");
+        
+        const start = parts[1].split(',').map(num => parseFloat(num.trim()));
+        const end = parts[2].split(',').map(num => parseFloat(num.trim()));
+        
+        flightInnData[cat][name] = { 
+            info: parts[0].trim(), 
+            image: img, 
+            coords: [start, end] 
+        };
+    } else {
+        flightInnData[cat][name] = { info: info, image: img };
+    }
+
+    database.ref('flightData').set(flightInnData).then(() => {
+        closeEditor();
+        loadDirectory(cat);
+    });
+} // End of saveEntry
 
 function saveEntry() {
     const cat = document.getElementById('entry-category').value;
