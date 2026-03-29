@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>FlightInn | Aviation Dashboard</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet-arc@1.0.0/bin/leaflet-arc.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="sidebar">
+        <h1 onclick="renderHome()">✈️ FlightInn</h1>
+        <div class="nav-group">
+            <div class="nav-link" onclick="loadDirectory('Airlines')">AIRLINES</div>
+            <div class="nav-link" onclick="loadDirectory('Fleets')">FLEETS</div>
+            <div class="nav-link" onclick="loadDirectory('Airports')">AIRPORTS</div>
+            <div class="nav-link" onclick="loadDirectory('Routes')">ROUTES</div>
+        </div>
+        <button id="editTrigger" onclick="toggleEditor()">[ Edit Database ]</button>
+    </div>
+
+    <main id="main-display">
+        <div id="top-bar">
+            <input type="text" id="queryInput" placeholder="Quick Search (e.g. MD-11, WestJet...)" onkeyup="runQuery()">
+        </div>
+
+        <div id="view-port">
+            </div>
+
+        <div id="wiki-editor" style="display:none;">
+            <div class="editor-header">
+                <h3>Source Code Editor</h3>
+                <button onclick="toggleEditor()">Close</button>
+            </div>
+            <textarea id="jsonBox" spellcheck="false"></textarea>
+            <div style="margin-top:10px;">
+                <button class="save-btn" onclick="applyData()">Save & Sync</button>
+            </div>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>

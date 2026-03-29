@@ -1,0 +1,78 @@
+:root {
+    --primary: #002244;
+    --accent: #00d2ff;
+    --bg: #f8fafc;
+}
+
+body {
+    display: flex;
+    margin: 0;
+    height: 100vh;
+    font-family: sans-serif;
+    background: var(--bg);
+}
+
+#sidebar {
+    width: 280px;
+    background: var(--primary);
+    color: white;
+    padding: 30px 20px;
+}
+
+#sidebar h1 { color: var(--accent); cursor: pointer; }
+
+.nav-link {
+    padding: 12px 15px;
+    margin: 8px 0;
+    cursor: pointer;
+    font-weight: 600;
+    border-radius: 8px;
+}
+
+.nav-link:hover { background: rgba(255,255,255,0.1); }
+
+#main-display { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+#top-bar { padding: 20px; background: white; border-bottom: 1px solid #e2e8f0; }
+
+#queryInput { width: 100%; max-width: 500px; padding: 12px; border-radius: 100px; border: 1px solid #ccc; }
+
+#view-port { padding: 40px; overflow-y: auto; flex: 1; }
+
+#map { height: 450px; border-radius: 12px; margin-top: 20px; border: 1px solid #ddd; }
+
+.info-card { background: white; padding: 30px; border-radius: 12px; border-top: 4px solid var(--primary); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+
+.result-link { color: #0066cc; text-decoration: underline; display: block; margin: 10px 0; cursor: pointer; }
+
+#wiki-editor { position: fixed; top: 10%; left: 10%; width: 80%; height: 80%; background: #1e1e1e; color: white; padding: 20px; z-index: 1000; border-radius: 15px; }
+
+#jsonBox { width: 100%; height: 70%; background: #2d2d2d; color: #00ff00; font-family: monospace; }
+
+.save-btn { background: #28a745; color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 5px; }
+/* Fix for the IATA labels on the map */
+.iata-label {
+    background: none !important;
+    border: none !important;
+    font-size: 14px;
+    font-family: 'Monaco', monospace;
+    text-align: center;
+}
+
+/* Totally clean IATA labels (Bare Text) */
+.iata-label-navy {
+    background: transparent !important; /* Forces the box to vanish */
+    border: none !important;
+}
+
+.iata-label-navy span {
+    color: #000044; /* Dark Navy Blue */
+    font-weight: 800; /* Extra bold so it stands out */
+    font-family: 'Inter', 'Segoe UI', 'Helvetica Neue', sans-serif;
+    font-size: 14px;
+    letter-spacing: 1px; /* Slightly wider letters looks pro */
+    text-transform: uppercase;
+    
+    /* White glow ensures it's readable over map lines/terrain */
+    text-shadow: 2px 2px 2px #ffffff, -1px -1px 2px #ffffff; 
+}
