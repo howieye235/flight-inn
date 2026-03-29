@@ -180,22 +180,6 @@ body { display: flex; margin: 0; height: 100vh; font-family: 'Inter', sans-serif
     white-space: pre-wrap; /* Crucial for paragraph breaks */
 }
 
-/* --- WIKI LINKS --- */
-.wiki-link {
-    color: #00f2ff;
-    text-decoration: none;
-    border-bottom: 1px dashed #00f2ff;
-    cursor: pointer;
-    font-weight: 500;
-    transition: all 0.2s;
-}
-
-.wiki-link:hover {
-    color: white;
-    border-bottom: 1px solid white;
-    background: rgba(0, 242, 255, 0.1);
-}
-
 .article-actions {
     margin-top: 50px;
     display: flex;
