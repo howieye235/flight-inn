@@ -1,4 +1,4 @@
-// 1. Firebase Config
+// 1. Firebase Configuration
 const firebaseConfig = {
     apiKey: "AIzaSyCkid-KKHmHUUuR0oikBjPGMkha0FJB5Dc",
     authDomain: "flightinn-cb4ba.firebaseapp.com",
@@ -9,67 +9,41 @@ const firebaseConfig = {
     databaseURL: "https://flightinn-cb4ba-default-rtdb.firebaseio.com"
 };
 
-firebase.initializeApp(firebaseConfig);
+// 2. Initialize Firebase
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
 const database = firebase.database();
-let flightInnData = {};
 
-// 2. Cloud Sync
+// 3. Global Variables
+let flightInnData = {
+    "Airlines": {},
+    "Fleets": {},
+    "Airports": {},
+    "Routes": {}
+};
+
+// 4. Cloud Sync
 function syncWithCloud() {
     database.ref('flightData').on('value', (snapshot) => {
-        const data = snapshot.val();
-        if (data) { flightInnData = data; }
+        const cloudData = snapshot.val();
+        if (cloudData) {
+            flightInnData = cloudData;
+        }
     });
 }
 
-// 3. Modal Controls
-function openEditor() {
-    document.getElementById('editor-modal').style.display = 'block';
-}
-
-function closeEditor() {
-    document.getElementById('editor-modal').style.display = 'none';
-}
-
-// 4. THE UNIVERSAL SAVE (Now with Routes!)
-function saveEntry() {
-    const category = document.getElementById('entry-category').value;
-    const name = document.getElementById('entry-name').value;
-    const info = document.getElementById('entry-info').value;
-
-    if (!name || !info) return alert("Fill in all boxes!");
-
-    if (!flightInnData[category]) flightInnData[category] = {};
-
-    if (category === "Routes") {
-        // Special logic for Routes: "Info | 52.1, -106.7 | 43.6, -79.6"
-        const parts = info.split('|');
-        if (parts.length < 3) return alert("Routes need: Info | Lat1, Lng1 | Lat2, Lng2");
-        
-        flightInnData[category][name] = {
-            info: parts[0].trim(),
-            coords: [
-                parts[1].split(',').map(Number),
-                parts[2].split(',').map(Number)
-            ]
-        };
-    } else {
-        // Normal text for everything else
-        flightInnData[category][name] = info;
-    }
-
-    database.ref('flightData').set(flightInnData).then(() => {
-        alert(name + " saved! 🚀");
-        closeEditor();
-        loadDirectory(category);
-    });
-}
-
-// 5. Navigation & Map Logic
+// 5. Navigation & Directory Display
 function loadDirectory(cat) {
     const list = flightInnData[cat];
     let html = `<h2>${cat} Directory</h2><hr>`;
-    for (let item in list) {
-        html += `<span class="result-link" onclick="openEntry('${cat}', '${item}')">${item}</span>`;
+    
+    if (list && Object.keys(list).length > 0) {
+        for (let item in list) {
+            html += `<span class="result-link" onclick="openEntry('${cat}', '${item}')">${item}</span>`;
+        }
+    } else {
+        html += `<p>No data found. Click "+ Edit" to add a ${cat}!</p>`;
     }
     document.getElementById('view-port').innerHTML = html;
 }
@@ -90,13 +64,60 @@ function openEntry(cat, item) {
         }, 200);
     } else {
         let desc = (typeof data === 'object') ? data.info : data;
-        contentHTML += `<div class="info-card"><p>${desc}</p></div>`;
+        contentHTML += `<div class="info-card"><p>${desc || "No details available."}</p></div>`;
         document.getElementById('view-port').innerHTML = contentHTML;
     }
+}
+
+// 6. Modal / Editor Logic
+function openEditor() {
+    document.getElementById('editor-modal').style.display = 'block';
+}
+
+function closeEditor() {
+    document.getElementById('editor-modal').style.display = 'none';
+}
+
+function saveEntry() {
+    const category = document.getElementById('entry-category').value;
+    const name = document.getElementById('entry-name').value;
+    const info = document.getElementById('entry-info').value;
+
+    if (!name || !info) {
+        alert("Fill in both boxes!");
+        return;
+    }
+
+    if (category === "Routes") {
+        const parts = info.split('|');
+        if (parts.length < 3) {
+            alert("Routes need: Info | Lat, Lng | Lat, Lng");
+            return;
+        }
+        flightInnData[category][name] = {
+            info: parts[0].trim(),
+            coords: [
+                parts[1].split(',').map(Number),
+                parts[2].split(',').map(Number)
+            ]
+        };
+    } else {
+        flightInnData[category][name] = info;
+    }
+
+    database.ref('flightData').set(flightInnData).then(() => {
+        alert(name + " saved! 🚀");
+        closeEditor();
+        loadDirectory(category);
+    });
 }
 
 function renderHome() {
     document.getElementById('view-port').innerHTML = `<h2>Welcome to FlightInn</h2><p>Select a category to begin.</p>`;
 }
 
-window.onload = function() { renderHome(); syncWithCloud(); };
+// 7. Startup
+window.onload = function() {
+    renderHome();
+    syncWithCloud();
+};
