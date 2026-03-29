@@ -51,7 +51,6 @@ function loadDirectory(cat) {
     document.getElementById('view-port').innerHTML = html + `</div>`;
 }
 
-// --- ENTRY VIEW (MAPS, CURVES, IATA) ---
 function openEntry(cat, item) {
     const data = flightInnData[cat][item];
     const img = data.image || "https://via.placeholder.com/800x400?text=No+Photo";
@@ -71,45 +70,41 @@ function openEntry(cat, item) {
     `;
 
     if (cat === "Routes" && data.coords) {
-    html += `<div id="map" style="height:450px; width:100%; background:#ddd; border-radius:12px; margin-top:20px;"></div>`;
-    document.getElementById('view-port').innerHTML = html;
+        html += `<div id="map" style="height:450px; width:100%; background:#ddd; border-radius:12px; margin-top:20px;"></div>`;
+        document.getElementById('view-port').innerHTML = html;
 
-    setTimeout(() => {
-        // Check if map already exists, if so, remove it to prevent "Already Initialized" error
-        var container = L.DomUtil.get('map');
-        if (container != null) { container._leaflet_id = null; }
+        setTimeout(() => {
+            var container = L.DomUtil.get('map');
+            if (container != null) { container._leaflet_id = null; }
 
-        var m = L.map('map').setView(data.coords[0], 3);
+            var m = L.map('map').setView(data.coords[0], 3);
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(m);
 
-        // Standard OpenStreetMap Tiles (The most reliable ones)
-        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '© OpenStreetMap'
-        }).addTo(m);
-
-        // THE CURVED LINE
-        var path = L.Polyline.Arc(L.latLng(data.coords[0]), L.latLng(data.coords[1]), {
-            color: '#0066cc', 
-            weight: 4, 
-            vertices: 100 
-        }).addTo(m);
-
-        // IATA LABELS
-        const codes = item.split('-'); 
-        if(codes.length === 2) {
-            L.marker(data.coords[0], {icon: L.divIcon({className: 'iata-label-navy', html: `<span>${codes[0].trim()}</span>` , iconSize:[40,20]})}).addTo(m);
-            L.marker(data.coords[1], {icon: L.divIcon({className: 'iata-label-navy', html: `<span>${codes[1].trim()}</span>` , iconSize:[40,20]})}).addTo(m);
-        }
-
-        // Final nudge to make sure tiles load
-        m.invalidateSize();
-        m.fitBounds(path.getBounds(), {padding: [50, 50]});
-    }, 400); // 400ms gives it plenty of time to render the white theme container
-} else {
-        // This part handles Fleets, Airlines, and Airports so they still show up!
+            // --- THE ARC CHECK ---
+            if (typeof L.Polyline.Arc === 'function') {
+                var path = L.Polyline.Arc(L.latLng(data.coords[0]), L.latLng(data.coords[1]), {
+                    color: '#0066cc', weight: 4, vertices: 100 
+                }).addTo(m);
+                
+                // IATA LABELS
+                const codes = item.split('-'); 
+                if(codes.length === 2) {
+                    L.marker(data.coords[0], {icon: L.divIcon({className: 'iata-label-navy', html: `<span>${codes[0].trim()}</span>` , iconSize:[40,20]})}).addTo(m);
+                    L.marker(data.coords[1], {icon: L.divIcon({className: 'iata-label-navy', html: `<span>${codes[1].trim()}</span>` , iconSize:[40,20]})}).addTo(m);
+                }
+                
+                m.fitBounds(path.getBounds(), {padding: [50, 50]});
+            } else {
+                console.error("ARC PLUGIN MISSING! Check your index.html scripts.");
+                // Fallback to straight line if Arc fails
+                L.polyline([data.coords[0], data.coords[1]], {color: 'red'}).addTo(m);
+            }
+            m.invalidateSize();
+        }, 400);
+    } else {
         document.getElementById('view-port').innerHTML = html;
     }
-} // <--- THIS BRACKET CLOSES THE WHOLE openEntry FUNCTION
+}
 // --- ACTIONS & SEARCH ---
 function openEditor() { document.getElementById('editor-modal').style.display='flex'; }
 function closeEditor() { document.getElementById('editor-modal').style.display='none'; }
