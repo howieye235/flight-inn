@@ -136,11 +136,19 @@ function toggleEditor() {
 }
 
 function applyData() {
+    const newData = document.getElementById('db-editor').value;
     try {
-        flightInnData = JSON.parse(document.getElementById('jsonBox').value);
-        toggleEditor();
-        alert("Database Updated!");
-    } catch(e) { alert("JSON Error!"); }
+        const parsedData = JSON.parse(newData);
+        
+        // This sends the data to your Firebase locker
+        database.ref('flightData').set(parsedData).then(() => {
+            alert("Cloud Sync Successful! 🚀");
+            closeEditor();
+        });
+
+    } catch (e) {
+        alert("JSON Error: Double check your commas and brackets!");
+    }
 }
 
 function renderHome() {
