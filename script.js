@@ -1,3 +1,11 @@
+const firebaseConfig = {
+  apiKey: "AIzaSyCkid-KKHmHUUuR0oikBjPGMkha0FJB5Dc",
+  authDomain: "flightinn-cb4ba.firebaseapp.com",
+  projectId: "flightinn-cb4ba",
+  storageBucket: "flightinn-cb4ba.firebasestorage.app",
+  messagingSenderId: "272507283961",
+  appId: "1:272507283961:web:e935c63963d1c8dde63528"
+};
 let flightInnData = {
     "Airlines": {
         "Air Canada": "Historical data on DC-8 and L-1011 operations.",
