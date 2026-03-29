@@ -1,3 +1,4 @@
+
 // --- CONFIG & INIT ---
 const firebaseConfig = {
     apiKey: "AIzaSyCkid-KKHmHUUuR0oikBjPGMkha0FJB5Dc",
