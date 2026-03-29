@@ -186,14 +186,39 @@ function searchDatabase() {
     viewport.innerHTML = found ? html + `</div>` : `<p>No results found.</p>`;
 }
 function wikiLinker(text) {
-    // We look through all categories in your data
+    if (!text) return "";
+    
+    // 1. Gather every single name from your Wiki
+    let entries = [];
     for (let cat in flightInnData) {
-        for (let itemName in flightInnData[cat]) {
-            // If we find a match, wrap it in a span that calls loadAsset
-            const regex = new RegExp(`\\b${itemName}\\b`, 'gi');
-            text = text.replace(regex, `<span class="wiki-link" onclick="openEntry('${cat}', '${itemName}')">${itemName}</span>`);
+        for (let name in flightInnData[cat]) {
+            entries.push({ name: name, cat: cat });
         }
     }
+
+    // 2. Sort by length so "787-9 Dreamliner" matches before just "787"
+    entries.sort((a, b) => b.name.length - a.name.length);
+
+    // 3. The "Anti-Double Link" Trick
+    // We replace names with unique placeholders first, then swap them for links.
+    // This prevents the code from linking a word inside an already created link.
+    let placeholders = [];
+    entries.forEach((item, index) => {
+        const escapedName = item.name.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+        const regex = new RegExp(`\\b${escapedName}\\b`, 'gi'); 
+        
+        if (regex.test(text)) {
+            const id = `___LINK${index}___`;
+            placeholders.push({ id: id, cat: item.cat, name: item.name });
+            text = text.replace(regex, id);
+        }
+    });
+
+    // 4. Swap placeholders for actual HTML links
+    placeholders.forEach(p => {
+        text = text.replace(p.id, `<span class="wiki-link" onclick="openEntry('${p.cat}', '${p.name}')">${p.name}</span>`);
+    });
+
     return text;
 }
 
