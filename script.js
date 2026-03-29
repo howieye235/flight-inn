@@ -146,11 +146,11 @@ if(codes.length === 2) {
 
             m.invalidateSize();
             m.fitBounds(flightPath.getBounds(), {padding: [50, 50]});
-        }, 400);
+        }, 400); // Closes the setTimeout
     } else {
         document.getElementById('view-port').innerHTML = html;
     }
-}
+} // Closes the openEntry function <--- MAKE SURE THIS IS HERE!
 // --- ACTIONS & SEARCH ---
 function openEditor() { document.getElementById('editor-modal').style.display='flex'; }
 function closeEditor() { document.getElementById('editor-modal').style.display='none'; }
