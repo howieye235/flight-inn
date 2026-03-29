@@ -107,36 +107,9 @@ function openEntry(cat, item) {
     }
 } // End of openEntry
 
-function saveEntry() {
-    const cat = document.getElementById('entry-category').value;
-    const name = document.getElementById('entry-name').value;
-    const img = document.getElementById('entry-image').value;
-    const info = document.getElementById('entry-info').value;
-
-    if (!name) return alert("Please enter a name");
-    if (!flightInnData[cat]) flightInnData[cat] = {};
-
-    if (cat === "Routes") {
-        const parts = info.split('|');
-        if (parts.length < 3) return alert("Format: Info | Lat,Lng | Lat,Lng");
-        
-        const start = parts[1].split(',').map(num => parseFloat(num.trim()));
-        const end = parts[2].split(',').map(num => parseFloat(num.trim()));
-        
-        flightInnData[cat][name] = { 
-            info: parts[0].trim(), 
-            image: img, 
-            coords: [start, end] 
-        };
-    } else {
-        flightInnData[cat][name] = { info: info, image: img };
-    }
-
-    database.ref('flightData').set(flightInnData).then(() => {
-        closeEditor();
-        loadDirectory(cat);
-    });
-} // End of saveEntry
+// --- ACTIONS & SEARCH ---
+function openEditor() { document.getElementById('editor-modal').style.display='flex'; }
+function closeEditor() { document.getElementById('editor-modal').style.display='none'; }
 
 function saveEntry() {
     const cat = document.getElementById('entry-category').value;
@@ -154,7 +127,6 @@ function saveEntry() {
         try {
             const start = parts[1].split(',').map(num => parseFloat(num.trim()));
             const end = parts[2].split(',').map(num => parseFloat(num.trim()));
-            
             flightInnData[cat][name] = { 
                 info: parts[0].trim(), 
                 image: img, 
@@ -169,39 +141,8 @@ function saveEntry() {
 
     database.ref('flightData').set(flightInnData).then(() => {
         closeEditor();
-        loadDirectory(cat);
-    });
-}
-
-// --- ACTIONS & SEARCH ---
-function openEditor() { document.getElementById('editor-modal').style.display='flex'; }
-function closeEditor() { document.getElementById('editor-modal').style.display='none'; }
-
-function saveEntry() {
-    const cat = document.getElementById('entry-category').value;
-    const name = document.getElementById('entry-name').value;
-    const img = document.getElementById('entry-image').value;
-    const info = document.getElementById('entry-info').value;
-
-    if (!name) return alert("Please enter a name");
-    if (!flightInnData[cat]) flightInnData[cat] = {};
-
-    if (cat === "Routes") {
-        const parts = info.split('|');
-        if (parts.length < 3) return alert("Format: Info | Lat,Lng | Lat,Lng");
-        const start = parts[1].split(',').map(num => parseFloat(num.trim()));
-        const end = parts[2].split(',').map(num => parseFloat(num.trim()));
-        flightInnData[cat][name] = { info: parts[0].trim(), image: img, coords: [start, end] };
-    } else {
-        flightInnData[cat][name] = { info: info, image: img };
-    }
-
-    database.ref('flightData').set(flightInnData).then(() => {
-        closeEditor();
-        loadDirectory(cat); // This is where 'cat' was breaking!
-    }).catch((error) => {
-        console.error("Firebase Error:", error);
-    });
+        loadDirectory(cat); // This fixes the 'cat' error!
+    }).catch((e) => console.error("Firebase Error:", e));
 }
 
 function deleteItem(cat, item) {
