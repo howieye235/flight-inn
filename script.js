@@ -139,15 +139,14 @@ function saveEntry() {
         flightInnData[cat][name] = { info: info, image: img };
     }
 
-    database.ref('flightData').set(flightInnData).then(() => {
-        // We use the 'cat' variable defined at the top of this function
+   database.ref('flightData').set(flightInnData).then(() => {
         console.log("Saved successfully to:", cat); 
         closeEditor();
         loadDirectory(cat); 
     }).catch((e) => {
         console.error("Firebase Error:", e);
-    });
-}
+    }); // <--- THIS WAS MISSING
+} // <--- THIS WAS MISSING
 
 function deleteItem(cat, item) {
     if(confirm("Delete " + item + "?")) {
