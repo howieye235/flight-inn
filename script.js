@@ -187,6 +187,8 @@ function saveNewPlane() {
         alert("Fill in both boxes first!");
     }
 }
+// This tells the website to start looking at the cloud as soon as it opens
+syncWithCloud();
     } else {
         alert("Fill in both boxes first!");
     }
