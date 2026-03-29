@@ -60,20 +60,25 @@
             <input type="text" id="entry-image" placeholder="Paste image link...">
             <label>Details</label>
             <div class="spec-inputs" style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin: 10px 0;">
     <div>
-        <label>Manufacturer</label>
-        <input type="text" id="entry-maker" placeholder="e.g. Boeing">
+        <label>Spec A (Mfr / Country / City / Airline)</label>
+        <input type="text" id="entry-maker">
     </div>
     <div>
-        <label>Primary Engine</label>
-        <input type="text" id="entry-engines" placeholder="e.g. GEnx-1B">
+        <label>Spec B (Engine / Alliance / IATA / Pax)</label>
+        <input type="text" id="entry-engines">
     </div>
     <div>
-        <label>First Flight / Era</label>
-        <input type="text" id="entry-era" placeholder="e.g. 2009 / Midnights">
+        <label>Spec C (Era / Year / Status)</label>
+        <input type="text" id="entry-era">
     </div>
     <div>
-        <label>Status</label>
+        <label>Spec D (Fact / Purpose / ICAO / Planes)</label>
+        <input type="text" id="entry-extra">
+    </div>
+    <div>
+        <label>Status Dot</label>
         <select id="entry-status">
             <option value="Active">🟢 Active</option>
             <option value="Stored">🟠 Stored</option>
