@@ -95,27 +95,56 @@ function openEntry(cat, item) {
         <div class="hero" style="background-image: url('${img}')">
             <div class="hero-text">
                 <h1>${item}</h1>
-                <div class="quick-facts">
-                    ${facts}
-                    <span class="fact-badge" style="border-left: 3px solid ${statusColor}">${status}</span>
-                </div>
             </div>
         </div>
 
-        <div class="wiki-article-container">
+        <div class="wiki-layout">
             <div class="article-body">
                 <h2 class="section-header">Reference Article</h2>
                 <div class="wiki-content">
-                    ${wikiLinker(data.info || "No detailed information provided for this entry.")}
+                    ${wikiLinker(data.info || "No detailed information provided.")}
+                </div>
+                
+                <div class="article-actions">
+                    <button onclick="editItem('${cat}', '${item}')" class="edit-btn">Edit Article</button>
+                    <button onclick="deleteItem('${cat}', '${item}')" class="delete-btn">Delete Entry</button>
                 </div>
             </div>
             
-            <div class="article-actions">
-                <button onclick="editItem('${cat}', '${item}')" class="edit-btn">Edit Article</button>
-                <button onclick="deleteItem('${cat}', '${item}')" class="delete-btn">Delete Entry</button>
-            </div>
+            <aside class="wiki-sidebar">
+                <div class="sidebar-header">Quick Facts</div>
+                <div class="sidebar-content">
+                    ${facts}
+                    <div class="sidebar-row">
+                        <span class="s-label">Status</span>
+                        <span class="s-value" style="color:${statusColor}">${status}</span>
+                    </div>
+                </div>
+            </aside>
         </div>
     `;
+
+    // Update the facts mapping to use Sidebar Rows instead of Badges
+    if (cat === "Airlines") {
+        facts = `
+            <div class="sidebar-row"><span class="s-label">Country</span><span class="s-value">${data.maker || "—"}</span></div>
+            <div class="sidebar-row"><span class="s-label">Fleet Size</span><span class="s-value">${data.engines || "—"}</span></div>
+            <div class="sidebar-row"><span class="s-label">Alliance</span><span class="s-value">${data.extra || "—"}</span></div>
+            <div class="sidebar-row"><span class="s-label">Established</span><span class="s-value">${data.era || "—"}</span></div>
+        `;
+    } else if (cat === "Airports") {
+        facts = `
+            <div class="sidebar-row"><span class="s-label">City/Country</span><span class="s-value">${data.maker || "—"}</span></div>
+            <div class="sidebar-row"><span class="s-label">IATA</span><span class="s-value">${data.engines || "—"}</span></div>
+            <div class="sidebar-row"><span class="s-label">ICAO</span><span class="s-value">${data.extra || "—"}</span></div>
+            <div class="sidebar-row"><span class="s-label">Era</span><span class="s-value">${data.era || "—"}</span></div>
+        `;
+    } else if (cat === "Fleets") {
+        facts = `
+            <div class="sidebar-row"><span class="s-label">Manufacturer</span><span class="s-value">${data.maker || "—"}</span></div>
+            <div class="sidebar-row"><span class="s-label">Engines</span><span class="s-value">${data.engines || "—"}</span></div>
+            <div class="sidebar-row"><span class="s-label">Era</span><span class="s-value">${data.era || "—"}</span></div>
+            <div class="sidebar-row"><span class="s-label
 
     // --- ROUTE MAP LOGIC ---
     if (cat === "Routes" && data.coords) {
