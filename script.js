@@ -149,4 +149,39 @@ function searchDatabase() {
 
 window.onload = sync;
 
+function searchDatabase() {
+    let query = document.getElementById('queryInput').value.toLowerCase();
+    let viewport = document.getElementById('view-port');
+    
+    // If search is empty, go back to Home
+    if (query === "") {
+        renderHome();
+        return;
+    }
 
+    let resultsHtml = `<h2 style="color:var(--primary);">Search Results</h2><div class="list-container">`;
+    let found = false;
+
+    // We loop through every category in your database
+    ['Airlines', 'Fleets', 'Airports', 'Routes'].forEach(cat => {
+        if (flightInnData[cat]) {
+            Object.keys(flightInnData[cat]).forEach(item => {
+                // If the name matches what you typed
+                if (item.toLowerCase().includes(query)) {
+                    found = true;
+                    resultsHtml += `
+                        <div class="list-item" onclick="openEntry('${cat}', '${item}')">
+                            <span style="font-weight:bold;">${item}</span> 
+                            <span style="color:#888; font-size:12px; margin-left:10px;">in ${cat}</span>
+                        </div>`;
+                }
+            });
+        }
+    });
+
+    if (!found) {
+        resultsHtml += `<p style="color:#888;">No aircraft or airlines found matching "${query}"</p>`;
+    }
+
+    viewport.innerHTML = resultsHtml + `</div>`;
+}
