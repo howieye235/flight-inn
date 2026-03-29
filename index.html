@@ -59,6 +59,28 @@
             <label>Image URL</label>
             <input type="text" id="entry-image" placeholder="Paste image link...">
             <label>Details</label>
+            <div class="spec-inputs" style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+    <div>
+        <label>Manufacturer</label>
+        <input type="text" id="entry-maker" placeholder="e.g. Boeing">
+    </div>
+    <div>
+        <label>Primary Engine</label>
+        <input type="text" id="entry-engines" placeholder="e.g. GEnx-1B">
+    </div>
+    <div>
+        <label>First Flight / Era</label>
+        <input type="text" id="entry-era" placeholder="e.g. 2009 / Midnights">
+    </div>
+    <div>
+        <label>Status</label>
+        <select id="entry-status">
+            <option value="Active">🟢 Active</option>
+            <option value="Stored">🟠 Stored</option>
+            <option value="Retired">🔴 Retired</option>
+        </select>
+    </div>
+</div>
             <textarea id="entry-info" placeholder="Specs or Route (Info | Lat,Lng | Lat,Lng)"></textarea>
             <div style="display:flex; gap:10px; margin-top:15px;">
                 <button onclick="saveEntry()" class="save-btn">Save to Cloud</button>
