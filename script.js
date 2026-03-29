@@ -61,7 +61,7 @@ function openEntry(cat, item) {
             <div class="hero-text"><h1>${item}</h1></div>
         </div>
         <div class="info-block">
-            <p>${data.info || "No details provided."}</p>
+            <p>${wikiLinker(data.info || "No details provided.")}</p>
             <div style="margin-top:20px; display:flex; gap:10px;">
                 <button onclick="editItem('${cat}', '${item}')" class="edit-btn">Edit</button>
                 <button onclick="deleteItem('${cat}', '${item}')" class="delete-btn">Delete</button>
