@@ -74,29 +74,30 @@ function openEntry(cat, item) {
         html += `<div id="map" style="height:450px; border-radius:12px; margin-top:20px;"></div>`;
         document.getElementById('view-port').innerHTML = html;
 
-        setTimeout(() => {
-            var m = L.map('map');
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png').addTo(m);
+setTimeout(() => {
+    var m = L.map('map');
+    
+    // Use the standard OSM tiles for reliability
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(m);
 
-            // CURVED LINE
-            var latLngs = [L.latLng(data.coords[0]), L.latLng(data.coords[1])];
-            var path = L.Polyline.Arc(latLngs[0], latLngs[1], {
-                color: '#0066cc', weight: 4, vertices: 100 
-            }).addTo(m);
+    // THE CURVED LINE
+    var latLngs = [L.latLng(data.coords[0]), L.latLng(data.coords[1])];
+    var path = L.Polyline.Arc(latLngs[0], latLngs[1], {
+        color: '#0066cc', weight: 4, vertices: 100 
+    }).addTo(m);
 
-            // IATA LABELS
-            const codes = item.split('-'); 
-            if(codes.length === 2) {
-                L.marker(data.coords[0], {icon: L.divIcon({className: 'iata-label-navy', html: `<span>${codes[0].trim()}</span>` , iconSize:[40,20]})}).addTo(m);
-                L.marker(data.coords[1], {icon: L.divIcon({className: 'iata-label-navy', html: `<span>${codes[1].trim()}</span>` , iconSize:[40,20]})}).addTo(m);
-            }
-
-            m.fitBounds(path.getBounds(), {padding: [50, 50]});
-        }, 200);
-    } else {
-        document.getElementById('view-port').innerHTML = html;
+    // IATA LABELS
+    const codes = item.split('-'); 
+    if(codes.length === 2) {
+        L.marker(data.coords[0], {icon: L.divIcon({className: 'iata-label-navy', html: `<span>${codes[0].trim()}</span>` , iconSize:[40,20]})}).addTo(m);
+        L.marker(data.coords[1], {icon: L.divIcon({className: 'iata-label-navy', html: `<span>${codes[1].trim()}</span>` , iconSize:[40,20]})}).addTo(m);
     }
-}
+
+    // THIS IS THE FIX: Tell the map to refresh its "eyes"
+    m.invalidateSize(); 
+    
+    m.fitBounds(path.getBounds(), {padding: [50, 50]});
+}, 300); // Increased to 300ms to give the white layout time to breathe
 
 // --- ACTIONS & SEARCH ---
 function openEditor() { document.getElementById('editor-modal').style.display='flex'; }
