@@ -10,45 +10,37 @@ const firebaseConfig = {
 };
 
 // 2. Initialize Firebase
-firebase.initializeApp(firebaseConfig);
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
 const database = firebase.database();
 
-// 3. Global Data Variable
+// 3. Global Variables
 let flightInnData = {};
-let currentCategory = 'Fleets';
+let currentCategory = 'Airlines';
 
-// 4. Cloud Sync Logic
-function syncWithCloud() {
-    database.ref('flightData').on('value', (snapshot) => {
-        const cloudData = snapshot.val();
-        if (cloudData) {
-            flightInnData = cloudData;
-            // Auto-refresh the view if we are already looking at a list
-            if (document.getElementById('view-port').innerHTML.includes('Directory')) {
-                loadDirectory(currentCategory);
-            }
-        }
-    });
-}
-
-// 5. Navigation & Display
+// 4. Navigation & Display
 function loadDirectory(cat) {
     currentCategory = cat;
     const list = flightInnData[cat];
     let html = `<h2>${cat} Directory</h2><hr>`;
-    for (let item in list) {
-        html += `<span class="result-link" onclick="openEntry('${cat}', '${item}')">${item}</span>`;
+    if (list) {
+        for (let item in list) {
+            html += `<span class="result-link" onclick="openEntry('${cat}', '${item}')">${item}</span>`;
+        }
+    } else {
+        html += `<p>No data found in this category.</p>`;
     }
     document.getElementById('view-port').innerHTML = html;
 }
 
 function openEntry(cat, item) {
     const data = flightInnData[cat][item];
-    let displayDescription = (typeof data === 'object') ? data.info : data;
+    let displayDescription = (typeof data === 'object') ? (data.info || "No details") : data;
     
     document.getElementById('view-port').innerHTML = `
-        <button class="back-btn" onclick="loadDirectory('${cat}')">← Back to ${cat}</button>
-        <h2 style="color: #001a33; margin-top:0;">${item}</h2>
+        <button class="back-btn" onclick="loadDirectory('${cat}')">← Back</button>
+        <h2>${item}</h2>
         <div class="info-card"><p>${displayDescription}</p></div>
     `;
 }
@@ -57,7 +49,17 @@ function renderHome() {
     document.getElementById('view-port').innerHTML = `<h2>Welcome to the Hub</h2><p>Select a directory from the sidebar to begin.</p>`;
 }
 
-// 6. Modal / Editor Controls
+// 5. Cloud Sync
+function syncWithCloud() {
+    database.ref('flightData').on('value', (snapshot) => {
+        const cloudData = snapshot.val();
+        if (cloudData) {
+            flightInnData = cloudData;
+        }
+    });
+}
+
+// 6. Modal Controls
 function openEditor() {
     document.getElementById('editor-modal').style.display = 'block';
 }
@@ -72,19 +74,17 @@ function saveNewPlane() {
 
     if (name && info) {
         if (!flightInnData.Fleets) flightInnData.Fleets = {}; 
-        
         flightInnData.Fleets[name] = info;
 
         database.ref('flightData').set(flightInnData).then(() => {
-            alert(name + " added to Cloud! 🚀");
+            alert(name + " added! 🚀");
             closeEditor();
             document.getElementById('plane-name').value = "";
             document.getElementById('plane-info').value = "";
-        }).catch((error) => {
-            alert("Firebase Error: Check your 'Rules' tab!");
+            loadDirectory('Fleets'); // Refresh view
         });
     } else {
-        alert("Fill in both boxes first!");
+        alert("Fill in both boxes!");
     }
 }
 
@@ -97,7 +97,7 @@ function runQuery() {
         for (let item in flightInnData[cat]) {
             let entry = flightInnData[cat][item];
             let text = (typeof entry === 'object') ? entry.info : entry;
-            if (item.toLowerCase().includes(query) || text.toLowerCase().includes(query)) {
+            if (item.toLowerCase().includes(query) || (text && text.toLowerCase().includes(query))) {
                 html += `<span class="result-link" onclick="openEntry('${cat}', '${item}')">${item} (${cat})</span>`;
             }
         }
@@ -105,7 +105,7 @@ function runQuery() {
     document.getElementById('view-port').innerHTML = html;
 }
 
-// 8. Start the Engines
+// 8. Launch
 window.onload = function() {
     renderHome();
     syncWithCloud();
