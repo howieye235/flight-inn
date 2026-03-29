@@ -189,40 +189,27 @@ function saveEntry() {
     if (cat === "Routes") {
         const parts = info.split('|');
         if (parts.length < 3) return alert("Format: Info | Lat,Lng | Lat,Lng");
-        
-        // This part converts the text into REAL numbers for the Arc math
         const start = parts[1].split(',').map(num => parseFloat(num.trim()));
         const end = parts[2].split(',').map(num => parseFloat(num.trim()));
-        
-        flightInnData[cat][name] = { 
-            info: parts[0].trim(), 
-            image: img, 
-            coords: [start, end] 
-        };
+        flightInnData[cat][name] = { info: parts[0].trim(), image: img, coords: [start, end] };
     } else {
         flightInnData[cat][name] = { info: info, image: img };
     }
 
     database.ref('flightData').set(flightInnData).then(() => {
         closeEditor();
-        loadDirectory(cat);
+        loadDirectory(cat); // This is where 'cat' was breaking!
+    }).catch((error) => {
+        console.error("Firebase Error:", error);
     });
 }
-    // 4. Push to Firebase Cloud
-    database.ref('flightData').set(flightInnData)
-        .then(() => {
-            closeEditor();
-            loadDirectory(cat);
-        })
-        .catch((error) => {
-            console.error("Firebase Error:", error);
-            alert("Cloud Save Failed!");
-        });
 
 function deleteItem(cat, item) {
     if(confirm("Delete " + item + "?")) {
         delete flightInnData[cat][item];
-        database.ref('flightData').set(flightInnData).then(() => loadDirectory(cat));
+        database.ref('flightData').set(flightInnData).then(() => {
+            loadDirectory(cat);
+        });
     }
 }
 
@@ -242,12 +229,12 @@ function searchDatabase() {
 
     let html = `<h2>Search Results</h2><div class="list-container">`;
     let found = false;
-    ['Airlines', 'Fleets', 'Airports', 'Routes'].forEach(cat => {
-        if (flightInnData[cat]) {
-            Object.keys(flightInnData[cat]).forEach(item => {
+    ['Airlines', 'Fleets', 'Airports', 'Routes'].forEach(c => {
+        if (flightInnData[c]) {
+            Object.keys(flightInnData[c]).forEach(item => {
                 if (item.toLowerCase().includes(query)) {
                     found = true;
-                    html += `<div class="list-item" onclick="openEntry('${cat}', '${item}')">${item} <small>(${cat})</small></div>`;
+                    html += `<div class="list-item" onclick="openEntry('${c}', '${item}')">${item} <small>(${c})</small></div>`;
                 }
             });
         }
@@ -256,4 +243,3 @@ function searchDatabase() {
 }
 
 window.onload = sync;
-// --- NO EXTRA BRACKETS AFTER THIS LINE ---
