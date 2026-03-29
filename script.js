@@ -55,24 +55,72 @@ function openEntry(cat, item) {
     const data = flightInnData[cat][item];
     const img = data.image || "https://placehold.co/800x400?text=No+Photo";
     
+    // --- SMART HUD LOGIC ---
+    let facts = ""; 
+    const status = data.status || "Active";
+    const statusColor = status === "Active" ? "#00ff88" : (status === "Retired" ? "#ff4444" : "#ffbb00");
+
+    if (cat === "Airlines") {
+        facts = `
+            <span class="fact-badge">🚩 ${data.maker || "Country"}</span>
+            <span class="fact-badge">✈️ Fleet: ${data.engines || "0"}</span>
+            <span class="fact-badge">🌐 ${data.extra || "Alliance"}</span>
+            <span class="fact-badge">📅 Est. ${data.era || "Year"}</span>
+        `;
+    } else if (cat === "Airports") {
+        facts = `
+            <span class="fact-badge">🏙️ ${data.maker || "City/Country"}</span>
+            <span class="fact-badge">🆔 IATA: ${data.engines || "???"}</span>
+            <span class="fact-badge">📡 ICAO: ${data.extra || "????"}</span>
+            <span class="fact-badge">⏳ Era: ${data.era || "Modern"}</span>
+        `;
+    } else if (cat === "Fleets") {
+        facts = `
+            <span class="fact-badge">🛠️ ${data.maker || "Manufacturer"}</span>
+            <span class="fact-badge">⚙️ ${data.engines || "Engines"}</span>
+            <span class="fact-badge">📅 ${data.era || "Era"}</span>
+            <span class="fact-badge">🎯 ${data.extra || "Purpose"}</span>
+        `;
+    } else if (cat === "Routes") {
+        facts = `
+            <span class="fact-badge">🏢 ${data.maker || "Airlines"}</span>
+            <span class="fact-badge">👥 ${data.engines || "Pax/Year"}</span>
+            <span class="fact-badge">✈️ ${data.extra || "Planes"}</span>
+        `;
+    }
+
     let html = `
         <button class="back-btn" onclick="loadDirectory('${cat}')">← Back</button>
+        
         <div class="hero" style="background-image: url('${img}')">
-            <div class="hero-text"><h1>${item}</h1></div>
+            <div class="hero-text">
+                <h1>${item}</h1>
+                <div class="quick-facts">
+                    ${facts}
+                    <span class="fact-badge" style="border-left: 3px solid ${statusColor}">${status}</span>
+                </div>
+            </div>
         </div>
-        <div class="info-block">
-            <p>${wikiLinker(data.info || "No details provided.")}</p>
-            <div style="margin-top:20px; display:flex; gap:10px;">
-                <button onclick="editItem('${cat}', '${item}')" class="edit-btn">Edit</button>
-                <button onclick="deleteItem('${cat}', '${item}')" class="delete-btn">Delete</button>
+
+        <div class="wiki-article-container">
+            <div class="article-body">
+                <h2 class="section-header">Reference Article</h2>
+                <div class="wiki-content">
+                    ${wikiLinker(data.info || "No detailed information provided for this entry.")}
+                </div>
+            </div>
+            
+            <div class="article-actions">
+                <button onclick="editItem('${cat}', '${item}')" class="edit-btn">Edit Article</button>
+                <button onclick="deleteItem('${cat}', '${item}')" class="delete-btn">Delete Entry</button>
             </div>
         </div>
     `;
 
+    // --- ROUTE MAP LOGIC ---
     if (cat === "Routes" && data.coords) {
-        html += `<div id="map" style="height:450px; width:100%; background:#ddd; border-radius:12px; margin-top:20px;"></div>`;
-        document.getElementById('view-port').innerHTML = html;
-
+        document.getElementById('view-port').innerHTML = html + `<div id="map" style="height:450px; width:100%; border-radius:12px; margin-top:20px;"></div>`;
+        
         setTimeout(() => {
             var container = L.DomUtil.get('map');
             if (container != null) { container._leaflet_id = null; }
@@ -80,12 +128,10 @@ function openEntry(cat, item) {
             var m = L.map('map').setView(data.coords[0], 3);
             L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(m);
 
-            // The Arc logic
             var flightPath = L.Polyline.Arc(data.coords[0], data.coords[1], {
-            color: '#0066cc', weight: 4, vertices: 100
+                color: '#00f2ff', weight: 4, vertices: 100
             }).addTo(m);
-    
-            // The Label logic (Box-Killer version)
+
             const codes = item.split('-'); 
             if(codes.length === 2) {
                 [data.coords[0], data.coords[1]].forEach((pos, i) => {
@@ -101,11 +147,11 @@ function openEntry(cat, item) {
             }
             m.invalidateSize();
             m.fitBounds(flightPath.getBounds(), {padding: [50, 50]});
-        }, 400); // End of timeout
+        }, 400);
     } else {
         document.getElementById('view-port').innerHTML = html;
     }
-} // End of openEntry
+}
 
 // --- ACTIONS & SEARCH ---
 function openEditor() { document.getElementById('editor-modal').style.display='flex'; }
