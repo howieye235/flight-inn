@@ -1,23 +1,21 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FlightInn | Aviation OS</title>
+    <title>FlightInn | Aviation Database</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 </head>
 <body>
 
     <div id="sidebar">
-        <h1 onclick="renderHome()" style="cursor:pointer; color:#0066cc; margin-bottom:30px;">✈️ FlightInn</h1>
+        <h1 onclick="renderHome()" style="cursor:pointer;">✈️ FlightInn</h1>
         <div class="nav-item" onclick="loadDirectory('Airlines')">Airlines</div>
         <div class="nav-item" onclick="loadDirectory('Fleets')">Fleets</div>
         <div class="nav-item" onclick="loadDirectory('Airports')">Airports</div>
         <div class="nav-item" onclick="loadDirectory('Routes')">Routes</div>
-        <hr style="border:0; border-top:1px solid #333; margin:20px 0;">
         <button id="add-btn" onclick="openEditor()">+ ADD NEW</button>
     </div>
 
@@ -26,37 +24,31 @@
 
     <div id="editor-modal" class="modal">
         <div class="modal-content">
-            <h3 id="modal-title">Log Asset</h3>
-            
+            <h3>Log Asset</h3>
             <label>Category</label>
             <select id="entry-category">
-                <option value="Airlines">Airline</option>
-                <option value="Fleets">Fleet/Aircraft</option>
-                <option value="Airports">Airport</option>
-                <option value="Routes">Route (Map)</option>
+                <option value="Airlines">Airlines</option>
+                <option value="Fleets">Fleets</option>
+                <option value="Airports">Airports</option>
+                <option value="Routes">Routes</option>
             </select>
 
             <label>Name</label>
-            <input type="text" id="entry-name" placeholder="e.g. Boeing 747SP">
+            <input type="text" id="entry-name" placeholder="e.g. B747SP or Heathrow">
 
             <label>Image URL (Link to your photo)</label>
-            <input type="text" id="entry-image" placeholder="https://link-to-photo.jpg">
+            <input type="text" id="entry-image" placeholder="https://image-link.jpg">
 
-            <label id="details-label">Details / Description</label>
-            <textarea id="entry-info" placeholder="Technical specs or route info..."></textarea>
-            
-            <p id="route-hint" style="display:none; color:#888; font-size:11px;">
-                For Routes, use format: Description | Lat,Lng | Lat,Lng
-            </p>
+            <label>Details</label>
+            <textarea id="entry-info" placeholder="Specs... (For Routes: Info | Lat,Lng | Lat,Lng)"></textarea>
 
-            <div style="display:flex; gap:10px; margin-top:20px;">
-                <button onclick="saveEntry()" class="save-btn">Save to Cloud</button>
-                <button onclick="closeEditor()" class="cancel-btn">Cancel</button>
+            <div style="display:flex; gap:10px; margin-top:10px;">
+                <button onclick="saveEntry()" style="background:#2ecc71; color:white; flex:1;">Save to Cloud</button>
+                <button onclick="closeEditor()" style="background:#444; color:white; flex:1;">Cancel</button>
             </div>
         </div>
     </div>
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
