@@ -22,20 +22,18 @@ function sync() {
     });
 }
 
-// --- NAVIGATION & UI ---
 function renderHome() {
     const f = flightInnData.Fleets ? Object.keys(flightInnData.Fleets).length : 0;
     const a = flightInnData.Airlines ? Object.keys(flightInnData.Airlines).length : 0;
     const r = flightInnData.Routes ? Object.keys(flightInnData.Routes).length : 0;
+    const ap = flightInnData.Airports ? Object.keys(flightInnData.Airports).length : 0; // Added this
 
     document.getElementById('view-port').innerHTML = `
-        <div class="dashboard">
-            <h1>System Overview</h1>
-            <div class="card-grid">
-                <div class="stat-card"><h3>${f}</h3><p>Fleets</p></div>
-                <div class="stat-card"><h3>${a}</h3><p>Airlines</p></div>
-                <div class="stat-card"><h3>${r}</h3><p>Routes</p></div>
-            </div>
+        <h1 style="color:var(--primary);">System Overview</h1>
+        <div class="card-grid">
+            <div class="stat-card"><h3>${f}</h3><p>Fleets</p></div>
+            <div class="stat-card"><h3>${a}</h3><p>Airlines</p></div>
+            <div class="stat-card"><h3>${ap}</h3><p>Airports</p></div> <div class="stat-card"><h3>${r}</h3><p>Routes</p></div>
         </div>
     `;
 }
@@ -126,4 +124,29 @@ function editItem(cat, item) {
     openEditor();
 }
 
+function searchDatabase() {
+    let query = document.getElementById('queryInput').value.toLowerCase();
+    let results = [];
+    
+    // Search through all categories
+    ['Fleets', 'Airlines', 'Airports', 'Routes'].forEach(cat => {
+        if (flightInnData[cat]) {
+            Object.keys(flightInnData[cat]).forEach(item => {
+                if (item.toLowerCase().includes(query)) {
+                    results.push({cat, item});
+                }
+            });
+        }
+    });
+
+    // Display results
+    let html = `<h2>Search Results</h2>`;
+    results.forEach(res => {
+        html += `<div class="list-item" onclick="openEntry('${res.cat}', '${res.item}')">${res.item} (${res.cat})</div>`;
+    });
+    document.getElementById('view-port').innerHTML = html;
+}
+
 window.onload = sync;
+
+
