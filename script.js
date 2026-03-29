@@ -67,24 +67,31 @@ function openEntry(cat, item) {
     `;
 
     if (cat === "Routes" && data.coords) {
-        html += `<div id="map" style="height:400px; border-radius:12px; margin-top:20px; border:1px solid #ddd;"></div>`;
-        document.getElementById('view-port').innerHTML = html;
+    html += `<div id="map" style="height:450px; border-radius:12px; margin-top:20px;"></div>`;
+    document.getElementById('view-port').innerHTML = html;
 
-        // Give the browser 200ms to render the DIV before Leaflet tries to draw the map
-        setTimeout(() => {
-            var m = L.map('map');
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png').addTo(m);
-            
-            var path = L.polyline(data.coords, {color: '#0066cc', weight: 5, opacity: 0.7}).addTo(m);
-            
-            // This is the magic part: it auto-zooms to fit the flight path
-            m.fitBounds(path.getBounds(), {padding: [50, 50]});
-        }, 200);
-    } else {
-        document.getElementById('view-port').innerHTML = html;
-    }
+    setTimeout(() => {
+        var m = L.map('map');
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png').addTo(m);
+
+        // 1. THE CURVED LINE (Great Circle Path)
+        var latLngs = [L.latLng(data.coords[0]), L.latLng(data.coords[1])];
+        var path = L.Polyline.Arc(latLngs[0], latLngs[1], {
+            color: '#0066cc', 
+            weight: 4, 
+            vertices: 100 
+        }).addTo(m);
+
+        // 2. THE IATA LABELS (Pulling codes from the Route Name, e.g., "JFK-LHR")
+        const codes = item.split('-'); // Assumes name is like "JFK-LHR"
+        if(codes.length === 2) {
+            L.marker(data.coords[0], {icon: L.divIcon({className: 'iata-label-navy', html: `<span>${codes[0]}</span>` , iconSize:[40,20]})}).addTo(m);
+            L.marker(data.coords[1], {icon: L.divIcon({className: 'iata-label-navy', html: `<span>${codes[1]}</span>` , iconSize:[40,20]})}).addTo(m);
+        }
+
+        m.fitBounds(path.getBounds(), {padding: [50, 50]});
+    }, 200);
 }
-
 // --- ACTIONS ---
 function openEditor() { document.getElementById('editor-modal').style.display='flex'; }
 function closeEditor() { document.getElementById('editor-modal').style.display='none'; }
