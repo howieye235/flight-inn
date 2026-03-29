@@ -134,8 +134,8 @@ function saveEntry() {
         
         try {
             // Convert strings like "40.6, -73.7" into real Numbers [40.6, -73.7]
-            const start = parts[1].trim().split(',').map(Number);
-            const end = parts[2].trim().split(',').map(Number);
+            const start = parts[1].split(',').map(num => parseFloat(num.trim()));
+            const end = parts[2].split(',').map(num => parseFloat(num.trim()));
             
             flightInnData[cat][name] = { 
                 info: parts[0].trim(), 
