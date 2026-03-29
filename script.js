@@ -81,15 +81,16 @@ function openEntry(cat, item) {
             var m = L.map('map').setView(data.coords[0], 3);
             L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(m);
 
-            // 1. Standard Dashed Line (Reliable on all networks)
+            // 1. DRAW THE LINE (Dashed style - No plugin needed!)
             var flightPath = L.polyline([data.coords[0], data.coords[1]], {
-                color: '#0066cc', weight: 4, dashArray: '10, 10'
+                color: '#0066cc', 
+                weight: 4, 
+                dashArray: '10, 10' // This creates the "flight track" look
             }).addTo(m);
 
-            // 2. IATA Labels
+            // 2. IATA LABELS (Using a specific class to kill the boxes)
             const codes = item.split('-'); 
             if(codes.length === 2) {
-                // Origin
                 L.marker(data.coords[0], {
                     icon: L.divIcon({
                         className: 'iata-clean-marker', 
@@ -97,7 +98,6 @@ function openEntry(cat, item) {
                         iconSize:[40,20]
                     })
                 }).addTo(m);
-                // Destination
                 L.marker(data.coords[1], {
                     icon: L.divIcon({
                         className: 'iata-clean-marker', 
