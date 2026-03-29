@@ -173,18 +173,20 @@ function saveNewPlane() {
     const info = document.getElementById('plane-info').value;
 
     if (name && info) {
-        // Add it to our local list
-        if (!flightInnData.Fleet) flightInnData.Fleet = {}; // Safety check
-        flightInnData.Fleet[name] = { info: info };
+        // Use "Fleets" to match your data structure
+        if (!flightInnData.Fleets) flightInnData.Fleets = {}; 
+        flightInnData.Fleets[name] = info; // Simplified for your current layout
 
-        // Push the whole updated fleet to Firebase
         database.ref('flightData').set(flightInnData).then(() => {
             alert(name + " added! 🚀");
             closeEditor();
-            // Clear the boxes for next time
             document.getElementById('plane-name').value = "";
             document.getElementById('plane-info').value = "";
         });
+    } else {
+        alert("Fill in both boxes first!");
+    }
+}
     } else {
         alert("Fill in both boxes first!");
     }
