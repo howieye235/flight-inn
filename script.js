@@ -50,21 +50,20 @@ function loadDirectory(cat) {
 
 function openEntry(cat, item) {
     const data = flightInnData[cat][item];
-    let contentHTML = `<button class="back-btn" onclick="loadDirectory('${cat}')">← Back</button><h2>${item}</h2>`;
+    let contentHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <button class="back-btn" onclick="loadDirectory('${cat}')">← Back</button>
+            <button onclick="editItem('${cat}', '${item}')" style="background:#34495e; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer; font-size:12px;">Edit Details</button>
+        </div>
+        <h2>${item}</h2>
+    `;
 
+    // (Keep your existing Map/Text logic here)
     if (cat === "Routes" && data.coords) {
-        contentHTML += `<div class="info-card"><p>${data.info}</p></div><div id="map" style="height:400px; margin-top:20px;"></div>`;
-        document.getElementById('view-port').innerHTML = contentHTML;
-        
-        setTimeout(() => {
-            var map = L.map('map').setView(data.coords[0], 3);
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(map);
-            L.polyline(data.coords, {color: '#0066cc', weight: 3, dashArray: '8, 8'}).addTo(map);
-            map.fitBounds(L.polyline(data.coords).getBounds(), {padding: [50, 50]});
-        }, 200);
+        // ... (your existing map code)
     } else {
         let desc = (typeof data === 'object') ? data.info : data;
-        contentHTML += `<div class="info-card"><p>${desc || "No details available."}</p></div>`;
+        contentHTML += `<div class="info-card"><p>${desc}</p></div>`;
         document.getElementById('view-port').innerHTML = contentHTML;
     }
 }
@@ -113,7 +112,47 @@ function saveEntry() {
 }
 
 function renderHome() {
-    document.getElementById('view-port').innerHTML = `<h2>Welcome to FlightInn</h2><p>Select a category to begin.</p>`;
+    // Count the items
+    const airlineCount = flightInnData.Airlines ? Object.keys(flightInnData.Airlines).length : 0;
+    const fleetCount = flightInnData.Fleets ? Object.keys(flightInnData.Fleets).length : 0;
+    const airportCount = flightInnData.Airports ? Object.keys(flightInnData.Airports).length : 0;
+
+    document.getElementById('view-port').innerHTML = `
+        <div class="stats-container" style="display:flex; gap:20px; margin-bottom:20px;">
+            <div class="stat-card" style="background:#1a1a1a; padding:15px; border-radius:8px; border-left:4px solid #0066cc; flex:1;">
+                <h4 style="margin:0; color:#888; font-size:12px;">FLEET SIZE</h4>
+                <p style="margin:5px 0 0; font-size:24px; font-weight:bold;">${fleetCount}</p>
+            </div>
+            <div class="stat-card" style="background:#1a1a1a; padding:15px; border-radius:8px; border-left:4px solid #2ecc71; flex:1;">
+                <h4 style="margin:0; color:#888; font-size:12px;">AIRLINES</h4>
+                <p style="margin:5px 0 0; font-size:24px; font-weight:bold;">${airlineCount}</p>
+            </div>
+            <div class="stat-card" style="background:#1a1a1a; padding:15px; border-radius:8px; border-left:4px solid #f1c40f; flex:1;">
+                <h4 style="margin:0; color:#888; font-size:12px;">AIRPORTS</h4>
+                <p style="margin:5px 0 0; font-size:24px; font-weight:bold;">${airportCount}</p>
+            </div>
+        </div>
+        <h2>Welcome to FlightInn</h2>
+        <p>Select a category from the sidebar to view your aviation database.</p>
+    `;
+}
+
+function editItem(cat, item) {
+    const data = flightInnData[cat][item];
+    
+    // Fill the modal with current data
+    document.getElementById('entry-category').value = cat;
+    document.getElementById('entry-name').value = item;
+    
+    // If it's a route, we need to format it back to "Info | Lat,Lng | Lat,Lng"
+    if (cat === "Routes" && data.coords) {
+        document.getElementById('entry-info').value = `${data.info} | ${data.coords[0].join(',')} | ${data.coords[1].join(',')}`;
+    } else {
+        document.getElementById('entry-info').value = (typeof data === 'object') ? data.info : data;
+    }
+
+    // Show the modal
+    openEditor();
 }
 
 // 7. Startup
