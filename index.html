@@ -8,43 +8,35 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 </head>
-<body>
+<body style="background:#000; color:#eee; margin:0; display:flex;">
 
-    <div id="sidebar">
-        <h1 onclick="renderHome()" style="cursor:pointer;">✈️ FlightInn</h1>
+    <div id="sidebar" style="width:200px; background:#0a0a0a; height:100vh; padding:20px; border-right:1px solid #222;">
+        <h1 onclick="renderHome()" style="cursor:pointer; color:#0066cc;">✈️ FlightInn</h1>
         <div class="nav-item" onclick="loadDirectory('Airlines')">Airlines</div>
         <div class="nav-item" onclick="loadDirectory('Fleets')">Fleets</div>
         <div class="nav-item" onclick="loadDirectory('Airports')">Airports</div>
         <div class="nav-item" onclick="loadDirectory('Routes')">Routes</div>
-        <button id="add-btn" onclick="openEditor()">+ ADD NEW</button>
+        <button id="add-btn" onclick="openEditor()" style="background:#0066cc; color:white; border:none; padding:10px; width:100%; border-radius:5px; margin-top:20px; cursor:pointer;">+ ADD NEW</button>
     </div>
 
-    <div id="view-port">
+    <div id="view-port" style="flex:1; padding:40px;">
         </div>
 
-    <div id="editor-modal" class="modal">
-        <div class="modal-content">
-            <h3>Log Asset</h3>
-            <label>Category</label>
-            <select id="entry-category">
+    <div id="editor-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:100;">
+        <div style="background:#111; width:320px; margin:100px auto; padding:25px; border-radius:10px; border:1px solid #333;">
+            <h3 style="margin-top:0;">Log Asset</h3>
+            <select id="entry-category" style="width:100%; margin-bottom:10px; background:#000; color:white; border:1px solid #333; padding:8px;">
                 <option value="Airlines">Airlines</option>
                 <option value="Fleets">Fleets</option>
                 <option value="Airports">Airports</option>
                 <option value="Routes">Routes</option>
             </select>
-
-            <label>Name</label>
-            <input type="text" id="entry-name" placeholder="e.g. B747SP or Heathrow">
-
-            <label>Image URL (Link to your photo)</label>
-            <input type="text" id="entry-image" placeholder="https://image-link.jpg">
-
-            <label>Details</label>
-            <textarea id="entry-info" placeholder="Specs... (For Routes: Info | Lat,Lng | Lat,Lng)"></textarea>
-
-            <div style="display:flex; gap:10px; margin-top:10px;">
-                <button onclick="saveEntry()" style="background:#2ecc71; color:white; flex:1;">Save to Cloud</button>
-                <button onclick="closeEditor()" style="background:#444; color:white; flex:1;">Cancel</button>
+            <input type="text" id="entry-name" placeholder="Name (e.g. 747SP)" style="width:94%; margin-bottom:10px; background:#000; color:white; border:1px solid #333; padding:8px;">
+            <input type="text" id="entry-image" placeholder="Image URL (Link to photo)" style="width:94%; margin-bottom:10px; background:#000; color:white; border:1px solid #333; padding:8px;">
+            <textarea id="entry-info" placeholder="Details... (Routes: Info | Lat,Lng | Lat,Lng)" style="width:94%; height:100px; background:#000; color:white; border:1px solid #333; padding:8px;"></textarea>
+            <div style="display:flex; gap:10px;">
+                <button onclick="saveEntry()" style="background:#2ecc71; color:white; border:none; padding:10px; flex:1; border-radius:5px;">Save</button>
+                <button onclick="closeEditor()" style="background:#444; color:white; border:none; padding:10px; flex:1; border-radius:5px;">Cancel</button>
             </div>
         </div>
     </div>
