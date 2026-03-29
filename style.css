@@ -93,16 +93,16 @@ body { display: flex; margin: 0; height: 100vh; font-family: 'Inter', sans-serif
     display: inline-block !important;
     box-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
+/* Add this to the very bottom of your style.css */
 .wiki-link {
-    color: #3182ce;
-    text-decoration: underline;
-    cursor: pointer;
-    font-weight: 500;
-    transition: color 0.2s;
+    color: #00f2ff !important; /* Bright Cyan */
+    text-decoration: underline !important;
+    cursor: pointer !important;
+    font-weight: bold !important;
+    display: inline-block;
 }
 
 .wiki-link:hover {
-    color: #63b3ed;
-    background: rgba(49, 130, 206, 0.1);
-    border-radius: 2px;
+    color: #ffffff !important;
+    background: rgba(0, 242, 255, 0.2);
 }
