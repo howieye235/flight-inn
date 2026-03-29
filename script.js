@@ -95,27 +95,53 @@ function saveEntry() {
     const img = document.getElementById('entry-image').value;
     const info = document.getElementById('entry-info').value;
 
+    // Check if name is empty
+    if (!name) return alert("Please enter a name!");
+
+    // Ensure the category exists in our local data object
     if (!flightInnData[cat]) flightInnData[cat] = {};
 
     if (cat === "Routes") {
         const parts = info.split('|');
         if (parts.length < 3) {
-            alert("Format Error! Use: Description | Lat,Lng | Lat,Lng");
+            alert("Route Format Error! Use: Description | Lat,Lng | Lat,Lng");
             return;
         }
         
-        // .trim() removes accidental spaces. .map(Number) ensures they are math values, not text.
-        const startCoords = parts[1].trim().split(',').map(Number);
-        const endCoords = parts[2].trim().split(',').map(Number);
-
-        flightInnData[cat][name] = { 
-            info: parts[0].trim(), 
-            image: img, 
-            coords: [startCoords, endCoords] 
-        };
+        try {
+            const start = parts[1].trim().split(',').map(Number);
+            const end = parts[2].trim().split(',').map(Number);
+            
+            flightInnData[cat][name] = { 
+                info: parts[0].trim(), 
+                image: img, 
+                coords: [start, end] 
+            };
+        } catch (e) {
+            alert("Coordinate error! Make sure they are numbers separated by commas.");
+            return;
+        }
     } else {
-        flightInnData[cat][name] = { info: info, image: img };
+        // Standard save for Fleets, Airlines, and Airports
+        flightInnData[cat][name] = { 
+            info: info, 
+            image: img 
+        };
     }
+
+    // Push to Firebase
+    console.log("Attempting to save:", name, "to", cat);
+    database.ref('flightData').set(flightInnData)
+        .then(() => {
+            console.log("Save Successful!");
+            closeEditor();
+            loadDirectory(cat);
+        })
+        .catch((error) => {
+            console.error("Firebase Error:", error);
+            alert("Cloud Save Failed: " + error.message);
+        });
+}
 
     database.ref('flightData').set(flightInnData).then(() => {
         closeEditor();
