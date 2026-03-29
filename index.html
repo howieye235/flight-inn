@@ -21,11 +21,16 @@
         <button id="add-btn" onclick="openEditor()">+ ADD NEW</button>
     </div>
 
-    <div id="view-port">
-        <div id="top-bar" style="padding: 20px; background: white; border-bottom: 1px solid #e2e8f0;">
-    <input type="text" id="queryInput" onkeyup="searchDatabase()" placeholder="Search Fleets, Airlines, or Routes...">
-</div>
+<div id="main-display" style="flex: 1; display: flex; flex-direction: column;">
+    
+    <div id="top-bar" style="padding: 20px; background: white; border-bottom: 1px solid #e2e8f0;">
+        <input type="text" id="queryInput" onkeyup="searchDatabase()" placeholder="Search Fleets, Airlines, or Routes..." style="width: 100%; max-width: 500px; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
+    </div>
+
+    <div id="view-port" style="flex: 1; padding: 40px; overflow-y: auto;">
         </div>
+
+</div>
 
     <div id="editor-modal" class="modal">
         <div class="modal-content">
