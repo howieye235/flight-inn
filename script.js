@@ -186,37 +186,28 @@ function searchDatabase() {
     viewport.innerHTML = found ? html + `</div>` : `<p>No results found.</p>`;
 }
 function wikiLinker(text) {
-    if (!text) return "";
+    if (!text || !flightInnData) return text || "";
     
-    // 1. Gather every single name from your Wiki
     let entries = [];
     for (let cat in flightInnData) {
+        if (cat === "AirportDB") continue; // Skip the hidden dictionary
         for (let name in flightInnData[cat]) {
-            entries.push({ name: name, cat: cat });
+            entries.push({ name: name.trim(), cat: cat });
         }
     }
 
-    // 2. Sort by length so "787-9 Dreamliner" matches before just "787"
+    // Sort by length (Longest names first so "Boeing 787-9" links before "787")
     entries.sort((a, b) => b.name.length - a.name.length);
 
-    // 3. The "Anti-Double Link" Trick
-    // We replace names with unique placeholders first, then swap them for links.
-    // This prevents the code from linking a word inside an already created link.
-    let placeholders = [];
-    entries.forEach((item, index) => {
+    entries.forEach(item => {
+        // This Regex finds the name even if the capitals don't match
         const escapedName = item.name.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
         const regex = new RegExp(`\\b${escapedName}\\b`, 'gi'); 
         
-        if (regex.test(text)) {
-            const id = `___LINK${index}___`;
-            placeholders.push({ id: id, cat: item.cat, name: item.name });
-            text = text.replace(regex, id);
-        }
-    });
-
-    // 4. Swap placeholders for actual HTML links
-    placeholders.forEach(p => {
-        text = text.replace(p.id, `<span class="wiki-link" onclick="openEntry('${p.cat}', '${p.name}')">${p.name}</span>`);
+        text = text.replace(regex, (match) => {
+            console.log("✈️ WikiLink Found:", match); // Look in your F12 console for this!
+            return `<span class="wiki-link" onclick="openEntry('${item.cat}', '${item.name}')">${match}</span>`;
+        });
     });
 
     return text;
