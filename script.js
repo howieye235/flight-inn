@@ -44,26 +44,53 @@ function loadDirectory(cat) {
 // 4. Detailed View (WITH EDIT BUTTON)
 function openEntry(cat, item) {
     const data = flightInnData[cat][item];
+    let desc = (typeof data === 'object') ? data.info : data;
+    
+    // Split the text from the image link using the "|" symbol
+    let infoParts = desc.split('|');
+    let mainText = infoParts[0];
+    let imageUrl = infoParts[1] ? infoParts[1].trim() : "https://images.unsplash.com/photo-1544016764-66fe3f58f480?q=80&w=2000&auto=format&fit=crop"; 
+
     let contentHTML = `
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-            <button class="back-btn" onclick="loadDirectory('${cat}')">← Back</button>
-            <button onclick="editItem('${cat}', '${item}')" style="background:#34495e; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer;">[ Edit ]</button>
-        </div>
-        <h2>${item}</h2>
+        <div style="animation: fadeIn 0.4s ease-in-out;">
+            <div style="display:flex; justify-content:space-between; margin-bottom: 20px;">
+                <button class="back-btn" onclick="loadDirectory('${cat}')">← Back to ${cat}</button>
+                <div style="display:flex; gap:10px;">
+                    <button onclick="editItem('${cat}', '${item}')" style="background:#f1c40f; border:none; padding:8px 15px; border-radius:6px; cursor:pointer; font-weight:bold;">Edit</button>
+                    <button onclick="deleteItem('${cat}', '${item}')" style="background:#e74c3c; color:white; border:none; padding:8px 15px; border-radius:6px; cursor:pointer; font-weight:bold;">Delete</button>
+                </div>
+            </div>
+
+            <div style="width:100%; height:250px; background: url('${imageUrl}') center/cover; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 8px 25px rgba(0,0,0,0.2); position:relative;">
+                <div style="position:absolute; bottom:0; left:0; right:0; background:linear-gradient(transparent, rgba(0,0,0,0.8)); padding:20px; border-radius: 0 0 12px 12px;">
+                    <h2 style="margin:0; color:white; font-size:32px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">${item}</h2>
+                </div>
+            </div>
     `;
 
+    // ADD THE ROUTE MAP BELOW THE HEADER IF IT'S A ROUTE
     if (cat === "Routes" && data.coords) {
-        contentHTML += `<div class="info-card"><p>${data.info}</p></div><div id="map" style="height:400px; margin-top:20px;"></div>`;
+        contentHTML += `
+            <div style="background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom:20px;">
+                <p style="font-size: 18px; color: #444; line-height: 1.6;">${data.info}</p>
+            </div>
+            <div id="map" style="height:400px; border-radius:12px; border:2px solid #eee;"></div>
+        `;
         document.getElementById('view-port').innerHTML = contentHTML;
+        
         setTimeout(() => {
             var map = L.map('map').setView(data.coords[0], 3);
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(map);
-            L.polyline(data.coords, {color: '#0066cc', weight: 3, dashArray: '8, 8'}).addTo(map);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png').addTo(map);
+            L.polyline(data.coords, {color: '#0066cc', weight: 4, dashArray: '10, 10'}).addTo(map);
             map.fitBounds(L.polyline(data.coords).getBounds(), {padding: [50, 50]});
         }, 200);
     } else {
-        let desc = (typeof data === 'object') ? data.info : data;
-        contentHTML += `<div class="info-card"><p>${desc || "No details."}</p></div>`;
+        // STANDARD LAYOUT FOR FLEETS/AIRLINES
+        contentHTML += `
+            <div style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); line-height: 1.8;">
+                <p style="font-size: 20px; color: #333; margin:0;">${mainText}</p>
+            </div>
+        `;
         document.getElementById('view-port').innerHTML = contentHTML;
     }
 }
@@ -149,3 +176,13 @@ function saveEntry() {
 
 // 7. Launch
 window.onload = function() { syncWithCloud(); renderHome(); };
+
+function deleteItem(cat, item) {
+    if (confirm("Are you sure you want to delete " + item + "?")) {
+        delete flightInnData[cat][item];
+        database.ref('flightData').set(flightInnData).then(() => {
+            alert("Deleted successfully.");
+            loadDirectory(cat);
+        });
+    }
+}
