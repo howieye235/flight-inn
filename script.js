@@ -77,40 +77,46 @@ function openEntry(cat, item) {
             var container = L.DomUtil.get('map');
             if (container != null) { container._leaflet_id = null; }
 
-            // 1. Initialize Map
             var m = L.map('map').setView(data.coords[0], 3);
             L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(m);
 
-            // 2. The Flight Path (Dashed makes it look like a route map)
-            var flightPath = L.polyline([data.coords[0], data.coords[1]], {
-                color: '#0066cc', 
-                weight: 4, 
-                dashArray: '10, 15', 
-                opacity: 0.8
+            // --- 1. MANUAL ARC MATH (No Plugin Needed!) ---
+            const lat1 = data.coords[0][0], lon1 = data.coords[0][1];
+            const lat2 = data.coords[1][0], lon2 = data.coords[1][1];
+            
+            // Create 50 small points to make a smooth curve
+            let arcPoints = [];
+            for (let i = 0; i <= 50; i++) {
+                let f = i / 50;
+                let lat = lat1 + (lat2 - lat1) * f;
+                let lon = lon1 + (lon2 - lon1) * f;
+                // This "Math.sin" line creates the curve height
+                let offset = Math.sin(Math.PI * f) * 5; 
+                arcPoints.push([lat + offset, lon]);
+            }
+
+            var flightPath = L.polyline(arcPoints, {
+                color: '#0066cc', weight: 4, opacity: 0.7, dashArray: '8, 8'
             }).addTo(m);
 
-            // 3. IATA LABELS (STYLING INJECTED DIRECTLY TO KILL BOXES)
+            // --- 2. BOX-KREATING KILLER (Direct Styling) ---
             const codes = item.split('-'); 
             if(codes.length === 2) {
-                const labelStyle = "background:#002244; color:white; padding:4px 8px; border-radius:4px; font-weight:bold; font-size:12px; border:1px solid white; white-space:nowrap; display:inline-block; box-shadow: 0 2px 4px rgba(0,0,0,0.3);";
+                const badge = "background:#002244; color:white; padding:3px 8px; border-radius:4px; font-weight:bold; font-size:11px; border:1px solid white; white-space:nowrap;";
                 
-                // Origin
                 L.marker(data.coords[0], {
-                    icon: L.divIcon({
-                        className: 'no-box', // This class name doesn't matter now
-                        html: `<span style="${labelStyle}">${codes[0].trim()}</span>`, 
-                        iconSize: [0, 0], // Setting size to 0 kills the default white box!
-                        iconAnchor: [20, 10]
+                    icon: L.divIcon({ 
+                        className: '', 
+                        html: `<span style="${badge}">${codes[0].trim()}</span>`, 
+                        iconSize: [0, 0] // 0 size = NO WHITE BOX
                     })
                 }).addTo(m);
 
-                // Destination
                 L.marker(data.coords[1], {
-                    icon: L.divIcon({
-                        className: 'no-box',
-                        html: `<span style="${labelStyle}">${codes[1].trim()}</span>`, 
-                        iconSize: [0, 0], // Setting size to 0 kills the default white box!
-                        iconAnchor: [20, 10]
+                    icon: L.divIcon({ 
+                        className: '', 
+                        html: `<span style="${badge}">${codes[1].trim()}</span>`, 
+                        iconSize: [0, 0] // 0 size = NO WHITE BOX
                     })
                 }).addTo(m);
             }
