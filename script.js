@@ -50,7 +50,7 @@ function loadDirectory(cat) {
 
 function openEntry(cat, item) {
     const data = flightInnData[cat][item];
-    const img = data.image || "https://via.placeholder.com/800x400?text=No+Photo+Uploaded";
+    const img = data.image || "https://via.placeholder.com/800x400?text=No+Photo";
     
     let html = `
         <button class="back-btn" onclick="loadDirectory('${cat}')">← Back</button>
@@ -67,13 +67,18 @@ function openEntry(cat, item) {
     `;
 
     if (cat === "Routes" && data.coords) {
-        html += `<div id="map"></div>`;
+        html += `<div id="map" style="height:400px; border-radius:12px; margin-top:20px; border:1px solid #ddd;"></div>`;
         document.getElementById('view-port').innerHTML = html;
+
+        // Give the browser 200ms to render the DIV before Leaflet tries to draw the map
         setTimeout(() => {
-            var m = L.map('map').setView(data.coords[0], 3);
+            var m = L.map('map');
             L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png').addTo(m);
-            L.polyline(data.coords, {color: '#0066cc', weight: 4}).addTo(m);
-            m.fitBounds(L.polyline(data.coords).getBounds(), {padding: [50, 50]});
+            
+            var path = L.polyline(data.coords, {color: '#0066cc', weight: 5, opacity: 0.7}).addTo(m);
+            
+            // This is the magic part: it auto-zooms to fit the flight path
+            m.fitBounds(path.getBounds(), {padding: [50, 50]});
         }, 200);
     } else {
         document.getElementById('view-port').innerHTML = html;
@@ -90,15 +95,25 @@ function saveEntry() {
     const img = document.getElementById('entry-image').value;
     const info = document.getElementById('entry-info').value;
 
+    if (!flightInnData[cat]) flightInnData[cat] = {};
+
     if (cat === "Routes") {
-        const p = info.split('|');
+        const parts = info.split('|');
+        if (parts.length < 3) {
+            alert("Format Error! Use: Description | Lat,Lng | Lat,Lng");
+            return;
+        }
+        
+        // .trim() removes accidental spaces. .map(Number) ensures they are math values, not text.
+        const startCoords = parts[1].trim().split(',').map(Number);
+        const endCoords = parts[2].trim().split(',').map(Number);
+
         flightInnData[cat][name] = { 
-            info: p[0].trim(), 
+            info: parts[0].trim(), 
             image: img, 
-            coords: [p[1].split(',').map(Number), p[2].split(',').map(Number)] 
+            coords: [startCoords, endCoords] 
         };
     } else {
-        if (!flightInnData[cat]) flightInnData[cat] = {};
         flightInnData[cat][name] = { info: info, image: img };
     }
 
