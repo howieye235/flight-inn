@@ -156,3 +156,36 @@ function renderHome() {
 }
 
 window.onload = renderHome;
+
+// Function to show the box
+function openEditor() {
+    document.getElementById('editor-modal').style.display = 'block';
+}
+
+// Function to hide the box
+function closeEditor() {
+    document.getElementById('editor-modal').style.display = 'none';
+}
+
+// The 'Brain' that saves to Firebase
+function saveNewPlane() {
+    const name = document.getElementById('plane-name').value;
+    const info = document.getElementById('plane-info').value;
+
+    if (name && info) {
+        // Add it to our local list
+        if (!flightInnData.Fleet) flightInnData.Fleet = {}; // Safety check
+        flightInnData.Fleet[name] = { info: info };
+
+        // Push the whole updated fleet to Firebase
+        database.ref('flightData').set(flightInnData).then(() => {
+            alert(name + " added! 🚀");
+            closeEditor();
+            // Clear the boxes for next time
+            document.getElementById('plane-name').value = "";
+            document.getElementById('plane-info').value = "";
+        });
+    } else {
+        alert("Fill in both boxes first!");
+    }
+}
