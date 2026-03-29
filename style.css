@@ -53,12 +53,13 @@ body { display: flex; margin: 0; height: 100vh; font-family: 'Inter', sans-serif
     box-shadow: none !important;
 }
 
-.iata-label-navy span { 
-    color: #000044; 
-    font-weight: 800; 
-    font-family: 'Inter', sans-serif; 
-    font-size: 13px; 
-    letter-spacing: 1px; 
-    text-transform: uppercase; 
-    text-shadow: 2px 2px 2px #ffffff, -1px -1px 2px #ffffff; 
+.iata-label-navy span {
+    background: #002244;
+    color: white;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 12px;
+    border: 1px solid white;
+    white-space: nowrap;
 }
