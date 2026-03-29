@@ -72,3 +72,20 @@ body { display: flex; margin: 0; height: 100vh; font-family: 'Inter', sans-serif
     white-space: nowrap;
     display: inline-block;
 }
+
+.iata-clean {
+    background: none !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.badge {
+    background: #002244;
+    color: white;
+    padding: 3px 7px;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 11px;
+    border: 1px solid white;
+    white-space: nowrap;
+}
