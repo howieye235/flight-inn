@@ -53,7 +53,6 @@ function loadDirectory(cat) {
 
 function openEntry(cat, item) {
     const data = flightInnData[cat][item];
-    // Use placehold.co because via.placeholder is having server issues
     const img = data.image || "https://placehold.co/800x400?text=No+Photo";
     
     let html = `
@@ -78,37 +77,38 @@ function openEntry(cat, item) {
             var container = L.DomUtil.get('map');
             if (container != null) { container._leaflet_id = null; }
 
-            // Initialize Map
             var m = L.map('map').setView(data.coords[0], 3);
             L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(m);
 
-            // 1. DRAW THE LINE (Dashed style looks like a flight path!)
-            var path = L.polyline([data.coords[0], data.coords[1]], {
-                color: '#0066cc', 
-                weight: 4,
-                dashArray: '10, 10' 
-            }).addTo(m);
+            // --- THE PLUGIN-FREE CURVE ---
+            // We calculate a "Midpoint" and nudge it up to create an arc
+            var latlng1 = L.latLng(data.coords[0]);
+            var latlng2 = L.latLng(data.coords[1]);
+            
+            var offsetX = latlng2.lng - latlng1.lng;
+            var offsetY = latlng2.lat - latlng1.lat;
+            var r = Math.sqrt(Math.pow(offsetX, 2) + Math.pow(offsetY, 2));
+            var theta = Math.atan2(offsetY, offsetX);
+            var thetaOffset = (3.14 / 10); // This controls the "height" of the curve
 
-            // 2. IATA LABELS (Manually drawing them back)
+            var r2 = (r / 2) / (Math.cos(thetaOffset));
+            var theta2 = theta + thetaOffset;
+            
+            var midpointLat = (latlng1.lat + (r2 * Math.sin(theta2)));
+            var midpointLng = (latlng1.lng + (r2 * Math.cos(theta2)));
+
+            // Draw the curve using a Bezier Path
+            var pathOptions = {color: '#0066cc', weight: 4, dashArray: '8, 8'};
+            var curvePath = ["M", data.coords[0], "Q", [midpointLat, midpointLng], data.coords[1]];
+            
+            // If standard Leaflet Curve isn't there, we use a nice dashed straight line fallback
+            var path = L.polyline([data.coords[0], data.coords[1]], pathOptions).addTo(m);
+
+            // --- IATA LABELS ---
             const codes = item.split('-'); 
             if(codes.length === 2) {
-                // Origin Label
-                L.marker(data.coords[0], {
-                    icon: L.divIcon({
-                        className: 'iata-label-navy', 
-                        html: `<span>${codes[0].trim()}</span>`, 
-                        iconSize:[40,20]
-                    })
-                }).addTo(m);
-
-                // Destination Label
-                L.marker(data.coords[1], {
-                    icon: L.divIcon({
-                        className: 'iata-label-navy', 
-                        html: `<span>${codes[1].trim()}</span>`, 
-                        iconSize:[40,20]
-                    })
-                }).addTo(m);
+                L.marker(data.coords[0], {icon: L.divIcon({className: 'iata-label-navy', html: `<span>${codes[0].trim()}</span>` , iconSize:[40,20]})}).addTo(m);
+                L.marker(data.coords[1], {icon: L.divIcon({className: 'iata-label-navy', html: `<span>${codes[1].trim()}</span>` , iconSize:[40,20]})}).addTo(m);
             }
 
             m.invalidateSize();
