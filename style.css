@@ -37,3 +37,20 @@ body { display: flex; margin: 0; height: 100vh; font-family: 'Inter', sans-serif
 .modal-content input, .modal-content select, .modal-content textarea { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; }
 .save-btn { background: #10b981; color: white; border: none; padding: 10px; width: 100%; border-radius: 6px; cursor: pointer; font-weight: bold; }
 .cancel-btn { background: #f1f5f9; color: #64748b; border: none; padding: 10px; width: 100%; border-radius: 6px; cursor: pointer; margin-top: 5px; }
+
+/* Clean IATA labels (Bare Navy Text) */
+.iata-label-navy { 
+    background: transparent !important; 
+    border: none !important; 
+    box-shadow: none !important;
+}
+
+.iata-label-navy span { 
+    color: #000044; 
+    font-weight: 800; 
+    font-family: 'Inter', sans-serif; 
+    font-size: 13px; 
+    letter-spacing: 1px; 
+    text-transform: uppercase; 
+    text-shadow: 2px 2px 2px #ffffff, -1px -1px 2px #ffffff; 
+}
