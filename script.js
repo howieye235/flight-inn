@@ -202,7 +202,7 @@ function saveEntry() {
         hubs: document.getElementById('entry-hubs').value,
         freqFlyer: document.getElementById('entry-freq').value,
         subsidiaries: document.getElementById('entry-subs').value,
-        destinations: document.getElementById('entry-dests').value,
+        destinations: document.getElementById('entry-destinations').value,
         hubFor: document.getElementById('entry-hubfor').value,
         openingDate: document.getElementById('entry-opening').value,
         runways: document.getElementById('entry-runways').value
