@@ -422,3 +422,57 @@ body { display: flex; margin: 0; height: 100vh; font-family: 'Inter', sans-serif
 .wiki-content tr:nth-child(even) {
     background: rgba(255, 255, 255, 0.03);
 }
+
+.home-hero {
+    background: linear-gradient(135deg, var(--primary) 0%, #1e293b 100%);
+    padding: 40px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 3px solid var(--accent);
+    margin-bottom: 30px;
+}
+
+.hero-info h1 {
+    margin: 0;
+    font-size: 2.2rem;
+    color: white;
+}
+
+.hero-info p {
+    color: #94a3b8;
+    margin-top: 10px;
+}
+
+.utc-clock {
+    font-family: 'Courier New', monospace;
+    font-size: 1.8rem;
+    color: var(--accent);
+    background: rgba(0,0,0,0.3);
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 210, 255, 0.2);
+}
+
+.tutorial-box {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+}
+
+.tutorial-steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-top: 15px;
+}
+
+.tutorial-steps p {
+    font-size: 0.95rem;
+    line-height: 1.4;
+    margin: 0;
+}
