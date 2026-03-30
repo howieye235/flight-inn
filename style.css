@@ -73,17 +73,37 @@ body { display: flex; margin: 0; height: 100vh; font-family: 'Inter', sans-serif
 
 /* The background dimming effect */
 /* The background dimming effect */
+/* 1. Remove the blur from the overlay entirely */
 .modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0,0,0,0.4); /* Slightly lighter dimming */
-    /* REMOVE OR COMMENT OUT THE LINE BELOW */
-    /* backdrop-filter: blur(4px); */ 
+    background: rgba(0, 0, 0, 0.7); /* Darken the background instead of blurring */
     display: none;
     z-index: 1999;
+    backdrop-filter: none !important; /* This kills the blur that's blocking you */
+}
+
+/* 2. Ensure the Editor is solid and readable */
+#editor-modal {
+    background: #1e293b; /* A solid, dark slate color */
+    color: white;
+    box-shadow: -5px 0 15px rgba(0,0,0,0.5); /* Adds depth so it stands out */
+    z-index: 2000;
+    /* Optional: Add a very slight blur ONLY to the sidebar if you want the effect */
+    /* backdrop-filter: blur(10px); */
+}
+
+/* 3. Make sure inputs aren't transparent */
+#editor-modal input, 
+#editor-modal textarea, 
+#editor-modal select {
+    background: #0f172a;
+    color: #f8fafc;
+    border: 1px solid #334155;
+    opacity: 1 !important; /* Ensures text is 100% sharp */
 }
 
 .spec-grid {
