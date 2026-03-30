@@ -77,6 +77,42 @@
         <label>Spec D (Fact / Purpose / ICAO / Planes)</label>
         <input type="text" id="entry-extra">
     </div>
+        <div id="airline-extra-fields" style="display:none; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
+    <div>
+        <label>Hubs</label>
+        <input type="text" id="entry-hubs" placeholder="e.g. YYZ, YVR">
+    </div>
+    <div>
+        <label>Freq Flyer</label>
+        <input type="text" id="entry-freq" placeholder="e.g. Aeroplan">
+    </div>
+    <div>
+        <label>Subsidiaries</label>
+        <input type="text" id="entry-subs" placeholder="e.g. Rouge, Encore">
+    </div>
+    <div>
+        <label>Destinations</label>
+        <input type="text" id="entry-dests" placeholder="e.g. 190+">
+    </div>
+</div>
+
+<div id="airport-extra-fields" style="display:none; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
+    <div>
+        <label>Hub For (Airlines)</label>
+        <input type="text" id="entry-hubfor" placeholder="e.g. Air Canada, WestJet">
+    </div>
+    <div>
+        <label>Opening Date</label>
+        <input type="text" id="entry-opening" placeholder="e.g. 1939">
+    </div>
+    <div>
+        <label>Runways</label>
+        <input type="text" id="entry-runways" placeholder="e.g. 06L/24R, 05/23">
+    </div>
+</div>
+<label>Details</label>
+<textarea id="entry-info" placeholder="Specs or Route (Info | Lat,Lng | Lat,Lng)"></textarea>
+        
     <div>
         <label>Status Dot</label>
         <select id="entry-status">
