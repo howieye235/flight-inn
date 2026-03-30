@@ -79,7 +79,6 @@ function openEntry(cat, item) {
             <div class="sidebar-row"><span class="s-label">Opening Date</span><span class="s-value">${data.openingDate || "—"}</span></div>
             <div class="sidebar-row"><span class="s-label">Runways</span><span class="s-value">${data.runways || "—"}</span></div>
             <div class="sidebar-row"><span class="s-label">Era</span><span class="s-value">${data.era || "—"}</span></div>`;
-    }
     } else if (cat === "Fleets") {
         factsHtml = `
             <div class="sidebar-row"><span class="s-label">Manufacturer</span><span class="s-value">${data.maker || "—"}</span></div>
