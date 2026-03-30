@@ -443,11 +443,15 @@ function updatePreview() {
     if (infoInput && previewArea) {
         let rawText = infoInput.value;
 
-        // 1. First, handle your custom [[WikiLinks]]
-        let processedText = wikiLinker(rawText);
+        // 1. First, process your custom [[WikiLinks]]
+        let linkedText = wikiLinker(rawText);
 
-        // 2. Then, let 'Marked' handle tables, bold, headers, etc.
-        // This converts Markdown symbols into real HTML
-        previewArea.innerHTML = marked.parse(processedText);
+        // 2. Then, let 'Marked' turn Markdown into HTML (Bold, Tables, etc.)
+        // We use 'marked.parse' here
+        if (typeof marked !== 'undefined') {
+            previewArea.innerHTML = marked.parse(linkedText);
+        } else {
+            previewArea.innerHTML = linkedText; // Fallback if library fails
+        }
     }
 }
