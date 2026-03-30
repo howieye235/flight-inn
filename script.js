@@ -188,6 +188,14 @@ function saveEntry() {
         era: era,
         extra: extra,
         status: status
+        // Inside saveEntry, add these to the entryData object
+    entryData.hubs = document.getElementById('entry-hubs').value;
+    entryData.freqFlyer = document.getElementById('entry-freq').value;
+    entryData.subsidiaries = document.getElementById('entry-subs').value;
+    entryData.destinations = document.getElementById('entry-dests').value;
+    entryData.hubFor = document.getElementById('entry-hubfor').value;
+    entryData.openingDate = document.getElementById('entry-opening').value;
+    entryData.runways = document.getElementById('entry-runways').value;
     };
 
     // 4. Special Logic for Routes (Coordinates)
