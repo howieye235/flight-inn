@@ -43,7 +43,9 @@
 
 </div>
 
-    <div id="editor-modal" class="modal">
+    <div id="modal-overlay" onclick="closeEditor()"></div>
+
+<div id="editor-modal" class="modal">
     <div class="modal-content" style="max-height: 90vh; display: flex; flex-direction: column;">
         
         <div style="border-bottom: 1px solid #334155; padding-bottom: 10px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
@@ -66,7 +68,7 @@
             <label>Image URL</label>
             <input type="text" id="entry-image">
 
-            <div class="spec-grid" style="margin-top: 15px;">
+            <div class="spec-grid" style="margin-top: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                 <div><label>Spec A (Mfr/Country)</label><input type="text" id="entry-maker"></div>
                 <div><label>Spec B (Eng/IATA)</label><input type="text" id="entry-engines"></div>
                 <div><label>Spec C (Era/Year)</label><input type="text" id="entry-era"></div>
@@ -99,13 +101,9 @@
 
         <div style="display:flex; gap:10px; margin-top:20px; border-top: 1px solid #334155; padding-top: 15px;">
             <button onclick="saveEntry()" class="save-btn" style="flex: 2;">Save to Cloud</button>
-            <button onclick="closeEditor()" class="cancel-btn" style="flex: 1; background: #334155; color: white;">Cancel</button>
+            <button type="button" onclick="closeEditor()" class="cancel-btn" style="flex: 1;">Cancel</button>
         </div>
     </div>
-       <div id="modal-overlay" onclick="closeEditor()"></div>
-
-<div id="editor-modal" class="modal">
-    <button onclick="closeEditor()">Cancel</button>
 </div>
 </div>
         <script src="script.js"></script>
