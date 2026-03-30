@@ -97,9 +97,9 @@ function openEntry(cat, item) {
         <div class="wiki-layout">
             <div class="article-body">
                 <h2 class="section-header">Reference Article</h2>
-                <div class="wiki-content">
-                    ${wikiLinker(data.info || "No detailed information provided.")}
-                </div>
+                    <div class="wiki-content">
+                ${typeof marked !== 'undefined' ? marked.parse(wikiLinker(data.info || "")) : wikiLinker(data.info || "")}
+                    </div>
                 <div class="article-actions">
                     <button onclick="editItem('${cat}', '${item}')" class="edit-btn">Edit Article</button>
                     <button onclick="deleteItem('${cat}', '${item}')" class="delete-btn">Delete Entry</button>
