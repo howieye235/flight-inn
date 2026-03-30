@@ -95,7 +95,8 @@ function openEntry(cat, item) {
         </div>
 
         <div class="wiki-layout">
-            // --- Inside your openEntry(cat, item) function ---
+            <div class="article-body">
+                <h2 class="section-header">Reference Article</h2>
 
 <div class="article-body">
     <h2 class="section-header">Reference Article</h2>
