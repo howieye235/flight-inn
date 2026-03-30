@@ -8,8 +8,6 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
@@ -20,6 +18,8 @@
     <script>
         (function(){L.Polyline.Arc=function(a,b,c){c=c||{};var d=c.vertices||100;var f=L.latLng(a),g=L.latLng(b);var h=Math.PI/180;var i=f.lng*h,j=f.lat*h,k=g.lng*h,l=g.lat*h;var m=[],n=Math.acos(Math.sin(j)*Math.sin(l)+Math.cos(j)*Math.cos(l)*Math.cos(k-i));for(var o=0;o<=d;o++){var p=o/d;var q=Math.sin((1-p)*n)/Math.sin(n),r=Math.sin(p*n)/Math.sin(n);var s=q*Math.cos(j)*Math.cos(i)+r*Math.cos(l)*Math.cos(k);var t=q*Math.cos(j)*Math.sin(i)+r*Math.cos(l)*Math.sin(k);var u=q*Math.sin(j)+r*Math.sin(l);var v=Math.atan2(u,Math.sqrt(Math.pow(s,2)+Math.pow(t,2)));var w=Math.atan2(t,s);m.push([v/h,w/h])}return L.polyline(m,c)}})();
     </script>
+
+     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
 </head>
 <body>
