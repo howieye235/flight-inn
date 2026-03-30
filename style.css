@@ -39,23 +39,50 @@ body { display: flex; margin: 0; height: 100vh; font-family: 'Inter', sans-serif
     z-index: 1;
 }
 
-/* Modal */
-.modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 1000; }
-/* Centering the Modal and making it responsive */
-.modal-content {
-    background: #1e293b;
-    border: 1px solid #00f2ff;
-    border-radius: 12px;
-    padding: 25px;
-    width: 90%;
-    max-width: 650px; /* Prevents it from getting too wide */
-    box-shadow: 0 0 30px rgba(0, 242, 255, 0.2);
+/* --- THE SLIDING DRAWER --- */
+.modal { 
+    position: fixed; 
+    top: 0; 
+    right: -450px; /* Start hidden off-screen to the right */
+    width: 400px; 
+    height: 100vh; 
+    background: #1e293b; 
+    border-left: 2px solid #00f2ff;
+    transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); /* Smooth "Aviation" slide */
+    z-index: 2000; 
+    box-shadow: -10px 0 30px rgba(0,0,0,0.5);
+    display: flex !important; /* Always exists, just moved off-screen */
 }
 
-/* Grid for the Spec A, B, C, D boxes */
-.spec-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr; /* Two columns */
+/* When this class is added via JS, it slides in */
+.modal.active { 
+    right: 0; 
+}
+
+/* The content inside the drawer */
+.modal-content {
+    background: transparent; /* Parent handles background now */
+    border: none;
+    box-shadow: none;
+    padding: 25px;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* The background dimming effect */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px); /* Makes it look high-end */
+    display: none;
+    z-index: 1999;
+}s: 1fr 1fr; /* Two columns */
     gap: 15px;
     margin-bottom: 20px;
 }
