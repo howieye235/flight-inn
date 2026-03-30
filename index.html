@@ -43,93 +43,74 @@
 
 </div>
 
-    <div id="editor-modal" class="modal">
-        <div class="modal-content">
-            <h3>Log Asset</h3>
-            <label>Category</label>
-            <select id="entry-category">
-                <option value="Airlines">Airline</option>
-                <option value="Fleets">Fleet/Aircraft</option>
-                <option value="Airports">Airport</option>
-                <option value="Routes">Route (Map)</option>
-            </select>
-            <label>Name</label>
-            <input type="text" id="entry-name" placeholder="e.g. Boeing 747SP">
-            <label>Image URL</label>
-            <input type="text" id="entry-image" placeholder="Paste image link...">
-            <label>Details</label>
-            <div class="spec-inputs" style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
-    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin: 10px 0;">
-    <div>
-        <label>Spec A (Mfr / Country / City / Airline)</label>
-        <input type="text" id="entry-maker">
+    <div class="modal-content" style="max-height: 90vh; display: flex; flex-direction: column; overflow: hidden;">
+    <div style="border-bottom: 1px solid #334155; padding-bottom: 15px; margin-bottom: 15px;">
+        <h3 style="margin: 0; color: #00f2ff;">Log Asset</h3>
     </div>
-    <div>
-        <label>Spec B (Engine / Alliance / IATA / Pax)</label>
-        <input type="text" id="entry-engines">
-    </div>
-    <div>
-        <label>Spec C (Era / Year / Status)</label>
-        <input type="text" id="entry-era">
-    </div>
-    <div>
-        <label>Spec D (Fact / Purpose / ICAO / Planes)</label>
-        <input type="text" id="entry-extra">
-    </div>
-        <div id="airline-extra-fields" style="display:none; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
-    <div>
-        <label>Hubs</label>
-        <input type="text" id="entry-hubs" placeholder="e.g. YYZ, YVR">
-    </div>
-    <div>
-        <label>Freq Flyer</label>
-        <input type="text" id="entry-freq" placeholder="e.g. Aeroplan">
-    </div>
-    <div>
-        <label>Subsidiaries</label>
-        <input type="text" id="entry-subs" placeholder="e.g. Rouge, Encore">
-    </div>
-    <div>
-        <label>Destinations</label>
-        <input type="text" id="entry-dests" placeholder="e.g. 190+">
-    </div>
-            <div id="airline-extra-fields" style="display:none; grid-template-columns: repeat(2, 1fr); gap: 10px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px;">
-    </div>
-</div>
 
-<div id="airport-extra-fields" style="display:none; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
-    <div>
-        <label>Hub For (Airlines)</label>
-        <input type="text" id="entry-hubfor" placeholder="e.g. Air Canada, WestJet">
-    </div>
-    <div>
-        <label>Opening Date</label>
-        <input type="text" id="entry-opening" placeholder="e.g. 1939">
-    </div>
-    <div>
-        <label>Runways</label>
-        <input type="text" id="entry-runways" placeholder="e.g. 06L/24R, 05/23">
-    </div>
-</div>
-<label>Details</label>
-<textarea id="entry-info" placeholder="Specs or Route (Info | Lat,Lng | Lat,Lng)"></textarea>
-        
-    <div>
-        <label>Status Dot</label>
+    <div id="modal-scroll-body" style="overflow-y: auto; flex-grow: 1; padding-right: 10px;">
+        <label>Category</label>
+        <select id="entry-category">
+            <option value="Airlines">Airline</option>
+            <option value="Fleets">Fleet/Aircraft</option>
+            <option value="Airports">Airport</option>
+            <option value="Routes">Route (Map)</option>
+        </select>
+
+        <label>Name</label>
+        <input type="text" id="entry-name" placeholder="e.g. Boeing 747SP">
+
+        <label>Image URL</label>
+        <input type="text" id="entry-image" placeholder="Paste image link...">
+
+        <div class="spec-grid" style="margin-top: 15px;">
+            <div>
+                <label>Spec A (Mfr/Country)</label>
+                <input type="text" id="entry-maker">
+            </div>
+            <div>
+                <label>Spec B (Eng/IATA)</label>
+                <input type="text" id="entry-engines">
+            </div>
+            <div>
+                <label>Spec C (Era/Year)</label>
+                <input type="text" id="entry-era">
+            </div>
+            <div>
+                <label>Spec D (Fact/ICAO)</label>
+                <input type="text" id="entry-extra">
+            </div>
+        </div>
+
+        <div id="airline-extra-fields" style="display:none; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; background: rgba(0,242,255,0.05); padding: 10px; border-radius: 8px; border: 1px solid rgba(0,242,255,0.1);">
+            <div><label>Hubs</label><input type="text" id="entry-hubs"></div>
+            <div><label>Freq Flyer</label><input type="text" id="entry-freq"></div>
+            <div><label>Subsidiaries</label><input type="text" id="entry-subs"></div>
+            <div><label>Destinations</label><input type="text" id="entry-dests"></div>
+        </div>
+
+        <div id="airport-extra-fields" style="display:none; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; background: rgba(0,242,255,0.05); padding: 10px; border-radius: 8px; border: 1px solid rgba(0,242,255,0.1);">
+            <div><label>Hub For</label><input type="text" id="entry-hubfor"></div>
+            <div><label>Opening Date</label><input type="text" id="entry-opening"></div>
+            <div style="grid-column: span 2;"><label>Runways</label><input type="text" id="entry-runways"></div>
+        </div>
+
+        <label style="margin-top:15px; display:block;">Details / Article Body</label>
+        <textarea id="entry-info" style="height: 120px;" placeholder="Specs or Route (Info | Lat,Lng | Lat,Lng)"></textarea>
+
+        <label>Status</label>
         <select id="entry-status">
             <option value="Active">🟢 Active</option>
             <option value="Stored">🟠 Stored</option>
             <option value="Retired">🔴 Retired</option>
         </select>
     </div>
-</div>
-            <textarea id="entry-info" placeholder="Specs or Route (Info | Lat,Lng | Lat,Lng)"></textarea>
-            <div style="display:flex; gap:10px; margin-top:15px;">
-                <button onclick="saveEntry()" class="save-btn">Save to Cloud</button>
-                <button onclick="closeEditor()" class="cancel-btn">Cancel</button>
-            </div>
-        </div>
+
+    <div style="display:flex; gap:10px; margin-top:20px; border-top: 1px solid #334155; padding-top: 15px;">
+        <button onclick="saveEntry()" class="save-btn" style="flex: 2;">Save to Cloud</button>
+        <button onclick="closeEditor()" class="cancel-btn" style="flex: 1; background: #334155; color: white;">Cancel</button>
     </div>
+</div>
 
         <script src="script.js"></script>
 </body>
