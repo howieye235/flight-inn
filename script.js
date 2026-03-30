@@ -88,35 +88,44 @@ function openEntry(cat, item) {
     }
 
     // 2. The Wiki Sidebar Layout
-    let html = `
-        <button class="back-btn" onclick="loadDirectory('${cat}')">← Back</button>
-        <div class="hero" style="background-image: url('${img}')">
-            <div class="hero-text"><h1>${item}</h1></div>
+    // 2. The Wiki Sidebar Layout (Updated to match your CSS)
+let html = `
+    <button class="back-btn" onclick="loadDirectory('${cat}')">← Back</button>
+    
+    <div class="hero" style="background-image: url('${img}')">
+        <div class="hero-text">
+            <h1>${item}</h1>
+            <div class="quick-facts">
+                <div class="fact-badge">${status}</div>
+                <div class="fact-badge">${cat.slice(0, -1)}</div>
+            </div>
         </div>
+    </div>
 
-        <div class="wiki-layout">
-            <div class="article-body">
-                <h2 class="section-header">Reference Article</h2>
-                <div class="wiki-content">
-                    ${typeof marked !== 'undefined' ? marked.parse(wikiLinker(data.info || "No detailed information provided.")) : wikiLinker(data.info || "")}
-                </div>
-                <div class="article-actions">
-                    <button onclick="editItem('${cat}', '${item}')" class="edit-btn">Edit Article</button>
-                    <button onclick="deleteItem('${cat}', '${item}')" class="delete-btn">Delete Entry</button>
-                </div>
+    <div class="wiki-layout">
+        <div class="article-body">
+            <h2 class="section-header">Reference Article</h2>
+            <div class="wiki-content">
+                ${typeof marked !== 'undefined' ? marked.parse(wikiLinker(data.info || "No detailed information provided.")) : wikiLinker(data.info || "")}
             </div>
             
-            <aside class="wiki-sidebar">
-                <div class="sidebar-header">Quick Facts</div>
-                <div class="sidebar-content">
-                    ${factsHtml}
-                    <div class="sidebar-row">
-                        <span class="s-label">Status</span>
-                        <span class="s-value" style="color:${statusColor}; font-weight:bold;">${status}</span>
-                    </div>
+            <div class="article-actions">
+                <button onclick="editItem('${cat}', '${item}')" class="edit-btn">Edit Article</button>
+                <button onclick="deleteItem('${cat}', '${item}')" class="delete-btn" style="background:#ef4444; color:white;">Delete Entry</button>
+            </div>
+        </div>
+        
+        <aside class="wiki-sidebar">
+            <div class="sidebar-header">Quick Facts</div>
+            <div class="sidebar-content">
+                ${factsHtml}
+                <div class="sidebar-row">
+                    <span class="s-label">Status</span>
+                    <span class="s-value" style="color:${statusColor}; font-weight:bold;">${status}</span>
                 </div>
-            </aside>
-        </div>`;
+            </div>
+        </aside>
+    </div>`;
 
     // 3. YOUR ORIGINAL ROUTE LOGIC (DO NOT CHANGE)
     if (cat === "Routes" && data.coords) {
