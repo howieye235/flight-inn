@@ -187,3 +187,74 @@ body { display: flex; margin: 0; height: 100vh; font-family: 'Inter', sans-serif
     border-top: 1px solid #334155;
     padding-top: 25px;
 }
+
+/* --- WIKI SPLIT LAYOUT --- */
+.wiki-layout {
+    display: flex;
+    gap: 25px;
+    margin-top: -40px; /* Pulls it up over the hero image */
+    padding: 0 30px 40px 30px;
+    align-items: flex-start; /* Prevents the sidebar from stretching */
+    position: relative;
+    z-index: 10;
+}
+
+/* Left Side: The main text */
+.article-body {
+    flex: 1; 
+    background: #1e293b;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    min-width: 0; 
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Right Side: The Sidebar */
+.wiki-sidebar {
+    width: 320px;
+    background: #1a202c;
+    border: 1px solid #2d3748;
+    border-radius: 12px;
+    overflow: hidden;
+    position: sticky; /* Keeps it on screen while you scroll! */
+    top: 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+}
+
+.sidebar-header {
+    background: var(--primary);
+    padding: 12px;
+    text-align: center;
+    font-weight: bold;
+    color: #00f2ff;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 0.8rem;
+    border-bottom: 2px solid #00f2ff;
+}
+
+.sidebar-content {
+    padding: 15px;
+}
+
+/* Row styling inside the sidebar */
+.sidebar-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #2d3748;
+    font-size: 0.9rem;
+}
+
+.sidebar-row:last-child { border-bottom: none; }
+
+.s-label {
+    color: #a0aec0;
+    font-weight: bold;
+}
+
+.s-value {
+    color: #edf2f7;
+    text-align: right;
+}
