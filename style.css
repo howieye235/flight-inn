@@ -289,16 +289,11 @@ body { display: flex; margin: 0; height: 100vh; font-family: 'Inter', sans-serif
 
 /* --- WIKI SPLIT LAYOUT --- */
 .wiki-layout {
-    display: flex;
-    gap: 25px;
-    margin-top: -40px;
-    padding: 0 30px 40px 30px;
-    align-items: flex-start;
-    position: relative;
-    z-index: 10;
-    /* ADD THIS LINE */
-    width: 100%; 
-    box-sizing: border-box;
+    display: flex;          /* This turns on the side-by-side behavior */
+    flex-direction: row;    /* Ensures they stay in a line */
+    align-items: flex-start; /* Prevents the sidebar from stretching to the bottom */
+    gap: 30px;              /* Gives them some breathing room */
+    width: 100%;
 }
 
 /* Left Side: The main text */
