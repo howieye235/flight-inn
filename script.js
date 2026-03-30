@@ -55,11 +55,11 @@ function openEntry(cat, item) {
     const data = flightInnData[cat][item];
     const img = data.image || "https://placehold.co/800x400?text=No+Photo";
     
-    let factsHtml = ""; // Renamed to avoid confusion
+    let factsHtml = ""; 
     const status = data.status || "Active";
     const statusColor = status === "Active" ? "#00ff88" : (status === "Retired" ? "#ff4444" : "#ffbb00");
 
-    // Map the specific sidebar rows based on category
+    // 1. Sidebar Rows for non-Route categories
     if (cat === "Airlines") {
         factsHtml = `
             <div class="sidebar-row"><span class="s-label">Country</span><span class="s-value">${data.maker || "—"}</span></div>
@@ -78,13 +78,9 @@ function openEntry(cat, item) {
             <div class="sidebar-row"><span class="s-label">Engines</span><span class="s-value">${data.engines || "—"}</span></div>
             <div class="sidebar-row"><span class="s-label">Era</span><span class="s-value">${data.era || "—"}</span></div>
             <div class="sidebar-row"><span class="s-label">Purpose</span><span class="s-value">${data.extra || "—"}</span></div>`;
-    } else if (cat === "Routes") {
-        factsHtml = `
-            <div class="sidebar-row"><span class="s-label">Airlines</span><span class="s-value">${data.maker || "—"}</span></div>
-            <div class="sidebar-row"><span class="s-label">Passengers</span><span class="s-value">${data.engines || "—"}</span></div>
-            <div class="sidebar-row"><span class="s-label">Aircraft</span><span class="s-value">${data.extra || "—"}</span></div>`;
     }
 
+    // 2. The Wiki Sidebar Layout
     let html = `
         <button class="back-btn" onclick="loadDirectory('${cat}')">← Back</button>
         <div class="hero" style="background-image: url('${img}')">
@@ -113,10 +109,9 @@ function openEntry(cat, item) {
                     </div>
                 </div>
             </aside>
-        </div>
-    `;
+        </div>`;
 
-    // --- ROUTE MAP LOGIC ---
+    // 3. YOUR ORIGINAL ROUTE LOGIC (DO NOT CHANGE)
     if (cat === "Routes" && data.coords) {
         document.getElementById('view-port').innerHTML = html + `<div id="map" style="height:450px; width:100%; border-radius:12px; margin-top:20px;"></div>`;
         
