@@ -291,34 +291,32 @@ body { display: flex; margin: 0; height: 100vh; font-family: 'Inter', sans-serif
 .wiki-layout {
     display: flex;
     gap: 25px;
-    margin-top: -40px; /* Pulls it up over the hero image */
+    margin-top: -40px;
     padding: 0 30px 40px 30px;
-    align-items: flex-start; /* Prevents the sidebar from stretching */
+    align-items: flex-start;
     position: relative;
     z-index: 10;
+    /* ADD THIS LINE */
+    width: 100%; 
+    box-sizing: border-box;
 }
 
 /* Left Side: The main text */
 .article-body {
-    flex: 1; 
+    flex: 1; /* This tells it to take up all REMAINING space */
+    min-width: 0; /* Important: prevents text from pushing the sidebar off-screen */
     background: #1e293b;
     padding: 40px;
     border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-    min-width: 0; 
-    border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 /* Right Side: The Sidebar */
 .wiki-sidebar {
     width: 320px;
-    background: #1a202c;
-    border: 1px solid #2d3748;
-    border-radius: 12px;
-    overflow: hidden;
-    position: sticky; /* Keeps it on screen while you scroll! */
+    flex-shrink: 0; /* Prevents the sidebar from getting skinny/squashed */
+    position: sticky; 
     top: 20px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    /* Remove any 'left' or 'right' properties if they are there */
 }
 
 .sidebar-header {
