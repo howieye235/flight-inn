@@ -156,13 +156,17 @@ function openEntry(cat, item) {
 
 // --- ACTIONS & SEARCH ---
 function openEditor() {
-    document.getElementById('editor-modal').classList.add('active');
-    document.getElementById('modal-overlay').style.display = 'block';
+    const modal = document.getElementById('editor-modal');
+    const overlay = document.getElementById('modal-overlay');
 
-    // FIX: Prevents the click from "leaking" out to the overlay
-    document.getElementById('editor-modal').onclick = (e) => e.stopPropagation();
+    modal.classList.add('active');
+    overlay.style.display = 'block';
+
+    // NEW: This stops the click from "bubbling" up to the overlay
+    modal.onclick = (e) => {
+        e.stopPropagation();
+    };
 }
-
 function closeEditor() {
     // Remove the class to slide it back out
     document.getElementById('editor-modal').classList.remove('active');
