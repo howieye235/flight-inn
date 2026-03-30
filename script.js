@@ -30,15 +30,60 @@ function renderHome() {
     const r = flightInnData.Routes ? Object.keys(flightInnData.Routes).length : 0;
     const ap = flightInnData.Airports ? Object.keys(flightInnData.Airports).length : 0;
 
+    // Get time for the greeting
+    const hour = new Date().getHours();
+    const greeting = hour < 12 ? "Good Morning" : hour < 18 ? "Good Afternoon" : "Good Evening";
+
     document.getElementById('view-port').innerHTML = `
-        <h1 style="color:var(--primary);">System Overview</h1>
-        <div class="card-grid">
-            <div class="stat-card"><h3>${f}</h3><p>Fleets</p></div>
-            <div class="stat-card"><h3>${a}</h3><p>Airlines</p></div>
-            <div class="stat-card"><h3>${ap}</h3><p>Airports</p></div>
-            <div class="stat-card"><h3>${r}</h3><p>Routes</p></div>
+        <div class="home-hero">
+            <div class="hero-info">
+                <h1>${greeting}, Archivist</h1>
+                <p>FlightInn Archive Systems are online. Currently tracking <b>${f + a + ap + r}</b> total data points.</p>
+            </div>
+            <div class="utc-clock" id="utc-clock">00:00:00 UTC</div>
+        </div>
+
+        <div class="dashboard-container">
+            <div class="tutorial-box">
+                <h3><span style="color:var(--accent);">✦</span> New Entry Tutorial</h3>
+                <div class="tutorial-steps">
+                    <p><b>1. Add Data:</b> Click <b>+ ADD NEW</b> to log a new plane or airline.</p>
+                    <p><b>2. Wiki-Links:</b> Use <code>[[Name]]</code> in the article to link entries.</p>
+                    <p><b>3. Multimedia:</b> Use <code>![Desc](URL)</code> to embed your spotting photos.</p>
+                </div>
+            </div>
+
+            <div class="card-grid">
+                <div class="stat-card" onclick="loadDirectory('Fleets')">
+                    <h3>${f}</h3>
+                    <p>Fleets</p>
+                </div>
+                <div class="stat-card" onclick="loadDirectory('Airlines')">
+                    <h3>${a}</h3>
+                    <p>Airlines</p>
+                </div>
+                <div class="stat-card" onclick="loadDirectory('Airports')">
+                    <h3>${ap}</h3>
+                    <p>Airports</p>
+                </div>
+                <div class="stat-card" onclick="loadDirectory('Routes')">
+                    <h3>${r}</h3>
+                    <p>Routes</p>
+                </div>
+            </div>
         </div>
     `;
+
+    // Start the clock
+    updateHomeClock();
+}
+
+function updateHomeClock() {
+    const clockEl = document.getElementById('utc-clock');
+    if (!clockEl) return;
+    const now = new Date();
+    clockEl.innerText = now.toISOString().substr(11, 8) + " UTC";
+    setTimeout(updateHomeClock, 1000);
 }
 
 function loadDirectory(cat) {
