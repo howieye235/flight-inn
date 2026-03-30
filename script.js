@@ -272,18 +272,15 @@ function editItem(cat, item) {
     document.getElementById('entry-extra').value = d.extra || "";     
     
     // 4. NEW: Fill the Category-Specific Fields
-    document.getElementById('entry-hubs').value = d.hubs || "";
-    document.getElementById('entry-freq').value = d.freqFlyer || "";
-    document.getElementById('entry-subs').value = d.subsidiaries || "";
-    document.getElementById('entry-destinations').value = d.destinations || ""; // Note: Check if ID matches destinations
-    document.getElementById('entry-hubfor').value = d.hubFor || "";
-    document.getElementById('entry-opening').value = d.openingDate || "";
-    document.getElementById('entry-runways').value = d.runways || "";
-
-    // 5. Set the Status and Open
-    document.getElementById('entry-status').value = d.status || "Active";
+    if (document.getElementById('entry-hubs')) document.getElementById('entry-hubs').value = d.hubs || "";
+    if (document.getElementById('entry-freq')) document.getElementById('entry-freq').value = d.freqFlyer || "";
+    if (document.getElementById('entry-subs')) document.getElementById('entry-subs').value = d.subsidiaries || "";
+    if (document.getElementById('entry-destinations')) document.getElementById('entry-destinations').value = d.destinations || ""; 
     
-    // Manually trigger the toggle so the right boxes show up immediately
+    if (document.getElementById('entry-hubfor')) document.getElementById('entry-hubfor').value = d.hubFor || "";
+    if (document.getElementById('entry-opening')) document.getElementById('entry-opening').value = d.openingDate || "";
+    if (document.getElementById('entry-runways')) document.getElementById('entry-runways').value = d.runways || "";
+
     toggleExtraFields(cat); 
     openEditor();
 }
