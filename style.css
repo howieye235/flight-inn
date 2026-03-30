@@ -276,7 +276,7 @@ body { display: flex; margin: 0; height: 100vh; font-family: 'Inter', sans-serif
     line-height: 1.8;
     color: #cbd5e1;
     font-size: 1.1rem;
-    white-space: pre-wrap; /* Crucial for paragraph breaks */
+    /* white-space: pre-wrap;  <-- Remove or comment this out */
 }
 
 .article-actions {
