@@ -357,3 +357,30 @@ body { display: flex; margin: 0; height: 100vh; font-family: 'Inter', sans-serif
     color: #edf2f7;
     text-align: right;
 }
+/* Styling for Markdown Tables in the Article */
+.wiki-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid #334155;
+}
+
+.wiki-content th {
+    background: rgba(0, 242, 255, 0.1);
+    color: #00f2ff;
+    font-weight: bold;
+    text-align: left;
+    padding: 12px;
+    border: 1px solid #334155;
+}
+
+.wiki-content td {
+    padding: 12px;
+    border: 1px solid #334155;
+    color: #cbd5e1;
+}
+
+.wiki-content tr:nth-child(even) {
+    background: rgba(255, 255, 255, 0.03);
+}
