@@ -97,17 +97,14 @@ function openEntry(cat, item) {
         <div class="wiki-layout">
             <div class="article-body">
                 <h2 class="section-header">Reference Article</h2>
-
-<div class="article-body">
-    <h2 class="section-header">Reference Article</h2>
-    <div class="wiki-content">
-        ${typeof marked !== 'undefined' ? marked.parse(wikiLinker(data.info || "No detailed information provided.")) : wikiLinker(data.info || "")}
-    </div>
-    <div class="article-actions">
-        <button onclick="editItem('${cat}', '${item}')" class="edit-btn">Edit Article</button>
-        <button onclick="deleteItem('${cat}', '${item}')" class="delete-btn">Delete Entry</button>
-    </div>
-</div>
+                <div class="wiki-content">
+                    ${typeof marked !== 'undefined' ? marked.parse(wikiLinker(data.info || "No detailed information provided.")) : wikiLinker(data.info || "")}
+                </div>
+                <div class="article-actions">
+                    <button onclick="editItem('${cat}', '${item}')" class="edit-btn">Edit Article</button>
+                    <button onclick="deleteItem('${cat}', '${item}')" class="delete-btn">Delete Entry</button>
+                </div>
+            </div>
             
             <aside class="wiki-sidebar">
                 <div class="sidebar-header">Quick Facts</div>
