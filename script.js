@@ -248,7 +248,6 @@ function editItem(cat, item) {
     document.getElementById('entry-image').value = d.image || "";
     
     // 2. Fill the "Details" (Article or Route string)
-    // If it's a route, we reconstruct the "Info | Lat,Lng | Lat,Lng" format
     if (cat === "Routes" && d.coords) {
         document.getElementById('entry-info').value = `${d.info} | ${d.coords[0]} | ${d.coords[1]}`;
     } else {
@@ -256,15 +255,25 @@ function editItem(cat, item) {
     }
 
     // 3. Fill the Quick Fact Spec Boxes (A, B, C, D)
-    document.getElementById('entry-maker').value = d.maker || "";    // Spec A
-    document.getElementById('entry-engines').value = d.engines || ""; // Spec B
-    document.getElementById('entry-era').value = d.era || "";         // Spec C
-    document.getElementById('entry-extra').value = d.extra || "";     // Spec D
+    document.getElementById('entry-maker').value = d.maker || "";    
+    document.getElementById('entry-engines').value = d.engines || ""; 
+    document.getElementById('entry-era').value = d.era || "";         
+    document.getElementById('entry-extra').value = d.extra || "";     
     
-    // 4. Set the Status Dropdown
-    document.getElementById('entry-status').value = d.status || "Active";
+    // 4. NEW: Fill the Category-Specific Fields
+    document.getElementById('entry-hubs').value = d.hubs || "";
+    document.getElementById('entry-freq').value = d.freqFlyer || "";
+    document.getElementById('entry-subs').value = d.subsidiaries || "";
+    document.getElementById('entry-destinations').value = d.destinations || ""; // Note: Check if ID matches destinations
+    document.getElementById('entry-hubfor').value = d.hubFor || "";
+    document.getElementById('entry-opening').value = d.openingDate || "";
+    document.getElementById('entry-runways').value = d.runways || "";
 
-    // 5. Open the Modal
+    // 5. Set the Status and Open
+    document.getElementById('entry-status').value = d.status || "Active";
+    
+    // Manually trigger the toggle so the right boxes show up immediately
+    toggleExtraFields(cat); 
     openEditor();
 }
 
@@ -314,5 +323,18 @@ function wikiLinker(text) {
 
     return text;
 }
+
+function toggleExtraFields(category) {
+    const airlineFields = document.getElementById('airline-extra-fields');
+    const airportFields = document.getElementById('airport-extra-fields');
+    
+    if (airlineFields) airlineFields.style.display = (category === "Airlines") ? "grid" : "none";
+    if (airportFields) airportFields.style.display = (category === "Airports") ? "grid" : "none";
+}
+
+// Attach it to the category dropdown in the modal
+document.getElementById('entry-category').addEventListener('change', (e) => {
+    toggleExtraFields(e.target.value);
+});
 
 window.onload = sync;
