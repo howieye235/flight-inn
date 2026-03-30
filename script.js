@@ -55,47 +55,40 @@ function openEntry(cat, item) {
     const data = flightInnData[cat][item];
     const img = data.image || "https://placehold.co/800x400?text=No+Photo";
     
-    // --- SMART HUD LOGIC ---
-    let facts = ""; 
+    let factsHtml = ""; // Renamed to avoid confusion
     const status = data.status || "Active";
     const statusColor = status === "Active" ? "#00ff88" : (status === "Retired" ? "#ff4444" : "#ffbb00");
 
+    // Map the specific sidebar rows based on category
     if (cat === "Airlines") {
-        facts = `
-            <span class="fact-badge">🚩 ${data.maker || "Country"}</span>
-            <span class="fact-badge">✈️ Fleet: ${data.engines || "0"}</span>
-            <span class="fact-badge">🌐 ${data.extra || "Alliance"}</span>
-            <span class="fact-badge">📅 Est. ${data.era || "Year"}</span>
-        `;
+        factsHtml = `
+            <div class="sidebar-row"><span class="s-label">Country</span><span class="s-value">${data.maker || "—"}</span></div>
+            <div class="sidebar-row"><span class="s-label">Fleet Size</span><span class="s-value">${data.engines || "—"}</span></div>
+            <div class="sidebar-row"><span class="s-label">Alliance</span><span class="s-value">${data.extra || "—"}</span></div>
+            <div class="sidebar-row"><span class="s-label">Established</span><span class="s-value">${data.era || "—"}</span></div>`;
     } else if (cat === "Airports") {
-        facts = `
-            <span class="fact-badge">🏙️ ${data.maker || "City/Country"}</span>
-            <span class="fact-badge">🆔 IATA: ${data.engines || "???"}</span>
-            <span class="fact-badge">📡 ICAO: ${data.extra || "????"}</span>
-            <span class="fact-badge">⏳ Era: ${data.era || "Modern"}</span>
-        `;
+        factsHtml = `
+            <div class="sidebar-row"><span class="s-label">City/Country</span><span class="s-value">${data.maker || "—"}</span></div>
+            <div class="sidebar-row"><span class="s-label">IATA</span><span class="s-value">${data.engines || "—"}</span></div>
+            <div class="sidebar-row"><span class="s-label">ICAO</span><span class="s-value">${data.extra || "—"}</span></div>
+            <div class="sidebar-row"><span class="s-label">Era</span><span class="s-value">${data.era || "—"}</span></div>`;
     } else if (cat === "Fleets") {
-        facts = `
-            <span class="fact-badge">🛠️ ${data.maker || "Manufacturer"}</span>
-            <span class="fact-badge">⚙️ ${data.engines || "Engines"}</span>
-            <span class="fact-badge">📅 ${data.era || "Era"}</span>
-            <span class="fact-badge">🎯 ${data.extra || "Purpose"}</span>
-        `;
+        factsHtml = `
+            <div class="sidebar-row"><span class="s-label">Manufacturer</span><span class="s-value">${data.maker || "—"}</span></div>
+            <div class="sidebar-row"><span class="s-label">Engines</span><span class="s-value">${data.engines || "—"}</span></div>
+            <div class="sidebar-row"><span class="s-label">Era</span><span class="s-value">${data.era || "—"}</span></div>
+            <div class="sidebar-row"><span class="s-label">Purpose</span><span class="s-value">${data.extra || "—"}</span></div>`;
     } else if (cat === "Routes") {
-        facts = `
-            <span class="fact-badge">🏢 ${data.maker || "Airlines"}</span>
-            <span class="fact-badge">👥 ${data.engines || "Pax/Year"}</span>
-            <span class="fact-badge">✈️ ${data.extra || "Planes"}</span>
-        `;
+        factsHtml = `
+            <div class="sidebar-row"><span class="s-label">Airlines</span><span class="s-value">${data.maker || "—"}</span></div>
+            <div class="sidebar-row"><span class="s-label">Passengers</span><span class="s-value">${data.engines || "—"}</span></div>
+            <div class="sidebar-row"><span class="s-label">Aircraft</span><span class="s-value">${data.extra || "—"}</span></div>`;
     }
 
     let html = `
         <button class="back-btn" onclick="loadDirectory('${cat}')">← Back</button>
-        
         <div class="hero" style="background-image: url('${img}')">
-            <div class="hero-text">
-                <h1>${item}</h1>
-            </div>
+            <div class="hero-text"><h1>${item}</h1></div>
         </div>
 
         <div class="wiki-layout">
@@ -104,7 +97,6 @@ function openEntry(cat, item) {
                 <div class="wiki-content">
                     ${wikiLinker(data.info || "No detailed information provided.")}
                 </div>
-                
                 <div class="article-actions">
                     <button onclick="editItem('${cat}', '${item}')" class="edit-btn">Edit Article</button>
                     <button onclick="deleteItem('${cat}', '${item}')" class="delete-btn">Delete Entry</button>
@@ -114,37 +106,15 @@ function openEntry(cat, item) {
             <aside class="wiki-sidebar">
                 <div class="sidebar-header">Quick Facts</div>
                 <div class="sidebar-content">
-                    ${facts}
+                    ${factsHtml}
                     <div class="sidebar-row">
                         <span class="s-label">Status</span>
-                        <span class="s-value" style="color:${statusColor}">${status}</span>
+                        <span class="s-value" style="color:${statusColor}; font-weight:bold;">${status}</span>
                     </div>
                 </div>
             </aside>
         </div>
     `;
-
-    // Update the facts mapping to use Sidebar Rows instead of Badges
-    if (cat === "Airlines") {
-        facts = `
-            <div class="sidebar-row"><span class="s-label">Country</span><span class="s-value">${data.maker || "—"}</span></div>
-            <div class="sidebar-row"><span class="s-label">Fleet Size</span><span class="s-value">${data.engines || "—"}</span></div>
-            <div class="sidebar-row"><span class="s-label">Alliance</span><span class="s-value">${data.extra || "—"}</span></div>
-            <div class="sidebar-row"><span class="s-label">Established</span><span class="s-value">${data.era || "—"}</span></div>
-        `;
-    } else if (cat === "Airports") {
-        facts = `
-            <div class="sidebar-row"><span class="s-label">City/Country</span><span class="s-value">${data.maker || "—"}</span></div>
-            <div class="sidebar-row"><span class="s-label">IATA</span><span class="s-value">${data.engines || "—"}</span></div>
-            <div class="sidebar-row"><span class="s-label">ICAO</span><span class="s-value">${data.extra || "—"}</span></div>
-            <div class="sidebar-row"><span class="s-label">Era</span><span class="s-value">${data.era || "—"}</span></div>
-        `;
-    } else if (cat === "Fleets") {
-        facts = `
-            <div class="sidebar-row"><span class="s-label">Manufacturer</span><span class="s-value">${data.maker || "—"}</span></div>
-            <div class="sidebar-row"><span class="s-label">Engines</span><span class="s-value">${data.engines || "—"}</span></div>
-            <div class="sidebar-row"><span class="s-label">Era</span><span class="s-value">${data.era || "—"}</span></div>
-            <div class="sidebar-row"><span class="s-label
 
     // --- ROUTE MAP LOGIC ---
     if (cat === "Routes" && data.coords) {
@@ -187,41 +157,69 @@ function openEditor() { document.getElementById('editor-modal').style.display='f
 function closeEditor() { document.getElementById('editor-modal').style.display='none'; }
 
 function saveEntry() {
+    // 1. Grab Basic Info
     const cat = document.getElementById('entry-category').value;
     const name = document.getElementById('entry-name').value;
     const img = document.getElementById('entry-image').value;
     const info = document.getElementById('entry-info').value;
+    
+    // 2. Grab the "Quick Fact" Specs
+    const maker = document.getElementById('entry-maker').value;   // Spec A
+    const engines = document.getElementById('entry-engines').value; // Spec B
+    const era = document.getElementById('entry-era').value;       // Spec C
+    const extra = document.getElementById('entry-extra').value;   // Spec D
+    const status = document.getElementById('entry-status').value;
 
-    if (!name) return alert("Please enter a name");
+    // Validation
+    if (!name) return alert("Please enter a name for this entry.");
+    
+    // Initialize category if it doesn't exist locally
     if (!flightInnData[cat]) flightInnData[cat] = {};
 
+    // 3. Build the Data Object
+    let entryData = {
+        info: info,
+        image: img,
+        maker: maker,
+        engines: engines,
+        era: era,
+        extra: extra,
+        status: status
+    };
+
+    // 4. Special Logic for Routes (Coordinates)
     if (cat === "Routes") {
         const parts = info.split('|');
-        if (parts.length < 3) return alert("Format: Info | Lat,Lng | Lat,Lng");
-        
-        try {
-            const start = parts[1].split(',').map(num => parseFloat(num.trim()));
-            const end = parts[2].split(',').map(num => parseFloat(num.trim()));
-            flightInnData[cat][name] = { 
-                info: parts[0].trim(), 
-                image: img, 
-                coords: [start, end] 
-            };
-        } catch (e) {
-            return alert("Coordinate error!");
+        if (parts.length >= 3) {
+            try {
+                const start = parts[1].split(',').map(num => parseFloat(num.trim()));
+                const end = parts[2].split(',').map(num => parseFloat(num.trim()));
+                
+                // Update entryData with parsed info and coords
+                entryData.info = parts[0].trim();
+                entryData.coords = [start, end];
+            } catch (e) {
+                return alert("Coordinate Error! Use: Info | Lat,Lng | Lat,Lng");
+            }
+        } else {
+            return alert("Route format must be: Info | Lat,Lng | Lat,Lng");
         }
-    } else {
-        flightInnData[cat][name] = { info: info, image: img };
     }
 
-   database.ref('flightData').set(flightInnData).then(() => {
-        console.log("Saved successfully to:", cat); 
-        closeEditor();
-        loadDirectory(cat); 
-    }).catch((e) => {
-        console.error("Firebase Error:", e);
-    }); // <--- THIS WAS MISSING
-} // <--- THIS WAS MISSING
+    // 5. Save to Local Variable and Firebase
+    flightInnData[cat][name] = entryData;
+
+    database.ref('flightData').set(flightInnData)
+        .then(() => {
+            console.log(`✅ Successfully saved ${name} to ${cat}`);
+            closeEditor();
+            loadDirectory(cat); // Refresh the list view
+        })
+        .catch((error) => {
+            console.error("❌ Firebase Save Error:", error);
+            alert("Failed to save to cloud. Check console.");
+        });
+}
 
 function deleteItem(cat, item) {
     if(confirm("Delete " + item + "?")) {
@@ -234,10 +232,30 @@ function deleteItem(cat, item) {
 
 function editItem(cat, item) {
     const d = flightInnData[cat][item];
+
+    // 1. Fill Basic Info
     document.getElementById('entry-category').value = cat;
     document.getElementById('entry-name').value = item;
     document.getElementById('entry-image').value = d.image || "";
-    document.getElementById('entry-info').value = (cat === "Routes") ? `${d.info}|${d.coords[0]}|${d.coords[1]}` : d.info;
+    
+    // 2. Fill the "Details" (Article or Route string)
+    // If it's a route, we reconstruct the "Info | Lat,Lng | Lat,Lng" format
+    if (cat === "Routes" && d.coords) {
+        document.getElementById('entry-info').value = `${d.info} | ${d.coords[0]} | ${d.coords[1]}`;
+    } else {
+        document.getElementById('entry-info').value = d.info || "";
+    }
+
+    // 3. Fill the Quick Fact Spec Boxes (A, B, C, D)
+    document.getElementById('entry-maker').value = d.maker || "";    // Spec A
+    document.getElementById('entry-engines').value = d.engines || ""; // Spec B
+    document.getElementById('entry-era').value = d.era || "";         // Spec C
+    document.getElementById('entry-extra').value = d.extra || "";     // Spec D
+    
+    // 4. Set the Status Dropdown
+    document.getElementById('entry-status').value = d.status || "Active";
+
+    // 5. Open the Modal
     openEditor();
 }
 
