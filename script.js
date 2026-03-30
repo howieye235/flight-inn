@@ -336,17 +336,34 @@ function toggleExtraFields(category) {
 // Remove the standalone event listener from the bottom and 
 // incorporate it into your sync or a dedicated init function.
 
-function setupListeners() {
+// --- DYNAMIC UI LOGIC ---
+
+function toggleExtraFields(category) {
+    const airlineFields = document.getElementById('airline-extra-fields');
+    const airportFields = document.getElementById('airport-extra-fields');
+    
+    // Reset both to hidden first
+    if (airlineFields) airlineFields.style.display = "none";
+    if (airportFields) airportFields.style.display = "none";
+    
+    // Only show the relevant one using Grid for a cleaner look
+    if (category === "Airlines" && airlineFields) airlineFields.style.display = "grid";
+    if (category === "Airports" && airportFields) airportFields.style.display = "grid";
+}
+
+// This function ensures the elements exist before adding listeners
+function initEditor() {
     const categoryDropdown = document.getElementById('entry-category');
     if (categoryDropdown) {
         categoryDropdown.addEventListener('change', (e) => {
             toggleExtraFields(e.target.value);
         });
+        console.log("✅ Editor Listeners Initialized");
     }
 }
 
-// Update your window.onload to include the setup
+// Update your window onload to trigger both sync and init
 window.onload = () => {
     sync();
-    setupListeners();
+    initEditor(); 
 };
