@@ -333,29 +333,43 @@ function searchDatabase() {
 }
 function wikiLinker(text) {
     if (!text || !flightInnData) return text || "";
-    
-    let entries = [];
-    for (let cat in flightInnData) {
-        if (cat === "AirportDB") continue; // Skip the hidden dictionary
-        for (let name in flightInnData[cat]) {
-            entries.push({ name: name.trim(), cat: cat });
+
+    // 1. Handle [[Target|Display Name]] style links
+    // This finds [[Real Name|What I typed]]
+    text = text.replace(/\[\[([^|\]]+)\|([^\]]+)\]\]/g, (match, target, display) => {
+        // Find if the target exists in any category
+        let foundCat = null;
+        for (let cat in flightInnData) {
+            if (flightInnData[cat][target.trim()]) {
+                foundCat = cat;
+                break;
+            }
         }
-    }
-
-    // Sort by length (Longest names first so "Boeing 787-9" links before "787")
-    entries.sort((a, b) => b.name.length - a.name.length);
-
-    entries.forEach(item => {
-        // This Regex finds the name even if the capitals don't match
-        const escapedName = item.name.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-        const regex = new RegExp(`\\b${escapedName}\\b`, 'gi'); 
         
-        text = text.replace(regex, (match) => {
-            console.log("✈️ WikiLink Found:", match); // Look in your F12 console for this!
-            return `<span class="wiki-link" onclick="openEntry('${item.cat}', '${item.name}')">${match}</span>`;
-        });
+        if (foundCat) {
+            return `<span class="wiki-link" onclick="openEntry('${foundCat}', '${target.trim()}')">${display.trim()}</span>`;
+        }
+        return display; // If not found, just show the text
     });
 
+    // 2. Handle standard [[Target]] links (No pipe)
+    text = text.replace(/\[\[([^\]]+)\]\]/g, (match, target) => {
+        let foundCat = null;
+        for (let cat in flightInnData) {
+            if (flightInnData[cat][target.trim()]) {
+                foundCat = cat;
+                break;
+            }
+        }
+
+        if (foundCat) {
+            return `<span class="wiki-link" onclick="openEntry('${foundCat}', '${target.trim()}')">${target.trim()}</span>`;
+        }
+        return target;
+    });
+
+    // 3. Keep your existing auto-linker for plain text names 
+    // (Optional: You can keep this or rely entirely on [[]] for more control)
     return text;
 }
 
