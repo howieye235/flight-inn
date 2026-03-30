@@ -333,8 +333,20 @@ function toggleExtraFields(category) {
 }
 
 // Attach it to the category dropdown in the modal
-document.getElementById('entry-category').addEventListener('change', (e) => {
-    toggleExtraFields(e.target.value);
-});
+// Remove the standalone event listener from the bottom and 
+// incorporate it into your sync or a dedicated init function.
 
-window.onload = sync;
+function setupListeners() {
+    const categoryDropdown = document.getElementById('entry-category');
+    if (categoryDropdown) {
+        categoryDropdown.addEventListener('change', (e) => {
+            toggleExtraFields(e.target.value);
+        });
+    }
+}
+
+// Update your window.onload to include the setup
+window.onload = () => {
+    sync();
+    setupListeners();
+};
