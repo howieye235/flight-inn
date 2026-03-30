@@ -180,17 +180,24 @@ body { display: flex; margin: 0; height: 100vh; font-family: 'Inter', sans-serif
 }
 
 /* This makes sure your navy badge looks sharp */
+/* Styling for the Map Labels (YXE, YYZ, etc) */
 .badge-style {
-    background: #002244 !important;
-    color: white !important;
-    padding: 4px 8px !important;
-    border-radius: 4px !important;
-    font-weight: bold !important;
-    font-size: 11px !important;
-    border: 1px solid white !important;
-    white-space: nowrap !important;
-    display: inline-block !important;
+    background: #002244;
+    color: #00f2ff;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 11px;
+    border: 1px solid #00f2ff;
+    white-space: nowrap;
     box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+/* Ensure Leaflet doesn't put a white box around our labels */
+.no-box {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
 }
 /* Add this to the very bottom of your style.css */
 .wiki-link {
