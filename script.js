@@ -156,10 +156,11 @@ function openEntry(cat, item) {
 
 // --- ACTIONS & SEARCH ---
 function openEditor() {
-    // Add the 'active' class to slide the panel in
     document.getElementById('editor-modal').classList.add('active');
-    // Show the dimming overlay
     document.getElementById('modal-overlay').style.display = 'block';
+
+    // FIX: Prevents the click from "leaking" out to the overlay
+    document.getElementById('editor-modal').onclick = (e) => e.stopPropagation();
 }
 
 function closeEditor() {
