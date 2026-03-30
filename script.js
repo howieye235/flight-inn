@@ -155,8 +155,19 @@ function openEntry(cat, item) {
 }
 
 // --- ACTIONS & SEARCH ---
-function openEditor() { document.getElementById('editor-modal').style.display='flex'; }
-function closeEditor() { document.getElementById('editor-modal').style.display='none'; }
+function openEditor() {
+    // Add the 'active' class to slide the panel in
+    document.getElementById('editor-modal').classList.add('active');
+    // Show the dimming overlay
+    document.getElementById('modal-overlay').style.display = 'block';
+}
+
+function closeEditor() {
+    // Remove the class to slide it back out
+    document.getElementById('editor-modal').classList.remove('active');
+    // Hide the overlay
+    document.getElementById('modal-overlay').style.display = 'none';
+}
 
 function saveEntry() {
     // 1. Grab Basic Info
