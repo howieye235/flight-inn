@@ -413,26 +413,36 @@ function initEditor() {
     }
 }
 
-// --- PREVIEW SYSTEM ---
-function togglePreview() {
-    const container = document.getElementById('preview-container');
-    const isHidden = !container.style.display || container.style.display === 'none';
-    container.style.display = isHidden ? 'block' : 'none';
-    if (isHidden) updatePreview(); 
-}
-
-function updatePreview() {
-    const rawText = document.getElementById('entry-info').value;
-    const previewArea = document.getElementById('wiki-preview-content');
-    
-    if (previewArea) {
-        // This uses your existing wikiLinker logic to show the links live!
-        previewArea.innerHTML = wikiLinker(rawText);
-    }
-}
-
 // Update your window onload to trigger both sync and init
 window.onload = () => {
     sync();
     initEditor(); 
 };
+
+// --- PREVIEW SYSTEM ---
+
+// This function shows/hides the preview box
+function togglePreview() {
+    const container = document.getElementById('preview-container');
+    // Check if it's hidden or doesn't have a display style set yet
+    const isHidden = !container.style.display || container.style.display === 'none';
+    
+    container.style.display = isHidden ? 'block' : 'none';
+    
+    // If we just opened it, update the content immediately
+    if (isHidden) {
+        updatePreview();
+    }
+}
+
+// This function converts your [[WikiLinks]] into clickable spans in the preview
+function updatePreview() {
+    const infoInput = document.getElementById('entry-info');
+    const previewArea = document.getElementById('wiki-preview-content');
+    
+    if (infoInput && previewArea) {
+        const rawText = infoInput.value;
+        // Uses your existing wikiLinker function to process the text
+        previewArea.innerHTML = wikiLinker(rawText);
+    }
+}
