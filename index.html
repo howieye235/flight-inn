@@ -89,8 +89,14 @@
             </div>
 
             <label style="margin-top:15px; display:block;">Details / Article Body</label>
+            <button type="button" onclick="togglePreview()" style="background: transparent; color: #94a3b8; border: 1px solid #334155; padding: 4px 8px; font-size: 10px; cursor: pointer; margin-bottom: 5px; text-transform: uppercase; border-radius: 4px;">👁️ Toggle Preview</button>
             <textarea id="entry-info" style="height: 150px;"></textarea>
 
+            <div id="preview-container" style="margin-top: 10px; padding: 15px; background: rgba(0,242,255,0.03); border: 1px dashed #00f2ff55; border-radius: 8px; display: none; margin-bottom: 15px;">
+            <label style="color: #00f2ff; font-size: 10px; text-transform: uppercase; letter-spacing: 1px;">Live Wiki Preview</label>
+            <div id="wiki-preview-content" class="wiki-content" style="color: #cbd5e1; font-size: 14px; line-height: 1.6; margin-top: 5px;"></div>
+            </div>
+            
             <label>Status</label>
             <select id="entry-status">
                 <option value="Active">🟢 Active</option>
