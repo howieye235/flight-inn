@@ -407,6 +407,8 @@ function initEditor() {
         categoryDropdown.addEventListener('change', (e) => {
             toggleExtraFields(e.target.value);
         });
+        document.getElementById('entry-info').addEventListener('input', updatePreview);
+        
         console.log("✅ Editor Listeners Initialized");
     }
 }
