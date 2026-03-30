@@ -254,33 +254,55 @@ function editItem(cat, item) {
     const d = flightInnData[cat][item];
 
     // 1. Fill Basic Info
-    document.getElementById('entry-category').value = cat;
-    document.getElementById('entry-name').value = item;
-    document.getElementById('entry-image').value = d.image || "";
+    const catEl = document.getElementById('entry-category');
+    const nameEl = document.getElementById('entry-name');
+    const imgEl = document.getElementById('entry-image');
+    const infoEl = document.getElementById('entry-info');
+    const statusEl = document.getElementById('entry-status');
+
+    if (catEl) catEl.value = cat;
+    if (nameEl) nameEl.value = item;
+    if (imgEl) imgEl.value = d.image || "";
     
     // 2. Fill the "Details" (Article or Route string)
-    if (cat === "Routes" && d.coords) {
-        document.getElementById('entry-info').value = `${d.info} | ${d.coords[0]} | ${d.coords[1]}`;
-    } else {
-        document.getElementById('entry-info').value = d.info || "";
+    if (infoEl) {
+        if (cat === "Routes" && d.coords) {
+            infoEl.value = `${d.info} | ${d.coords[0]} | ${d.coords[1]}`;
+        } else {
+            infoEl.value = d.info || "";
+        }
     }
 
     // 3. Fill the Quick Fact Spec Boxes (A, B, C, D)
-    document.getElementById('entry-maker').value = d.maker || "";    
-    document.getElementById('entry-engines').value = d.engines || ""; 
-    document.getElementById('entry-era').value = d.era || "";         
-    document.getElementById('entry-extra').value = d.extra || "";     
-    
-    // 4. NEW: Fill the Category-Specific Fields
-    if (document.getElementById('entry-hubs')) document.getElementById('entry-hubs').value = d.hubs || "";
-    if (document.getElementById('entry-freq')) document.getElementById('entry-freq').value = d.freqFlyer || "";
-    if (document.getElementById('entry-subs')) document.getElementById('entry-subs').value = d.subsidiaries || "";
-    if (document.getElementById('entry-destinations')) document.getElementById('entry-destinations').value = d.destinations || ""; 
-    
-    if (document.getElementById('entry-hubfor')) document.getElementById('entry-hubfor').value = d.hubFor || "";
-    if (document.getElementById('entry-opening')) document.getElementById('entry-opening').value = d.openingDate || "";
-    if (document.getElementById('entry-runways')) document.getElementById('entry-runways').value = d.runways || "";
+    const makerEl = document.getElementById('entry-maker');
+    const engEl = document.getElementById('entry-engines');
+    const eraEl = document.getElementById('entry-era');
+    const extraEl = document.getElementById('entry-extra');
 
+    if (makerEl) makerEl.value = d.maker || "";    
+    if (engEl) engEl.value = d.engines || ""; 
+    if (eraEl) eraEl.value = d.era || "";          
+    if (extraEl) extraEl.value = d.extra || "";      
+    
+    // 4. Fill Category-Specific Fields with NULL checks
+    const fields = {
+        'entry-hubs': d.hubs,
+        'entry-freq': d.freqFlyer,
+        'entry-subs': d.subsidiaries,
+        'entry-destinations': d.destinations,
+        'entry-hubfor': d.hubFor,
+        'entry-opening': d.openingDate,
+        'entry-runways': d.runways
+    };
+
+    for (let id in fields) {
+        const el = document.getElementById(id);
+        if (el) el.value = fields[id] || "";
+    }
+
+    // 5. Finalize UI
+    if (statusEl) statusEl.value = d.status || "Active";
+    
     toggleExtraFields(cat); 
     openEditor();
 }
