@@ -287,15 +287,16 @@ body { display: flex; margin: 0; height: 100vh; font-family: 'Inter', sans-serif
 }
 
 /* Style for images placed inside the article body */
+/* This keeps in-article images under control */
 .wiki-content img {
-    max-width: 100%;       /* Prevents the image from being wider than the text */
-    height: auto;          /* Maintains aspect ratio */
-    display: block;        /* Centers the image */
-    margin: 25px auto;     /* Adds space above and below */
-    border-radius: 8px;    /* Matches your UI corners */
-    border: 1px solid #334155; 
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-    transition: transform 0.3s ease;
+    max-width: 100%;       /* Never wider than the text */
+    max-height: 450px;     /* Adjust this number to your liking! */
+    object-fit: contain;   /* Ensures the plane doesn't look "stretched" */
+    display: block;
+    margin: 20px auto;     /* Centers the image with space around it */
+    border-radius: 8px;
+    border: 1px solid #334155;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
 
 /* Optional: Slight zoom effect when you hover over an archive photo */
