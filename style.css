@@ -312,24 +312,26 @@ body { display: flex; margin: 0; height: 100vh; font-family: 'Inter', sans-serif
     border-radius: 12px;
 }
 
-/* Right Side: The Sidebar */
+/* Sidebar Container */
 .wiki-sidebar {
     width: 320px;
-    flex-shrink: 0; /* Prevents the sidebar from getting skinny/squashed */
-    position: sticky; 
-    top: 20px;
-    /* Remove any 'left' or 'right' properties if they are there */
+    background: #0f172a; /* Solid dark background for contrast */
+    border: 1px solid #334155;
+    border-radius: 8px;
+    overflow: hidden;
+    flex-shrink: 0;
+    align-self: flex-start;
 }
 
+/* Header styling based on your image */
 .sidebar-header {
-    background: var(--primary);
+    background: #002244;
+    color: #00f2ff;
     padding: 12px;
     text-align: center;
     font-weight: bold;
-    color: #00f2ff;
     text-transform: uppercase;
     letter-spacing: 2px;
-    font-size: 0.8rem;
     border-bottom: 2px solid #00f2ff;
 }
 
@@ -337,25 +339,32 @@ body { display: flex; margin: 0; height: 100vh; font-family: 'Inter', sans-serif
     padding: 15px;
 }
 
-/* Row styling inside the sidebar */
+/* Individual Fact Rows */
 .sidebar-row {
     display: flex;
     justify-content: space-between;
     padding: 10px 0;
-    border-bottom: 1px solid #2d3748;
-    font-size: 0.9rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 13px;
+    gap: 10px;
 }
 
-.sidebar-row:last-child { border-bottom: none; }
+.sidebar-row:last-child {
+    border-bottom: none;
+}
 
+/* Label (Left side) */
 .s-label {
-    color: #a0aec0;
-    font-weight: bold;
+    color: #94a3b8; /* Muted gray for labels */
+    font-weight: 600;
+    flex: 1;
 }
 
+/* Value (Right side) */
 .s-value {
-    color: #edf2f7;
+    color: #f8fafc; /* Bright white for the actual data */
     text-align: right;
+    flex: 2;
 }
 /* Styling for Markdown Tables in the Article */
 .wiki-content table {
