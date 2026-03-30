@@ -441,8 +441,13 @@ function updatePreview() {
     const previewArea = document.getElementById('wiki-preview-content');
     
     if (infoInput && previewArea) {
-        const rawText = infoInput.value;
-        // Uses your existing wikiLinker function to process the text
-        previewArea.innerHTML = wikiLinker(rawText);
+        let rawText = infoInput.value;
+
+        // 1. First, handle your custom [[WikiLinks]]
+        let processedText = wikiLinker(rawText);
+
+        // 2. Then, let 'Marked' handle tables, bold, headers, etc.
+        // This converts Markdown symbols into real HTML
+        previewArea.innerHTML = marked.parse(processedText);
     }
 }
