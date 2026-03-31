@@ -968,7 +968,6 @@ function initGlobalMap() {
     setTimeout(() => {
         window.hubMap.invalidateSize();
     }, 500);
-}
     // Fix for Leaflet rendering in a hidden/new div
     setTimeout(() => hubMap.invalidateSize(), 400);
 }
