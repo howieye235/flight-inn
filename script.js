@@ -1,4 +1,3 @@
-
 // --- CONFIG & INIT ---
 
 const firebaseConfig = {
@@ -791,15 +790,14 @@ function getRecentActivity() {
                 allEntries.push({
                     name: name,
                     category: cat,
-                    time: entry.timestamp || 0
+                    timestamp: entry.timestamp || 0
                 });
             });
         }
-    });
-    
-    // Sort by time (newest first) and take the top 5
-    return allEntries.sort((a, b) => b.time - a.time).slice(0, 5);
-}
+    }); // This closing bracket was likely missing
+
+    return allEntries.sort((a, b) => b.timestamp - a.timestamp).slice(0, 5);
+} // This one too
 
 function openRandomEntry() {
     const categories = ['Airlines', 'Fleets', 'Airports', 'Routes'];
