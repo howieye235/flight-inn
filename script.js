@@ -29,87 +29,88 @@ function sync() {
     });
 }
 
-// --- NAVIGATION & DASHBOARD ---
 function renderHome() {
-    // 1. Calculate stats with safety fallbacks
+    // 1. Data Crunching
     const f = (flightInnData.Fleets && Object.keys(flightInnData.Fleets).length) || 0;
     const a = (flightInnData.Airlines && Object.keys(flightInnData.Airlines).length) || 0;
     const r = (flightInnData.Routes && Object.keys(flightInnData.Routes).length) || 0;
     const ap = (flightInnData.Airports && Object.keys(flightInnData.Airports).length) || 0;
     const total = f + a + r + ap;
 
-    // 2. Greeting Logic
     const hour = new Date().getHours();
     const greeting = hour < 12 ? "Good Morning" : hour < 18 ? "Good Afternoon" : "Good Evening";
 
-    // 3. Activity Feed Logic
-    const recent = getRecentActivity();
+    // 2. Activity Feed (Shows the last 5 things you archived)
+    const recent = getRecentActivity(); 
     let recentHtml = recent.map(item => `
-        <div class="log-item" onclick="openEntry('${item.category}', '${item.name}')" style="display:flex; align-items:center; padding:10px; border-bottom:1px solid #eee; cursor:pointer; background:white; margin-bottom:5px; border-radius:8px;">
-            <span style="font-size:10px; background:#002244; color:white; padding:3px 8px; border-radius:4px; margin-right:15px; font-weight:bold;">${item.category.toUpperCase()}</span>
-            <span style="font-weight:bold; color:#002244;">${item.name}</span>
+        <div class="log-item" onclick="openEntry('${item.category}', '${item.name}')" style="display:flex; align-items:center; padding:12px; border-bottom:1px solid #edf2f7; cursor:pointer; background:white; transition:0.2s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='white'">
+            <div style="width:4px; height:25px; background:#002244; margin-right:12px; border-radius:2px;"></div>
+            <div style="flex-grow:1;">
+                <div style="font-size:10px; color:#64748b; text-transform:uppercase; font-weight:bold;">${item.category}</div>
+                <div style="font-weight:bold; color:#002244;">${item.name}</div>
+            </div>
+            <span style="font-size:18px; color:#cbd5e1;">›</span>
         </div>
     `).join('');
 
-    // 4. Update the Viewport
+    // 3. Main UI Layout
     document.getElementById('view-port').innerHTML = `
-        <div class="welcome-section" style="background:#f1f5f9; padding:30px; border-radius:15px; border-left: 5px solid #002244; margin-bottom:20px;">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <h1 style="margin:0; color:#002244;">${greeting}, Archivist</h1>
-                <div id="utc-clock" style="font-family:monospace; background:#002244; color:#00f2ff; padding:5px 12px; border-radius:6px; font-weight:bold;">00:00:00 UTC</div>
+        <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:20px; border-bottom:2px solid #002244; padding-bottom:10px;">
+            <div>
+                <h1 style="margin:0; color:#002244; font-size:2rem;">${greeting}, Archivist</h1>
+                <p style="margin:5px 0 0; color:#64748b;">System online | <b style="color:#002244;">${total}</b> entries indexed</p>
             </div>
-            <p style="margin-top:15px; line-height:1.6; color:#334155; font-size:1.1rem;">
-                Welcome to <b>FlightInn</b>! This is your central hub for archiving aviation history. 
-                Explore our database of airlines, aircraft, and routes below!
-            </p>
-            <div style="margin-top:10px; font-size:0.9rem; color:#64748b;">
-                Currently indexing <b style="color:#002244;">${total}</b> historical entries.
-            </div>
+            <div id="utc-clock" style="font-family:monospace; background:#002244; color:#00f2ff; padding:8px 15px; border-radius:6px; font-weight:bold; font-size:1.2rem; letter-spacing:1px;">00:00:00 UTC</div>
         </div>
 
-        <div id="global-hub-map" style="height:350px; width:100%; border-radius:12px; margin-bottom:25px; border:2px solid #002244; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); background:#e2e8f0;"></div>
+        <div id="global-hub-map" style="height:300px; width:100%; border-radius:12px; margin-bottom:25px; border:1px solid #cbd5e1; background:#f1f5f9; position:relative; overflow:hidden;">
+             <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); color:#cbd5e1; text-align:center;">
+                <p style="margin:0; font-size:40px;">🌐</p>
+                <p style="margin:0; font-size:12px; font-weight:bold;">GLOBAL HUB MONITOR</p>
+             </div>
+        </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 300px; gap: 20px;">
+        <div style="display: grid; grid-template-columns: 1fr 320px; gap: 25px;">
             <div>
-                <button onclick="openRandomEntry()" style="width:100%; padding:15px; background:#ffbb00; color:#002244; border:none; border-radius:12px; font-weight:bold; cursor:pointer; margin-bottom:20px; font-size:1.1rem; box-shadow: 0 4px 0 #cc9900; transition:0.1s;" onmousedown="this.style.transform='translateY(2px)'; this.style.boxShadow='0 2px 0 #cc9900'" onmouseup="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 0 #cc9900'">
-                    🎲 DISCOVER RANDOM ENTRY
-                </button>
-                
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 15px;">
-<div id="global-hub-map" style="height:300px; width:100%; border-radius:12px; margin-bottom:20px; border:2px solid #002244; box-shadow: inset 0 0 10px rgba(0,0,0,0.1);"></div>
-    <h2 class="overview-title" style="margin:0;">System Overview</h2>
-    <div style="font-size:0.8rem; background:#e2e8f0; padding:5px 12px; border-radius:20px; color:#475569;">
-        <b>Compare:</b> 
-        <span onclick="openCompare('Fleets')" style="color:#2563eb; cursor:pointer; margin-left:8px; font-weight:bold;">Fleets</span> | 
-        <span onclick="openCompare('Airlines')" style="color:#2563eb; cursor:pointer; font-weight:bold;">Airlines</span> |
-        <span onclick="openCompare('Airports')" style="color:#2563eb; cursor:pointer; font-weight:bold;">Airports</span>
-    </div>
-</div>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:25px;">
+                    <button onclick="openRandomEntry()" style="padding:20px; background:#ffbb00; color:#002244; border:none; border-radius:12px; font-weight:900; cursor:pointer; font-size:1rem; box-shadow: 0 4px 0 #cc9900;">🎲 EXPLORE DATABASE</button>
+                    <button onclick="openEditor()" style="padding:20px; background:#002244; color:white; border:none; border-radius:12px; font-weight:900; cursor:pointer; font-size:1rem; box-shadow: 0 4px 0 #001122;">+ ADD NEW ENTRY</button>
+                </div>
 
-                <div class="card-grid">
-                    <div class="stat-card" onclick="loadDirectory('Fleets')"><h3>${f}</h3><p>Fleets</p></div>
-                    <div class="stat-card" onclick="loadDirectory('Airlines')"><h3>${a}</h3><p>Airlines</p></div>
-                    <div class="stat-card" onclick="loadDirectory('Airports')"><h3>${ap}</h3><p>Airports</p></div>
-                    <div class="stat-card" onclick="loadDirectory('Routes')"><h3>${r}</h3><p>Routes</p></div>
+                <h2 style="font-size:1rem; color:#64748b; text-transform:uppercase; letter-spacing:1px; margin-bottom:15px;">Fleet Statistics</h2>
+                <div class="card-grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap:15px;">
+                    <div class="stat-card" onclick="loadDirectory('Fleets')" style="background:white; padding:20px; border-radius:12px; border:1px solid #e2e8f0; text-align:center; cursor:pointer; border-top:5px solid #3b82f6;">
+                        <h3 style="margin:0; font-size:1.8rem; color:#002244;">${f}</h3>
+                        <p style="margin:5px 0 0; color:#64748b; font-weight:bold;">Fleets</p>
+                    </div>
+                    <div class="stat-card" onclick="loadDirectory('Airlines')" style="background:white; padding:20px; border-radius:12px; border:1px solid #e2e8f0; text-align:center; cursor:pointer; border-top:5px solid #10b981;">
+                        <h3 style="margin:0; font-size:1.8rem; color:#002244;">${a}</h3>
+                        <p style="margin:5px 0 0; color:#64748b; font-weight:bold;">Airlines</p>
+                    </div>
+                    <div class="stat-card" onclick="loadDirectory('Airports')" style="background:white; padding:20px; border-radius:12px; border:1px solid #e2e8f0; text-align:center; cursor:pointer; border-top:5px solid #f59e0b;">
+                        <h3 style="margin:0; font-size:1.8rem; color:#002244;">${ap}</h3>
+                        <p style="margin:5px 0 0; color:#64748b; font-weight:bold;">Airports</p>
+                    </div>
+                    <div class="stat-card" onclick="loadDirectory('Routes')" style="background:white; padding:20px; border-radius:12px; border:1px solid #e2e8f0; text-align:center; cursor:pointer; border-top:5px solid #8b5cf6;">
+                        <h3 style="margin:0; font-size:1.8rem; color:#002244;">${r}</h3>
+                        <p style="margin:5px 0 0; color:#64748b; font-weight:bold;">Routes</p>
+                    </div>
                 </div>
             </div>
             
-            <div class="activity-feed" style="background:#fff; padding:15px; border-radius:12px; border:1px solid #e2e8f0; height: fit-content;">
-                <h3 style="margin-top:0; color:#002244; border-bottom:2px solid #f1f5f9; padding-bottom:10px;">Recent Logs</h3>
-                <div class="log-container">
-                    ${recentHtml || '<p style="color:#94a3b8; font-size:12px; text-align:center; padding:20px;">No logs found.<br>Add an entry to start tracking!</p>'}
+            <div style="background:white; border-radius:12px; border:1px solid #e2e8f0; display:flex; flex-direction:column; overflow:hidden;">
+                <div style="background:#f8fafc; padding:15px; border-bottom:1px solid #e2e8f0;">
+                    <h3 style="margin:0; font-size:0.9rem; color:#002244;">RECENT ACTIVITY</h3>
+                </div>
+                <div style="flex-grow:1;">
+                    ${recentHtml || '<div style="padding:40px; text-align:center; color:#94a3b8; font-size:13px;">No entries found.<br>Start by adding an MD-11 or DC-10!</div>'}
                 </div>
             </div>
         </div>
     `;
 
-    // At the end of renderHome()
     updateHomeClock();
-    
-    // Wait 300ms to make sure the HTML is actually on the screen first
-    setTimeout(() => {
-        initGlobalMap();
-    }, 300);
+    setTimeout(() => { initGlobalMap(); }, 300);
 }
 
 function updateHomeClock() {
@@ -917,38 +918,53 @@ function renderSpotterChecklist() {
 }
 
 function initGlobalMap() {
-    const mapDiv = document.getElementById('global-hub-map');
-    if (!mapDiv || !flightInnData.Airports) return;
+    const mapEl = document.getElementById('global-hub-map');
+    if (!mapEl || !window.L) return;
 
-    // Cleanup: Remove existing map if it's already there
-    if (window.hubMap) { window.hubMap.remove(); }
+    // 1. Clean up existing map instance if it exists
+    var container = L.DomUtil.get('global-hub-map');
+    if (container != null) { container._leaflet_id = null; }
 
-    // Initialize map centered more toward the Atlantic to see both sides
-    window.hubMap = L.map('global-hub-map').setView([25, -10], 2);
+    // 2. Initialize Map (Centered on a global view)
+    const globalMap = L.map('global-hub-map', {
+        zoomControl: false,
+        attributionControl: false
+    }).setView([20, 0], 2);
 
-    // Using "Voyager" tiles - much cleaner for an aviation look
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-        attribution: '©OpenStreetMap'
-    }).addTo(window.hubMap);
+    // 3. Add a "Dark Mode" or "Aviation Style" Tile Layer
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(globalMap);
 
-    // Drop pins for Airports
-    Object.keys(flightInnData.Airports).forEach(name => {
-        const data = flightInnData.Airports[name];
-        
-        // Use the 'extra' field for coordinates (e.g., "52.17, -106.68")
-        if (data.extra && data.extra.includes(',')) {
-            const coords = data.extra.split(',').map(n => parseFloat(n.trim()));
-            if (coords.length === 2 && !isNaN(coords[0])) {
-                L.marker(coords).addTo(window.hubMap)
-                 .bindPopup(`
-                    <div style="text-align:center; font-family:sans-serif;">
-                        <b style="color:#002244;">${name}</b><br>
-                        <button onclick="openEntry('Airports', '${name}')" style="background:#002244; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; margin-top:5px;">Open Archive</button>
-                    </div>
-                 `);
+    // 4. Plot Airports
+    if (flightInnData.Airports) {
+        for (let name in flightInnData.Airports) {
+            const ap = flightInnData.Airports[name];
+            if (ap.coords) {
+                L.circleMarker(ap.coords, {
+                    radius: 5,
+                    fillColor: "#00f2ff",
+                    color: "#002244",
+                    weight: 1,
+                    opacity: 1,
+                    fillOpacity: 0.8
+                }).addTo(globalMap).bindPopup(`<b>${name}</b><br>${ap.maker || ''}`);
             }
         }
-    });
+    }
+
+    // 5. Plot Routes (Arcs)
+    if (flightInnData.Routes) {
+        for (let name in flightInnData.Routes) {
+            const rt = flightInnData.Routes[name];
+            if (rt.coords && rt.coords.length === 2) {
+                L.Polyline.Arc(rt.coords[0], rt.coords[1], {
+                    color: 'rgba(0, 242, 255, 0.4)',
+                    weight: 2,
+                    vertices: 50
+                }).addTo(globalMap);
+            }
+        }
+    }
+}
 
     // CRITICAL: Force the map to "awaken" and fill the whole div
     setTimeout(() => {
