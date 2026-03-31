@@ -2,39 +2,25 @@
 // --- CONFIG & INIT ---
 
 const firebaseConfig = {
-
     apiKey: "AIzaSyCkid-KKHmHUUuR0oikBjPGMkha0FJB5Dc",
-
     authDomain: "flightinn-cb4ba.firebaseapp.com",
-
     projectId: "flightinn-cb4ba",
-
     storageBucket: "flightinn-cb4ba.firebasestorage.app",
-
     messagingSenderId: "272507283961",
-
     appId: "1:272507283961:web:e935c63963d1c8dde63528",
-
     databaseURL: "https://flightinn-cb4ba-default-rtdb.firebaseio.com"
 
 };
 
-
-
 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-
 const database = firebase.database();
-
 let flightInnData = {};
-
-
 
 // --- CLOUD SYNC ---
 
 function sync() {
     database.ref('flightData').on('value', (s) => {
         flightInnData = s.val() || {};
-        
         // Only re-render if the user is actually on the Home/Dashboard view
         const viewport = document.getElementById('view-port');
         if (viewport && viewport.querySelector('.welcome-section')) {
@@ -43,10 +29,7 @@ function sync() {
     });
 }
 
-
-
 // --- NAVIGATION & DASHBOARD ---
-
 function renderHome() {
     // 1. Calculate stats with safety fallbacks
     const f = (flightInnData.Fleets && Object.keys(flightInnData.Fleets).length) || 0;
@@ -118,23 +101,21 @@ function renderHome() {
         </div>
     `;
 
+    // At the end of renderHome()
     updateHomeClock();
-    initGlobalMap(); // Trigger the pins!
+    
+    // Wait 300ms to make sure the HTML is actually on the screen first
+    setTimeout(() => {
+        initGlobalMap();
+    }, 300);
 }
 
-
 function updateHomeClock() {
-
     const clockEl = document.getElementById('utc-clock');
-
     if (!clockEl) return;
-
     const now = new Date();
-
     clockEl.innerText = now.toISOString().substr(11, 8) + " UTC";
-
     setTimeout(updateHomeClock, 1000);
-
 }
 
 function showTutorial() {
@@ -238,261 +219,124 @@ function showTutorial() {
 }
 
 function loadDirectory(cat) {
-
     let html = `<h2>${cat}</h2><div class="list-container">`;
-
     if (flightInnData[cat]) {
-
         for (let item in flightInnData[cat]) {
-
             html += `<div class="list-item" onclick="openEntry('${cat}', '${item}')">${item}</div>`;
-
         }
-
     }
-
     document.getElementById('view-port').innerHTML = html + `</div>`;
-
 }
 
-
-
 function openEntry(cat, item) {
-
     const data = flightInnData[cat][item];
-
     const img = data.image || "https://placehold.co/800x400?text=No+Photo";
-
-    
-
     let factsHtml = ""; 
-
     const status = data.status || "Active";
-
     const statusColor = status === "Active" ? "#00ff88" : (status === "Retired" ? "#ff4444" : "#ffbb00");
-
-
-
     // 1. Sidebar Rows for non-Route categories
-
    if (cat === "Airlines") {
-
         factsHtml = `
-
             <div class="sidebar-row"><span class="s-label">Country</span><span class="s-value">${data.maker || "—"}</span></div>
-
             <div class="sidebar-row"><span class="s-label">Fleet Size</span><span class="s-value">${data.engines || "—"}</span></div>
-
             <div class="sidebar-row"><span class="s-label">Hubs</span><span class="s-value">${data.hubs || "—"}</span></div>
-
             <div class="sidebar-row"><span class="s-label">Frequent Flyer</span><span class="s-value">${data.freqFlyer || "—"}</span></div>
-
             <div class="sidebar-row"><span class="s-label">Subsidiaries</span><span class="s-value">${data.subsidiaries || "—"}</span></div>
-
             <div class="sidebar-row"><span class="s-label">Destinations</span><span class="s-value">${data.destinations || "—"}</span></div>
-
             <div class="sidebar-row"><span class="s-label">Alliance</span><span class="s-value">${data.extra || "—"}</span></div>
-
             <div class="sidebar-row"><span class="s-label">Established</span><span class="s-value">${data.era || "—"}</span></div>`;
-
     } else if (cat === "Airports") {
-
         factsHtml = `
-
             <div class="sidebar-row"><span class="s-label">City/Country</span><span class="s-value">${data.maker || "—"}</span></div>
-
             <div class="sidebar-row"><span class="s-label">IATA</span><span class="s-value">${data.engines || "—"}</span></div>
-
             <div class="sidebar-row"><span class="s-label">ICAO</span><span class="s-value">${data.extra || "—"}</span></div>
-
             <div class="sidebar-row"><span class="s-label">Hub For</span><span class="s-value">${data.hubFor || "—"}</span></div>
-
             <div class="sidebar-row"><span class="s-label">Opening Date</span><span class="s-value">${data.openingDate || "—"}</span></div>
-
             <div class="sidebar-row"><span class="s-label">Runways</span><span class="s-value">${data.runways || "—"}</span></div>
-
             <div class="sidebar-row"><span class="s-label">Era</span><span class="s-value">${data.era || "—"}</span></div>`;
-
     } else if (cat === "Fleets") {
-
         factsHtml = `
-
             <div class="sidebar-row"><span class="s-label">Manufacturer</span><span class="s-value">${data.maker || "—"}</span></div>
-
             <div class="sidebar-row"><span class="s-label">Engines</span><span class="s-value">${data.engines || "—"}</span></div>
-
             <div class="sidebar-row"><span class="s-label">Era</span><span class="s-value">${data.era || "—"}</span></div>
-
             <div class="sidebar-row"><span class="s-label">Purpose</span><span class="s-value">${data.extra || "—"}</span></div>`;
-
     }
-
-
-
-    // 2. The Wiki Sidebar Layout
-
     // 2. The Wiki Sidebar Layout (Updated to match your CSS)
-
 let html = `
-
     <button class="back-btn" onclick="loadDirectory('${cat}')">← Back</button>
-
-    
-
     <div class="hero" style="background-image: url('${img}')">
-
         <div class="hero-text">
-
             <h1>${item}</h1>
-
             <div class="quick-facts">
-
                 <div class="fact-badge">${status}</div>
-
                 <div class="fact-badge">${cat.slice(0, -1)}</div>
-
             </div>
-
         </div>
-
     </div>
 
-
-
     <div class="wiki-layout">
-
         <div class="article-body">
-
             <h2 class="section-header">Reference Article</h2>
-
             <div class="wiki-content">
-
                 ${typeof marked !== 'undefined' ? marked.parse(wikiLinker(data.info || "No detailed information provided.")) : wikiLinker(data.info || "")}
-
             </div>
-
-            
 
             <div class="article-actions">
-
                 <button onclick="editItem('${cat}', '${item}')" class="edit-btn">Edit Article</button>
-
                 <button onclick="deleteItem('${cat}', '${item}')" class="delete-btn" style="background:#ef4444; color:white;">Delete Entry</button>
-
             </div>
-
         </div>
-
         
-
         <aside class="wiki-sidebar">
-
             <div class="sidebar-header">Quick Facts</div>
-
             <div class="sidebar-content">
-
                 ${factsHtml}
-
                 <div class="sidebar-row">
-
                     <span class="s-label">Status</span>
-
                     <span class="s-value" style="color:${statusColor}; font-weight:bold;">${status}</span>
-
                 </div>
-
             </div>
-
         </aside>
-
     </div>`;
-
-
 
     // 3. YOUR ORIGINAL ROUTE LOGIC (DO NOT CHANGE)
 
     if (cat === "Routes" && data.coords) {
-
         document.getElementById('view-port').innerHTML = html + `<div id="map" style="height:450px; width:100%; border-radius:12px; margin-top:20px;"></div>`;
 
-        
-
         setTimeout(() => {
-
             var container = L.DomUtil.get('map');
-
             if (container != null) { container._leaflet_id = null; }
-
-
-
             var m = L.map('map').setView(data.coords[0], 3);
-
             L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(m);
-
-
-
             var flightPath = L.Polyline.Arc(data.coords[0], data.coords[1], {
-
                 color: '#00f2ff', weight: 4, vertices: 100
-
             }).addTo(m);
-
-
-
             const codes = item.split('-'); 
-
             if(codes.length === 2) {
-
                 [data.coords[0], data.coords[1]].forEach((pos, i) => {
-
                     L.marker(pos, {
-
                         icon: L.divIcon({
-
                             className: 'no-box',
-
                             html: `<span class="badge-style">${codes[i].trim()}</span>`, 
-
                             iconSize: [0, 0], 
-
                             iconAnchor: [20, 10]
-
                         })
-
                     }).addTo(m);
-
                 });
-
             }
-
             m.invalidateSize();
-
             m.fitBounds(flightPath.getBounds(), {padding: [50, 50]});
-
         }, 400);
-
     } else {
-
         document.getElementById('view-port').innerHTML = html;
-
     }
-
 }
-
-
-
 // --- ACTIONS & SEARCH ---
-
 function openEditor() {
-
     const modal = document.getElementById('editor-modal');
-
     const overlay = document.getElementById('modal-overlay');
-
-
-
     modal.classList.add('active');
-
     overlay.style.display = 'block';
 
 
