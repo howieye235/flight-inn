@@ -572,6 +572,16 @@ function saveEntry() {
         timestamp: Date.now()
     };
 
+        // Inside saveEntry() ...
+if (cat === "Airports") {
+    const coordInput = document.getElementById('entry-extra').value; // We can repurpose the "Extra" box for Lat, Lng
+    if (coordInput.includes(',')) {
+        const parts = coordInput.split(',').map(num => parseFloat(num.trim()));
+        if (parts.length === 2 && !isNaN(parts[0])) {
+            entryData.coords = parts; 
+        }
+    }
+}
     // 5. Special Logic for Routes (Coordinates)
     if (cat === "Routes") {
         const parts = info.split('|');
