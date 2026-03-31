@@ -50,40 +50,48 @@ function sync() {
 // --- NAVIGATION & DASHBOARD ---
 
 function renderHome() {
-    const f = flightInnData.Fleets ? Object.keys(flightInnData.Fleets).length : 0;
-    const a = flightInnData.Airlines ? Object.keys(flightInnData.Airlines).length : 0;
-    const r = flightInnData.Routes ? Object.keys(flightInnData.Routes).length : 0;
-    const ap = flightInnData.Airports ? Object.keys(flightInnData.Airports).length : 0;
+    // 1. Calculate stats with safety fallbacks
+    const f = (flightInnData.Fleets && Object.keys(flightInnData.Fleets).length) || 0;
+    const a = (flightInnData.Airlines && Object.keys(flightInnData.Airlines).length) || 0;
+    const r = (flightInnData.Routes && Object.keys(flightInnData.Routes).length) || 0;
+    const ap = (flightInnData.Airports && Object.keys(flightInnData.Airports).length) || 0;
+    const total = f + a + r + ap;
 
+    // 2. Greeting Logic
     const hour = new Date().getHours();
     const greeting = hour < 12 ? "Good Morning" : hour < 18 ? "Good Afternoon" : "Good Evening";
 
+    // 3. Activity Feed Logic
     const recent = getRecentActivity();
     let recentHtml = recent.map(item => `
         <div class="log-item" onclick="openEntry('${item.category}', '${item.name}')" style="display:flex; align-items:center; padding:10px; border-bottom:1px solid #eee; cursor:pointer; background:white; margin-bottom:5px; border-radius:8px;">
             <span style="font-size:10px; background:#002244; color:white; padding:3px 8px; border-radius:4px; margin-right:15px; font-weight:bold;">${item.category.toUpperCase()}</span>
-            <span style="font-weight:bold;">${item.name}</span>
+            <span style="font-weight:bold; color:#002244;">${item.name}</span>
         </div>
     `).join('');
 
+    // 4. Update the Viewport
     document.getElementById('view-port').innerHTML = `
-        <div class="welcome-section">
-            <div class="welcome-header">
-                <h1>${greeting}, Archivist</h1>
-                <div id="utc-clock">00:00:00 UTC</div>
+        <div class="welcome-section" style="background:#f1f5f9; padding:30px; border-radius:15px; border-left: 5px solid #002244; margin-bottom:20px;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h1 style="margin:0; color:#002244;">${greeting}, Archivist</h1>
+                <div id="utc-clock" style="font-family:monospace; background:#002244; color:#00f2ff; padding:5px 12px; border-radius:6px; font-weight:bold;">00:00:00 UTC</div>
             </div>
-            <p style="margin-top:10px; line-height:1.6; color:#334155;">
-                Welcome to FlightInn! This is an aviation wiki where we store information about airlines, airplanes, airports, and airroutes!<br>
-                Please make yourself at home here and check out some of our entries!<br>
-                We currently have <b>${(f || 0) + (a || 0) + (ap || 0) + (r || 0)}</b> total entries for you to read!
+            <p style="margin-top:15px; line-height:1.6; color:#334155; font-size:1.1rem;">
+                Welcome to <b>FlightInn</b>! This is your central hub for archiving aviation history. 
+                Explore our database of airlines, aircraft, and routes below!
             </p>
+            <div style="margin-top:10px; font-size:0.9rem; color:#64748b;">
+                Currently indexing <b style="color:#002244;">${total}</b> historical entries.
+            </div>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 300px; gap: 20px; margin-top:20px;">
+        <div style="display: grid; grid-template-columns: 1fr 300px; gap: 20px;">
             <div>
-                <button onclick="openRandomEntry()" style="width:100%; padding:15px; background:#ffbb00; color:#002244; border:none; border-radius:12px; font-weight:bold; cursor:pointer; margin-bottom:20px; font-size:1.1rem;">
-                    🎲 RANDOM ENTRY
+                <button onclick="openRandomEntry()" style="width:100%; padding:15px; background:#ffbb00; color:#002244; border:none; border-radius:12px; font-weight:bold; cursor:pointer; margin-bottom:20px; font-size:1.1rem; box-shadow: 0 4px 0 #cc9900; transition:0.1s;" onmousedown="this.style.transform='translateY(2px)'; this.style.boxShadow='0 2px 0 #cc9900'" onmouseup="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 0 #cc9900'">
+                    🎲 DISCOVER RANDOM ENTRY
                 </button>
+                
                 <h2 class="overview-title">System Overview</h2>
                 <div class="card-grid">
                     <div class="stat-card" onclick="loadDirectory('Fleets')"><h3>${f}</h3><p>Fleets</p></div>
@@ -93,10 +101,10 @@ function renderHome() {
                 </div>
             </div>
             
-            <div class="activity-feed" style="background:white; padding:15px; border-radius:12px; border:1px solid #e2e8f0;">
-                <h3 style="margin-top:0; color:#002244;">Recent Logs</h3>
+            <div class="activity-feed" style="background:#fff; padding:15px; border-radius:12px; border:1px solid #e2e8f0; height: fit-content;">
+                <h3 style="margin-top:0; color:#002244; border-bottom:2px solid #f1f5f9; padding-bottom:10px;">Recent Logs</h3>
                 <div class="log-container">
-                    ${recentHtml || '<p style="color:#94a3b8; font-size:12px;">No recent activity yet. Add an entry (like a 767) to see it here!</p>'}
+                    ${recentHtml || '<p style="color:#94a3b8; font-size:12px; text-align:center; padding:20px;">No logs found.<br>Add an entry to start tracking!</p>'}
                 </div>
             </div>
         </div>
