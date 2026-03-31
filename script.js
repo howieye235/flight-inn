@@ -67,6 +67,8 @@ function renderHome() {
             </div>
         </div>
 
+        <div id="global-hub-map" style="height:350px; width:100%; border-radius:12px; margin-bottom:25px; border:2px solid #002244; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); background:#e2e8f0;"></div>
+
         <div style="display: grid; grid-template-columns: 1fr 300px; gap: 20px;">
             <div>
                 <button onclick="openRandomEntry()" style="width:100%; padding:15px; background:#ffbb00; color:#002244; border:none; border-radius:12px; font-weight:bold; cursor:pointer; margin-bottom:20px; font-size:1.1rem; box-shadow: 0 4px 0 #cc9900; transition:0.1s;" onmousedown="this.style.transform='translateY(2px)'; this.style.boxShadow='0 2px 0 #cc9900'" onmouseup="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 0 #cc9900'">
@@ -918,24 +920,41 @@ function initGlobalMap() {
     const mapDiv = document.getElementById('global-hub-map');
     if (!mapDiv || !flightInnData.Airports) return;
 
-    // Use L.map (Leaflet) which you're already using for Routes
-    const hubMap = L.map('global-hub-map').setView([20, 0], 2);
+    // Cleanup: Remove existing map if it's already there
+    if (window.hubMap) { window.hubMap.remove(); }
 
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png').addTo(hubMap);
+    // Initialize map centered more toward the Atlantic to see both sides
+    window.hubMap = L.map('global-hub-map').setView([25, -10], 2);
 
-    // Loop through your Airports and drop pins
+    // Using "Voyager" tiles - much cleaner for an aviation look
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+        attribution: '©OpenStreetMap'
+    }).addTo(window.hubMap);
+
+    // Drop pins for Airports
     Object.keys(flightInnData.Airports).forEach(name => {
         const data = flightInnData.Airports[name];
-        // We'll look for coordinates in the 'extra' field (e.g., "52.17, -106.68")
+        
+        // Use the 'extra' field for coordinates (e.g., "52.17, -106.68")
         if (data.extra && data.extra.includes(',')) {
             const coords = data.extra.split(',').map(n => parseFloat(n.trim()));
             if (coords.length === 2 && !isNaN(coords[0])) {
-                L.marker(coords).addTo(hubMap)
-                 .bindPopup(`<b style="color:#002244;">${name}</b><br><button onclick="openEntry('Airports', '${name}')" style="cursor:pointer; background:#002244; color:white; border:none; padding:3px 8px; border-radius:4px; margin-top:5px;">Open Archive</button>`);
+                L.marker(coords).addTo(window.hubMap)
+                 .bindPopup(`
+                    <div style="text-align:center; font-family:sans-serif;">
+                        <b style="color:#002244;">${name}</b><br>
+                        <button onclick="openEntry('Airports', '${name}')" style="background:#002244; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; margin-top:5px;">Open Archive</button>
+                    </div>
+                 `);
             }
         }
     });
 
+    // CRITICAL: Force the map to "awaken" and fill the whole div
+    setTimeout(() => {
+        window.hubMap.invalidateSize();
+    }, 500);
+}
     // Fix for Leaflet rendering in a hidden/new div
     setTimeout(() => hubMap.invalidateSize(), 400);
 }
