@@ -214,27 +214,38 @@
 </div>
 
                 <label style="margin-top:15px; display:block;">Status</label>
-            <select id="entry-status">
-                <option value="Active">🟢 Active</option>
-                <option value="Stored">🟠 Stored</option>
-                <option value="Retired">🔴 Retired</option>
-            </select>
+<select id="entry-status">
+    <option value="Active">🟢 Active</option>
+    <option value="Stored">🟠 Stored</option>
+    <option value="Retired">🔴 Retired</option>
+</select>
 
-            <div class="input-group" style="margin-top: 15px;">
-                <label style="display:block; font-weight:bold; margin-bottom:5px; color:#00f2ff;">Aircraft Rarity</label>
-                <select id="entry-rarity" style="width:100%; padding:10px; border-radius:8px; border:1px solid #334155; background:#1e293b; color: white;">
-                    <option value="Common">⚪ Common (10 XP)</option>
-                    <option value="Uncommon">🟢 Uncommon (25 XP)</option>
-                    <option value="Rare">🔵 Rare (50 XP)</option>
-                    <option value="Epic">🟣 Epic (100 XP)</option>
-                    <option value="Legendary">🟡 Legendary (250 XP)</option>
-                </select>
-            </div>
-        </div> <div style="display:flex; gap:10px; margin-top:20px; border-top: 1px solid #334155; padding-top: 15px;">
+<div class="input-group" style="margin-top: 15px;">
+    <label style="display:block; font-weight:bold; margin-bottom:5px; color:#00f2ff;">Aircraft Rarity</label>
+    <select id="entry-rarity" style="width:100%; padding:10px; border-radius:8px; border:1px solid #334155; background:#1e293b; color: white;">
+        <option value="Common">⚪ Common (10 XP)</option>
+        <option value="Uncommon">🟢 Uncommon (25 XP)</option>
+        <option value="Rare">🔵 Rare (50 XP)</option>
+        <option value="Epic">🟣 Epic (100 XP)</option>
+        <option value="Legendary">🟡 Legendary (250 XP)</option>
+    </select>
+</div>
+
+
+
+        <div style="display:flex; gap:10px; margin-top:20px; border-top: 1px solid #334155; padding-top: 15px;">
+
             <button onclick="saveEntry()" class="save-btn" style="flex: 2;">Save to Cloud</button>
+
             <button type="button" onclick="closeEditor()" class="cancel-btn" style="flex: 1;">Cancel</button>
+
         </div>
-    </div> </div>
+
+    </div>
+
+</div>
+
+</div>
 
         <script src="script.js"></script>
 
