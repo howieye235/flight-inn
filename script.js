@@ -964,9 +964,25 @@ function initGlobalMap() {
     }
 }
 
-    // CRITICAL: Force the map to "awaken" and fill the whole div
+    // 6. CRITICAL: Force the map to "awaken" and fill the whole div
     setTimeout(() => {
-        window.hubMap.invalidateSize();
+        globalMap.invalidateSize();
+    }, 500);
+}
+
+// --- HELPER: WRAPPER FOR NAVIGATION ---
+function goToHome() {
+    renderHome();
+}
+
+// --- FINAL INITIALIZATION ---
+// This ensures your app starts with the Home dashboard visible
+document.addEventListener('DOMContentLoaded', () => {
+    // Small delay to ensure Firebase data has time to arrive
+    setTimeout(() => {
+        renderHome();
+    }, 1000);
+});
     }, 500);
     // Fix for Leaflet rendering in a hidden/new div
     setTimeout(() => hubMap.invalidateSize(), 400);
