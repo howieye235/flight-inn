@@ -99,7 +99,44 @@ function updateHomeClock() {
 
 }
 
+function showTutorial() {
+    const viewport = document.getElementById('view-port');
+    viewport.innerHTML = `
+        <h1 style="color:var(--primary); margin-bottom: 20px;">FlightInn Archive Manual</h1>
+        
+        <div class="tutorial-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            
+            <div class="tutorial-card-large" style="background: white; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0;">
+                <h3 style="color:var(--primary);">🔗 Wiki-Linking</h3>
+                <p>To connect two entries together (like linking an Airline to its Fleet), use double brackets:</p>
+                <code style="display:block; background:#f1f5f9; padding:10px; border-radius:5px; margin:10px 0;">
+                    [[Boeing 777]] <br>
+                    [[Air Canada|The National Carrier]]
+                </code>
+                <small>The second version shows "The National Carrier" but clicks through to the Air Canada page.</small>
+            </div>
 
+            <div class="tutorial-card-large" style="background: white; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0;">
+                <h3 style="color:var(--primary);">🖼️ Adding Images</h3>
+                <p>To add photos of your spotting trips (like <b>9H-SUN</b>), use the image syntax:</p>
+                <code style="display:block; background:#f1f5f9; padding:10px; border-radius:5px; margin:10px 0;">
+                    ![Plane Description](https://link-to-image.jpg)
+                </code>
+                <p><i>Tip: Use a "Max-Height" in your CSS to keep them from getting too big!</i></p>
+            </div>
+
+            <div class="tutorial-card-large" style="background: white; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0; grid-column: span 2;">
+                <h3 style="color:var(--primary);">🗺️ Mapping Routes</h3>
+                <p>When adding a <b>Route</b>, use the specific Coordinate Format in the "Details" box:</p>
+                <code style="display:block; background:#f1f5f9; padding:10px; border-radius:5px; margin:10px 0;">
+                    Flight Info Text | 52.17, -106.68 | 43.67, -79.62
+                </code>
+                <small>This would map a flight from Saskatoon (YXE) to Toronto (YYZ).</small>
+            </div>
+
+        </div>
+    `;
+}
 
 function loadDirectory(cat) {
 
