@@ -25,14 +25,23 @@
 <body>
 
     <div id="sidebar">
-        <h1 onclick="renderHome()">✈️ FlightInn</h1>
-        <div class="nav-item" onclick="loadDirectory('Airlines')">Airlines</div>
-        <div class="nav-item" onclick="loadDirectory('Fleets')">Fleets</div>
-        <div class="nav-item" onclick="loadDirectory('Airports')">Airports</div>
-        <div class="nav-item" onclick="loadDirectory('Routes')">Routes</div>
-        <hr style="border:0; border-top:1px solid rgba(255,255,255,0.1); margin:20px 0;">
-        <button id="add-btn" onclick="openEditor()">+ ADD NEW</button>
+    <h1 onclick="renderHome()" style="cursor:pointer">FlightInn</h1>
+    <div class="nav-links">
+        <button onclick="loadDirectory('Fleets')">Fleets</button>
+        <button onclick="loadDirectory('Airlines')">Airlines</button>
+        <button onclick="loadDirectory('Airports')">Airports</button>
+        <button onclick="loadDirectory('Routes')">Routes</button>
     </div>
+
+    <div class="sidebar-tutorial">
+        <h4>Quick Guide</h4>
+        <ul>
+            <li><b>[[Link]]</b> to connect pages</li>
+            <li><b>![Desc](URL)</b> for photos</li>
+            <li><b>+ ADD NEW</b> to contribute</li>
+        </ul>
+    </div>
+</div>
 
 <div id="main-display" style="flex: 1; display: flex; flex-direction: column;">
     
