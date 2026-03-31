@@ -58,12 +58,11 @@ function renderHome() {
     const hour = new Date().getHours();
     const greeting = hour < 12 ? "Good Morning" : hour < 18 ? "Good Afternoon" : "Good Evening";
 
-    // Get the recent logs
     const recent = getRecentActivity();
     let recentHtml = recent.map(item => `
-        <div class="log-item" onclick="openEntry('${item.category}', '${item.name}')" style="display:flex; align-items:center; padding:8px; border-bottom:1px solid #eee; cursor:pointer;">
-            <span style="font-size:9px; background:var(--primary); color:white; padding:2px 5px; border-radius:4px; margin-right:10px; min-width:50px; text-align:center;">${item.category.slice(0,-1)}</span>
-            <span style="font-size:13px; font-weight:bold;">${item.name}</span>
+        <div class="log-item" onclick="openEntry('${item.category}', '${item.name}')" style="display:flex; align-items:center; padding:10px; border-bottom:1px solid #eee; cursor:pointer; background:white; margin-bottom:5px; border-radius:8px;">
+            <span style="font-size:10px; background:#002244; color:white; padding:3px 8px; border-radius:4px; margin-right:15px; font-weight:bold;">${item.category.toUpperCase()}</span>
+            <span style="font-weight:bold;">${item.name}</span>
         </div>
     `).join('');
 
@@ -73,7 +72,11 @@ function renderHome() {
                 <h1>${greeting}, Archivist</h1>
                 <div id="utc-clock">00:00:00 UTC</div>
             </div>
-            <p class="welcome-text">Welcome to FlightInn! We currently have <b>${f + a + ap + r}</b> entries.</p>
+            <p class="welcome-text">
+                Welcome to FlightInn! This is an aviation wiki where we store information about airlines, airplanes, airports, and airroutes!<br>
+                Please make yourself at home here and check out some of our entries!<br>
+                We currently have <b>${f + a + ap + r}</b> total entries for you to read!
+            </p>
         </div>
 
         <div style="display: grid; grid-template-columns: 1fr 300px; gap: 20px; margin-top:20px;">
@@ -88,9 +91,9 @@ function renderHome() {
             </div>
             
             <div class="activity-feed" style="background:white; padding:15px; border-radius:12px; border:1px solid #e2e8f0;">
-                <h3 style="margin-top:0; color:var(--primary);">Recent Logs</h3>
+                <h3 style="margin-top:0; color:#002244;">Recent Logs</h3>
                 <div class="log-container">
-                    ${recentHtml || '<p style="color:#94a3b8; font-size:12px;">No recent activity yet.</p>'}
+                    ${recentHtml || '<p style="color:#94a3b8; font-size:12px;">No recent activity yet. Add an entry (like a 767) to see it here!</p>'}
                 </div>
             </div>
         </div>
