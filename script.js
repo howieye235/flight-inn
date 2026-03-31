@@ -919,19 +919,20 @@ function initGlobalMap() {
     const mapEl = document.getElementById('global-hub-map');
     if (!mapEl || !window.L) return;
 
-    // 1. Clean up existing map instance
+    // 1. Clean up existing map instance if it exists
     var container = L.DomUtil.get('global-hub-map');
     if (container != null) { container._leaflet_id = null; }
 
-    // 2. Initialize Map (Save to window.hubMap so other functions can see it)
-    window.hubMap = L.map('global-hub-map', {
+    // 2. Initialize Map (Centered on a global view)
+    const globalMap = L.map('global-hub-map', {
         zoomControl: false,
         attributionControl: false
     }).setView([20, 0], 2);
 
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(window.hubMap);
+    // 3. Add a "Dark Mode" or "Aviation Style" Tile Layer
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(globalMap);
 
-    // 3. Plot Airports
+    // 4. Plot Airports
     if (flightInnData.Airports) {
         for (let name in flightInnData.Airports) {
             const ap = flightInnData.Airports[name];
@@ -941,21 +942,48 @@ function initGlobalMap() {
                     fillColor: "#00f2ff",
                     color: "#002244",
                     weight: 1,
+                    opacity: 1,
                     fillOpacity: 0.8
-                }).addTo(window.hubMap).bindPopup(`<b>${name}</b>`);
+                }).addTo(globalMap).bindPopup(`<b>${name}</b><br>${ap.maker || ''}`);
             }
         }
     }
 
-    // 4. THE FIX: Correctly nested timeout
+    // 5. Plot Routes (Arcs)
+    if (flightInnData.Routes) {
+        for (let name in flightInnData.Routes) {
+            const rt = flightInnData.Routes[name];
+            if (rt.coords && rt.coords.length === 2) {
+                L.Polyline.Arc(rt.coords[0], rt.coords[1], {
+                    color: 'rgba(0, 242, 255, 0.4)',
+                    weight: 2,
+                    vertices: 50
+                }).addTo(globalMap);
+            }
+        }
+    }
+}
+
+    // 6. CRITICAL: Force the map to "awaken" and fill the whole div
     setTimeout(() => {
-        window.hubMap.invalidateSize();
+        globalMap.invalidateSize();
     }, 500);
-} // <--- THIS CLOSES THE FUNCTION. NOTHING ELSE SHOULD BE INSIDE HERE.
+}
+
+// --- HELPER: WRAPPER FOR NAVIGATION ---
+function goToHome() {
+    renderHome();
+}
 
 // --- FINAL INITIALIZATION ---
+// This ensures your app starts with the Home dashboard visible
 document.addEventListener('DOMContentLoaded', () => {
+    // Small delay to ensure Firebase data has time to arrive
     setTimeout(() => {
         renderHome();
     }, 1000);
 });
+    }, 500);
+    // Fix for Leaflet rendering in a hidden/new div
+    setTimeout(() => hubMap.invalidateSize(), 400);
+}
