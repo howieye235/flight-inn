@@ -38,7 +38,7 @@ function renderHome() {
         <div class="home-hero">
             <div class="hero-info">
                 <h1>${greeting}, Archivist</h1>
-                <p>FlightInn Archive Systems are online. Currently tracking <b>${f + a + ap + r}</b> total data points.</p>
+                <p>Welcome to FlightInn! This is a aviation wiki where we store information about airlines, airplanes, airports, and airroutes! Please make yourself at home here and check out some of our entries! We currently have <b>${f + a + ap + r}</b> total entries for you to read! If you would like to learn to add or edit entries, please check out the tutorial below!</p>
             </div>
             <div class="utc-clock" id="utc-clock">00:00:00 UTC</div>
         </div>
