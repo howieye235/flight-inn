@@ -32,17 +32,15 @@ let flightInnData = {};
 // --- CLOUD SYNC ---
 
 function sync() {
-
     database.ref('flightData').on('value', (s) => {
-
         flightInnData = s.val() || {};
-
-        // This ensures the dashboard updates whenever the data changes
-
-        renderHome(); 
-
+        
+        // Only re-render if the user is actually on the Home/Dashboard view
+        const viewport = document.getElementById('view-port');
+        if (viewport && viewport.querySelector('.welcome-section')) {
+            renderHome();
+        }
     });
-
 }
 
 
