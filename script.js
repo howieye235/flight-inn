@@ -175,6 +175,23 @@ function showTutorial() {
                 </div>
             </section>
 
+<section style="margin-bottom: 40px;">
+    <h2 style="color:var(--primary); border-bottom: 2px solid #eee;">📝 Style Cheat Sheet</h2>
+    <div style="background: white; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0;">
+        <table style="width: 100%; text-align: left; border-collapse: collapse;">
+            <tr style="background: #f8fafc;">
+                <th style="padding: 10px; border: 1px solid #ddd;">Feature</th>
+                <th style="padding: 10px; border: 1px solid #ddd;">Syntax</th>
+            </tr>
+            <tr><td style="padding: 8px; border: 1px solid #ddd;"><b>Bold</b></td><td style="padding: 8px; border: 1px solid #ddd;"><code>**text**</code></td></tr>
+            <tr><td style="padding: 8px; border: 1px solid #ddd;"><i>Italic</i></td><td style="padding: 8px; border: 1px solid #ddd;"><code>*text*</code></td></tr>
+            <tr><td style="padding: 8px; border: 1px solid #ddd;"><u>Underline</u></td><td style="padding: 8px; border: 1px solid #ddd;"><code>&lt;u&gt;text&lt;/u&gt;</code></td></tr>
+            <tr><td style="padding: 8px; border: 1px solid #ddd;">List</td><td style="padding: 8px; border: 1px solid #ddd;"><code>* item</code></td></tr>
+            <tr><td style="padding: 8px; border: 1px solid #ddd;">Table</td><td style="padding: 8px; border: 1px solid #ddd;"><code>| A | B |</code></td></tr>
+        </table>
+    </div>
+</section>
+
             <div style="text-align: center; color: #94a3b8; font-size: 0.8rem; margin-bottom: 50px;">
                 FlightInn System v3.0 | Running on Firebase RTDB
             </div>
