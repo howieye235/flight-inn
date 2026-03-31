@@ -522,49 +522,38 @@ function closeEditor() {
 
 
 function saveEntry() {
-
     // 1. Grab Basic Info
-
     const cat = document.getElementById('entry-category').value;
-
     const name = document.getElementById('entry-name').value;
-
     const img = document.getElementById('entry-image').value;
-
     const info = document.getElementById('entry-info').value;
-
     
+    // 2. Grab Rarity and calculate XP (Defined ONCE)
+    const xpTable = { 
+        "Common": 10, 
+        "Uncommon": 25, 
+        "Rare": 50, 
+        "Epic": 100, 
+        "Legendary": 250 
+    };
+    const rarityEl = document.getElementById('entry-rarity');
+    const selectedRarity = rarityEl ? rarityEl.value : "Common";
+    const pointsVal = xpTable[selectedRarity] || 10;
 
-    // 2. Grab the "Quick Fact" Specs
-
-    const maker = document.getElementById('entry-maker').value;   // Spec A
-
-    const engines = document.getElementById('entry-engines').value; // Spec B
-
-    const era = document.getElementById('entry-era').value;       // Spec C
-
-    const extra = document.getElementById('entry-extra').value;   // Spec D
-
+    // 3. Grab the Specs and Status
+    const maker = document.getElementById('entry-maker').value;
+    const engines = document.getElementById('entry-engines').value;
+    const era = document.getElementById('entry-era').value;
+    const extra = document.getElementById('entry-extra').value;
     const status = document.getElementById('entry-status').value;
 
-
-
     // Validation
-
     if (!name) return alert("Please enter a name for this entry.");
-
     
-
-    // Initialize category if it doesn't exist locally
-
+    // Initialize category if it doesn't exist
     if (!flightInnData[cat]) flightInnData[cat] = {};
 
-
-
-// 1. Define XP values for each Rarity level
-    const xpTable = { "Common": 10, "Uncommon": 25, "Rare": 50, "Epic": 100, "Legendary": 250 };
-    const selectedRarity = document.getElementById('entry-rarity').value; // We will add this ID to your HTML modal next
-
+    // 4. Build the Entry Object
     let entryData = {
         info: info,
         image: img,
@@ -573,91 +562,49 @@ function saveEntry() {
         era: era,
         extra: extra,
         status: status,
-        rarity: selectedRarity, // NEW
-        points: xpTable[selectedRarity] || 10, // NEW
-        hubs: document.getElementById('entry-hubs').value,
-        freqFlyer: document.getElementById('entry-freq').value,
-        subsidiaries: document.getElementById('entry-subs').value,
-        destinations: document.getElementById('entry-destinations').value,
-        hubFor: document.getElementById('entry-hubfor').value,
-        openingDate: document.getElementById('entry-opening').value,
-        runways: document.getElementById('entry-runways').value,
+        rarity: selectedRarity,
+        points: pointsVal,
+        hubs: document.getElementById('entry-hubs').value || "",
+        freqFlyer: document.getElementById('entry-freq').value || "",
+        subsidiaries: document.getElementById('entry-subs').value || "",
+        destinations: document.getElementById('entry-destinations').value || "",
+        hubFor: document.getElementById('entry-hubfor').value || "",
+        openingDate: document.getElementById('entry-opening').value || "",
+        runways: document.getElementById('entry-runways').value || "",
         timestamp: Date.now()
     };
 
-    database.ref('flightData').set(flightInnData).then(() => {
-        closeEditor();
-        renderHome();
-    });
-}
-
-    // 4. Special Logic for Routes (Coordinates)
-
+    // 5. Special Logic for Routes (Coordinates)
     if (cat === "Routes") {
-
         const parts = info.split('|');
-
         if (parts.length >= 3) {
-
             try {
-
                 const start = parts[1].split(',').map(num => parseFloat(num.trim()));
-
                 const end = parts[2].split(',').map(num => parseFloat(num.trim()));
-
-                
-
-                // Update entryData with parsed info and coords
-
                 entryData.info = parts[0].trim();
-
                 entryData.coords = [start, end];
-
             } catch (e) {
-
                 return alert("Coordinate Error! Use: Info | Lat,Lng | Lat,Lng");
-
             }
-
         } else {
-
             return alert("Route format must be: Info | Lat,Lng | Lat,Lng");
-
         }
-
     }
 
-
-
-    // 5. Save to Local Variable and Firebase
-
+    // 6. Save to Local Variable and Firebase
     flightInnData[cat][name] = entryData;
 
-
-
     database.ref('flightData').set(flightInnData)
-
         .then(() => {
-
             console.log(`✅ Successfully saved ${name} to ${cat}`);
-
             closeEditor();
-
-            loadDirectory(cat); // Refresh the list view
-
+            renderHome(); // Refresh the dashboard stats
         })
-
         .catch((error) => {
-
             console.error("❌ Firebase Save Error:", error);
-
-            alert("Failed to save to cloud. Check console.");
-
+            alert("Failed to save to cloud.");
         });
-
 }
-
-
 
 function deleteItem(cat, item) {
 
