@@ -25,12 +25,12 @@ function sync() {
 
 // --- NAVIGATION & DASHBOARD ---
 function renderHome() {
+    // Ensure data exists before counting
     const f = flightInnData.Fleets ? Object.keys(flightInnData.Fleets).length : 0;
     const a = flightInnData.Airlines ? Object.keys(flightInnData.Airlines).length : 0;
     const r = flightInnData.Routes ? Object.keys(flightInnData.Routes).length : 0;
     const ap = flightInnData.Airports ? Object.keys(flightInnData.Airports).length : 0;
 
-    // Get time for the greeting
     const hour = new Date().getHours();
     const greeting = hour < 12 ? "Good Morning" : hour < 18 ? "Good Afternoon" : "Good Evening";
 
@@ -38,43 +38,24 @@ function renderHome() {
         <div class="home-hero">
             <div class="hero-info">
                 <h1>${greeting}, Archivist</h1>
-                <p>Welcome to FlightInn! This is a aviation wiki where we store information about airlines, airplanes, airports, and airroutes! Please make yourself at home here and check out some of our entries! We currently have <b>${f + a + ap + r}</b> total entries for you to read! If you would like to learn to add or edit entries, please check out the tutorial below!</p>
+                <p class="welcome-msg">
+                    Welcome to FlightInn! This is an aviation wiki where we store information about airlines, airplanes, airports, and airroutes! 
+                    Please make yourself at home here and check out some of our entries! 
+                    We currently have <b>${f + a + ap + r}</b> total entries for you to read!
+                </p>
             </div>
             <div class="utc-clock" id="utc-clock">00:00:00 UTC</div>
         </div>
 
-        <div class="dashboard-container">
-            <div class="tutorial-box">
-                <h3><span style="color:var(--accent);">✦</span> New Entry Tutorial</h3>
-                <div class="tutorial-steps">
-                    <p><b>1. Add Data:</b> Click <b>+ ADD NEW</b> to log a new plane or airline.</p>
-                    <p><b>2. Wiki-Links:</b> Use <code>[[Name]]</code> in the article to link entries.</p>
-                    <p><b>3. Multimedia:</b> Use <code>![Desc](URL)</code> to embed your spotting photos.</p>
-                </div>
-            </div>
-
-            <div class="card-grid">
-                <div class="stat-card" onclick="loadDirectory('Fleets')">
-                    <h3>${f}</h3>
-                    <p>Fleets</p>
-                </div>
-                <div class="stat-card" onclick="loadDirectory('Airlines')">
-                    <h3>${a}</h3>
-                    <p>Airlines</p>
-                </div>
-                <div class="stat-card" onclick="loadDirectory('Airports')">
-                    <h3>${ap}</h3>
-                    <p>Airports</p>
-                </div>
-                <div class="stat-card" onclick="loadDirectory('Routes')">
-                    <h3>${r}</h3>
-                    <p>Routes</p>
-                </div>
-            </div>
+        <h2 class="section-title">System Overview</h2>
+        <div class="card-grid">
+            <div class="stat-card" onclick="loadDirectory('Fleets')"><h3>${f}</h3><p>Fleets</p></div>
+            <div class="stat-card" onclick="loadDirectory('Airlines')"><h3>${a}</h3><p>Airlines</p></div>
+            <div class="stat-card" onclick="loadDirectory('Airports')"><h3>${ap}</h3><p>Airports</p></div>
+            <div class="stat-card" onclick="loadDirectory('Routes')"><h3>${r}</h3><p>Routes</p></div>
         </div>
     `;
 
-    // Start the clock
     updateHomeClock();
 }
 
