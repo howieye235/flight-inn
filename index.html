@@ -1,128 +1,237 @@
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>FlightInn | Aviation OS</title>
+
     
+
     <link rel="stylesheet" href="style.css">
+
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
+
+
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
+
+
     <script src="https://cdn.jsdelivr.net/gh/jseppi/Leaflet.Arc@master/Leaflet.Arc.min.js"></script>
 
+
+
     <script>
+
         (function(){L.Polyline.Arc=function(a,b,c){c=c||{};var d=c.vertices||100;var f=L.latLng(a),g=L.latLng(b);var h=Math.PI/180;var i=f.lng*h,j=f.lat*h,k=g.lng*h,l=g.lat*h;var m=[],n=Math.acos(Math.sin(j)*Math.sin(l)+Math.cos(j)*Math.cos(l)*Math.cos(k-i));for(var o=0;o<=d;o++){var p=o/d;var q=Math.sin((1-p)*n)/Math.sin(n),r=Math.sin(p*n)/Math.sin(n);var s=q*Math.cos(j)*Math.cos(i)+r*Math.cos(l)*Math.cos(k);var t=q*Math.cos(j)*Math.sin(i)+r*Math.cos(l)*Math.sin(k);var u=q*Math.sin(j)+r*Math.sin(l);var v=Math.atan2(u,Math.sqrt(Math.pow(s,2)+Math.pow(t,2)));var w=Math.atan2(t,s);m.push([v/h,w/h])}return L.polyline(m,c)}})();
+
     </script>
+
+
 
      <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
+
+
 </head>
+
 <body>
 
+
+
     <div id="sidebar">
-    <h1 onclick="renderHome()" style="cursor:pointer">FlightInn</h1>
-    <div class="nav-links">
-        <button onclick="loadDirectory('Fleets')">Fleets</button>
-        <button onclick="loadDirectory('Airlines')">Airlines</button>
-        <button onclick="loadDirectory('Airports')">Airports</button>
-        <button onclick="loadDirectory('Routes')">Routes</button>
+
+        <h1 onclick="renderHome()">✈️ FlightInn</h1>
+
+        <div class="nav-item" onclick="loadDirectory('Airlines')">Airlines</div>
+
+        <div class="nav-item" onclick="loadDirectory('Fleets')">Fleets</div>
+
+        <div class="nav-item" onclick="loadDirectory('Airports')">Airports</div>
+
+        <div class="nav-item" onclick="loadDirectory('Routes')">Routes</div>
+
+        <hr style="border:0; border-top:1px solid rgba(255,255,255,0.1); margin:20px 0;">
+
+        <button id="add-btn" onclick="openEditor()">+ ADD NEW</button>
+
     </div>
 
-    <div class="sidebar-tutorial">
-        <h4>Quick Guide</h4>
-        <ul>
-            <li><b>[[Link]]</b> to connect pages</li>
-            <li><b>![Desc](URL)</b> for photos</li>
-            <li><b>+ ADD NEW</b> to contribute</li>
-        </ul>
-    </div>
-</div>
+
 
 <div id="main-display" style="flex: 1; display: flex; flex-direction: column;">
+
     
+
     <div id="top-bar" style="padding: 20px; background: white; border-bottom: 1px solid #e2e8f0;">
+
         <input type="text" id="queryInput" onkeyup="searchDatabase()" placeholder="Search Fleets, Airlines, or Routes..." style="width: 100%; max-width: 500px; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
+
     </div>
 
+
+
     <div id="view-port" style="flex: 1; padding: 40px; overflow-y: auto;">
+
         </div>
 
+
+
 </div>
+
+
 
     <div id="modal-overlay" onclick="closeEditor()"></div>
 
+
+
 <div id="editor-modal" class="modal">
+
     <div class="modal-content" style="max-height: 90vh; display: flex; flex-direction: column;">
+
         
+
         <div style="border-bottom: 1px solid #334155; padding-bottom: 10px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
+
             <h3 style="margin: 0; color: #00f2ff;">Log Asset</h3>
+
             <span onclick="closeEditor()" style="cursor:pointer; color:#94a3b8; font-size: 24px;">&times;</span>
+
         </div>
+
+
 
         <div id="modal-scroll-area" style="overflow-y: auto; flex-grow: 1; padding-right: 10px;">
+
             <label>Category</label>
+
             <select id="entry-category">
+
                 <option value="Airlines">Airline</option>
+
                 <option value="Fleets">Fleet/Aircraft</option>
+
                 <option value="Airports">Airport</option>
+
                 <option value="Routes">Route (Map)</option>
+
             </select>
+
+
 
             <label>Name</label>
+
             <input type="text" id="entry-name">
 
+
+
             <label>Image URL</label>
+
             <input type="text" id="entry-image">
 
+
+
             <div class="spec-grid" style="margin-top: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+
                 <div><label>Spec A (Mfr/Country)</label><input type="text" id="entry-maker"></div>
+
                 <div><label>Spec B (Eng/IATA)</label><input type="text" id="entry-engines"></div>
+
                 <div><label>Spec C (Era/Year)</label><input type="text" id="entry-era"></div>
+
                 <div><label>Spec D (Fact/ICAO)</label><input type="text" id="entry-extra"></div>
+
             </div>
+
+
 
             <div id="airline-extra-fields" style="display:none; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; background: rgba(0,242,255,0.05); padding: 10px; border-radius: 8px;">
+
                 <div><label>Hubs</label><input type="text" id="entry-hubs"></div>
+
                 <div><label>Freq Flyer</label><input type="text" id="entry-freq"></div>
+
                 <div><label>Subsidiaries</label><input type="text" id="entry-subs"></div>
+
                 <div><label>Destinations</label><input type="text" id="entry-destinations"></div>
+
             </div>
+
+
 
             <div id="airport-extra-fields" style="display:none; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; background: rgba(0,242,255,0.05); padding: 10px; border-radius: 8px;">
+
                 <div><label>Hub For</label><input type="text" id="entry-hubfor"></div>
+
                 <div><label>Opening Date</label><input type="text" id="entry-opening"></div>
+
                 <div style="grid-column: span 2;"><label>Runways</label><input type="text" id="entry-runways"></div>
+
             </div>
+
+
 
             <label style="margin-top:15px; display:block;">Details / Article Body</label>
+
             <button type="button" onclick="togglePreview()" style="background: transparent; color: #94a3b8; border: 1px solid #334155; padding: 4px 8px; font-size: 10px; cursor: pointer; margin-bottom: 5px; text-transform: uppercase; border-radius: 4px;">👁️ Toggle Preview</button>
+
             <textarea id="entry-info" style="height: 150px;"></textarea>
 
+
+
             <div id="preview-container" style="margin-top: 10px; padding: 15px; background: rgba(0,242,255,0.03); border: 1px dashed #00f2ff55; border-radius: 8px; display: none; margin-bottom: 15px;">
+
             <label style="color: #00f2ff; font-size: 10px; text-transform: uppercase; letter-spacing: 1px;">Live Wiki Preview</label>
+
             <div id="wiki-preview-content" class="wiki-content" style="color: #cbd5e1; font-size: 14px; line-height: 1.6; margin-top: 5px;"></div>
+
             </div>
+
             
+
             <label>Status</label>
+
             <select id="entry-status">
+
                 <option value="Active">🟢 Active</option>
+
                 <option value="Stored">🟠 Stored</option>
+
                 <option value="Retired">🔴 Retired</option>
+
             </select>
+
         </div>
 
+
+
         <div style="display:flex; gap:10px; margin-top:20px; border-top: 1px solid #334155; padding-top: 15px;">
+
             <button onclick="saveEntry()" class="save-btn" style="flex: 2;">Save to Cloud</button>
+
             <button type="button" onclick="closeEditor()" class="cancel-btn" style="flex: 1;">Cancel</button>
+
         </div>
+
     </div>
+
 </div>
+
 </div>
+
         <script src="script.js"></script>
+
 </body>
+
 </html>
