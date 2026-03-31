@@ -476,3 +476,50 @@ body { display: flex; margin: 0; height: 100vh; font-family: 'Inter', sans-serif
     line-height: 1.4;
     margin: 0;
 }
+
+/* The Main Welcome Box */
+.welcome-section {
+    background: #002244; /* Dark Navy */
+    padding: 30px;
+    border-radius: 12px;
+    border-left: 5px solid #00f2ff; /* Cyan accent */
+    margin-bottom: 30px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+.welcome-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.welcome-header h1 {
+    margin: 0;
+    font-size: 1.8rem;
+    color: #fff;
+}
+
+.welcome-text {
+    color: #cbd5e1;
+    line-height: 1.6;
+    font-size: 1.05rem;
+    margin: 0;
+}
+
+#utc-clock {
+    font-family: 'Courier New', monospace;
+    color: #00f2ff;
+    font-weight: bold;
+    background: rgba(0,0,0,0.2);
+    padding: 5px 12px;
+    border-radius: 4px;
+}
+
+.overview-title {
+    color: #002244;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 20px;
+}
