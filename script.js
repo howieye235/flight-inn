@@ -81,6 +81,9 @@ function renderHome() {
 
         <div style="display: grid; grid-template-columns: 1fr 300px; gap: 20px; margin-top:20px;">
             <div>
+                <button onclick="openRandomEntry()" style="width:100%; padding:15px; background:#ffbb00; color:#002244; border:none; border-radius:12px; font-weight:bold; cursor:pointer; margin-bottom:20px; font-size:1.1rem;">
+                    🎲 RANDOM ENTRY
+                </button>
                 <h2 class="overview-title">System Overview</h2>
                 <div class="card-grid">
                     <div class="stat-card" onclick="loadDirectory('Fleets')"><h3>${f}</h3><p>Fleets</p></div>
@@ -966,4 +969,20 @@ function getRecentActivity() {
     
     // Sort by time (newest first) and take the top 5
     return allEntries.sort((a, b) => b.time - a.time).slice(0, 5);
+}
+
+function openRandomEntry() {
+    const categories = Object.keys(flightInnData);
+    if (categories.length === 0) return alert("Archive is empty!");
+
+    // 1. Pick a random category that actually has items
+    const validCats = categories.filter(cat => Object.keys(flightInnData[cat]).length > 0);
+    const randomCat = validCats[Math.floor(Math.random() * validCats.length)];
+
+    // 2. Pick a random item from that category
+    const items = Object.keys(flightInnData[randomCat]);
+    const randomItem = items[Math.floor(Math.random() * items.length)];
+
+    // 3. Open it!
+    openEntry(randomCat, randomItem);
 }
