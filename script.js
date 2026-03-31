@@ -561,9 +561,10 @@ function saveEntry() {
 
 
 
-    // 3. Build the Data Object
+// 1. Define XP values for each Rarity level
+    const xpTable = { "Common": 10, "Uncommon": 25, "Rare": 50, "Epic": 100, "Legendary": 250 };
+    const selectedRarity = document.getElementById('entry-rarity').value; // We will add this ID to your HTML modal next
 
-    // 3. Build the Data Object
     let entryData = {
         info: info,
         image: img,
@@ -572,14 +573,16 @@ function saveEntry() {
         era: era,
         extra: extra,
         status: status,
+        rarity: selectedRarity, // NEW
+        points: xpTable[selectedRarity] || 10, // NEW
         hubs: document.getElementById('entry-hubs').value,
         freqFlyer: document.getElementById('entry-freq').value,
         subsidiaries: document.getElementById('entry-subs').value,
         destinations: document.getElementById('entry-destinations').value,
         hubFor: document.getElementById('entry-hubfor').value,
         openingDate: document.getElementById('entry-opening').value,
-        runways: document.getElementById('entry-runways').value, // Add a comma here!
-        timestamp: Date.now() // <--- PASTE THIS LINE HERE
+        runways: document.getElementById('entry-runways').value,
+        timestamp: Date.now()
     };
 
     // 4. Special Logic for Routes (Coordinates)
