@@ -58,31 +58,46 @@ function renderHome() {
     const hour = new Date().getHours();
     const greeting = hour < 12 ? "Good Morning" : hour < 18 ? "Good Afternoon" : "Good Evening";
 
+    // Get the recent logs
+    const recent = getRecentActivity();
+    let recentHtml = recent.map(item => `
+        <div class="log-item" onclick="openEntry('${item.category}', '${item.name}')" style="display:flex; align-items:center; padding:8px; border-bottom:1px solid #eee; cursor:pointer;">
+            <span style="font-size:9px; background:var(--primary); color:white; padding:2px 5px; border-radius:4px; margin-right:10px; min-width:50px; text-align:center;">${item.category.slice(0,-1)}</span>
+            <span style="font-size:13px; font-weight:bold;">${item.name}</span>
+        </div>
+    `).join('');
+
     document.getElementById('view-port').innerHTML = `
         <div class="welcome-section">
             <div class="welcome-header">
                 <h1>${greeting}, Archivist</h1>
                 <div id="utc-clock">00:00:00 UTC</div>
             </div>
-            <p class="welcome-text">
-                Welcome to FlightInn! This is an aviation wiki where we store information about airlines, airplanes, airports, and airroutes! 
-                Please make yourself at home here and check out some of our entries! 
-                We currently have <b>${f + a + ap + r}</b> total entries for you to read! 
-            </p>
+            <p class="welcome-text">Welcome to FlightInn! We currently have <b>${f + a + ap + r}</b> entries.</p>
         </div>
 
-        <h2 class="overview-title">System Overview</h2>
-        <div class="card-grid">
-            <div class="stat-card" onclick="loadDirectory('Fleets')"><h3>${f}</h3><p>Fleets</p></div>
-            <div class="stat-card" onclick="loadDirectory('Airlines')"><h3>${a}</h3><p>Airlines</p></div>
-            <div class="stat-card" onclick="loadDirectory('Airports')"><h3>${ap}</h3><p>Airports</p></div>
-            <div class="stat-card" onclick="loadDirectory('Routes')"><h3>${r}</h3><p>Routes</p></div>
+        <div style="display: grid; grid-template-columns: 1fr 300px; gap: 20px; margin-top:20px;">
+            <div>
+                <h2 class="overview-title">System Overview</h2>
+                <div class="card-grid">
+                    <div class="stat-card" onclick="loadDirectory('Fleets')"><h3>${f}</h3><p>Fleets</p></div>
+                    <div class="stat-card" onclick="loadDirectory('Airlines')"><h3>${a}</h3><p>Airlines</p></div>
+                    <div class="stat-card" onclick="loadDirectory('Airports')"><h3>${ap}</h3><p>Airports</p></div>
+                    <div class="stat-card" onclick="loadDirectory('Routes')"><h3>${r}</h3><p>Routes</p></div>
+                </div>
+            </div>
+            
+            <div class="activity-feed" style="background:white; padding:15px; border-radius:12px; border:1px solid #e2e8f0;">
+                <h3 style="margin-top:0; color:var(--primary);">Recent Logs</h3>
+                <div class="log-container">
+                    ${recentHtml || '<p style="color:#94a3b8; font-size:12px;">No recent activity yet.</p>'}
+                </div>
+            </div>
         </div>
     `;
 
     updateHomeClock();
 }
-
 
 
 function updateHomeClock() {
@@ -525,38 +540,23 @@ function saveEntry() {
 
     // 3. Build the Data Object
 
+    // 3. Build the Data Object
     let entryData = {
-
         info: info,
-
         image: img,
-
         maker: maker,
-
         engines: engines,
-
         era: era,
-
         extra: extra,
-
         status: status,
-
-        // CORRECTED FORMAT: Key: Value,
-
         hubs: document.getElementById('entry-hubs').value,
-
         freqFlyer: document.getElementById('entry-freq').value,
-
         subsidiaries: document.getElementById('entry-subs').value,
-
         destinations: document.getElementById('entry-destinations').value,
-
         hubFor: document.getElementById('entry-hubfor').value,
-
         openingDate: document.getElementById('entry-opening').value,
-
-        runways: document.getElementById('entry-runways').value
-
+        runways: document.getElementById('entry-runways').value, // Add a comma here!
+        timestamp: Date.now() // <--- PASTE THIS LINE HERE
     };
 
     // 4. Special Logic for Routes (Coordinates)
@@ -1043,4 +1043,21 @@ function updatePreview() {
 
     }
 
+}
+
+// --- ACTIVITY FEED LOGIC ---
+function getRecentActivity() {
+    let allEntries = [];
+    ['Airlines', 'Fleets', 'Airports', 'Routes'].forEach(cat => {
+        if (flightInnData[cat]) {
+            Object.keys(flightInnData[cat]).forEach(name => {
+                allEntries.push({
+                    name: name,
+                    category: cat,
+                    time: flightInnData[cat][name].timestamp || 0
+                });
+            });
+        }
+    });
+    return allEntries.sort((a, b) => b.time - a.time).slice(0, 5);
 }
