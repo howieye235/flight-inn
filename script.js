@@ -881,183 +881,86 @@ function wikiLinker(text) {
 
 
 
-function toggleExtraFields(category) {
-
-    const airlineFields = document.getElementById('airline-extra-fields');
-
-    const airportFields = document.getElementById('airport-extra-fields');
-
-    
-
-    if (airlineFields) airlineFields.style.display = (category === "Airlines") ? "grid" : "none";
-
-    if (airportFields) airportFields.style.display = (category === "Airports") ? "grid" : "none";
-
-}
-
-
-
-// Attach it to the category dropdown in the modal
-
-// Remove the standalone event listener from the bottom and 
-
-// incorporate it into your sync or a dedicated init function.
-
-
-
 // --- DYNAMIC UI LOGIC ---
 
-
-
 function toggleExtraFields(category) {
-
     const airlineFields = document.getElementById('airline-extra-fields');
-
     const airportFields = document.getElementById('airport-extra-fields');
-
     
-
     // Reset both to hidden first
-
     if (airlineFields) airlineFields.style.display = "none";
-
     if (airportFields) airportFields.style.display = "none";
-
     
-
     // Only show the relevant one using Grid for a cleaner look
-
     if (category === "Airlines" && airlineFields) airlineFields.style.display = "grid";
-
     if (category === "Airports" && airportFields) airportFields.style.display = "grid";
-
 }
-
-
 
 // This function ensures the elements exist before adding listeners
-
 function initEditor() {
-
     const categoryDropdown = document.getElementById('entry-category');
-
     if (categoryDropdown) {
-
         categoryDropdown.addEventListener('change', (e) => {
-
             toggleExtraFields(e.target.value);
-
         });
-
-        document.getElementById('entry-info').addEventListener('input', updatePreview);
-
-        
-
+        const infoInput = document.getElementById('entry-info');
+        if (infoInput) {
+            infoInput.addEventListener('input', updatePreview);
+        }
         console.log("✅ Editor Listeners Initialized");
-
     }
-
 }
 
-
-
 // Update your window onload to trigger both sync and init
-
 window.onload = () => {
-
     sync();
-
     initEditor(); 
-
+    updateHomeClock(); // Start the clock immediately
 };
-
-
 
 // --- PREVIEW SYSTEM ---
 
-
-
-// This function shows/hides the preview box
-
 function togglePreview() {
-
     const container = document.getElementById('preview-container');
-
-    // Check if it's hidden or doesn't have a display style set yet
-
+    if (!container) return;
     const isHidden = !container.style.display || container.style.display === 'none';
-
-    
-
     container.style.display = isHidden ? 'block' : 'none';
-
-    
-
-    // If we just opened it, update the content immediately
-
-    if (isHidden) {
-
-        updatePreview();
-
-    }
-
+    if (isHidden) { updatePreview(); }
 }
 
-
-
-// This function converts your [[WikiLinks]] into clickable spans in the preview
-
 function updatePreview() {
-
     const infoInput = document.getElementById('entry-info');
-
     const previewArea = document.getElementById('wiki-preview-content');
-
     
-
     if (infoInput && previewArea) {
-
         let rawText = infoInput.value;
-
-
-
-        // 1. First, process your custom [[WikiLinks]]
-
         let linkedText = wikiLinker(rawText);
-
-
-
-        // 2. Then, let 'Marked' turn Markdown into HTML (Bold, Tables, etc.)
-
-        // We use 'marked.parse' here
-
         if (typeof marked !== 'undefined') {
-
             previewArea.innerHTML = marked.parse(linkedText);
-
         } else {
-
-            previewArea.innerHTML = linkedText; // Fallback if library fails
-
+            previewArea.innerHTML = linkedText;
         }
-
     }
-
 }
 
 // --- ACTIVITY FEED LOGIC ---
 function getRecentActivity() {
     let allEntries = [];
-    ['Airlines', 'Fleets', 'Airports', 'Routes'].forEach(cat => {
-        if (flightInnData[cat]) {
+    const categories = ['Airlines', 'Fleets', 'Airports', 'Routes'];
+    
+    categories.forEach(cat => {
+        if (flightInnData && flightInnData[cat]) {
             Object.keys(flightInnData[cat]).forEach(name => {
+                const entry = flightInnData[cat][name];
                 allEntries.push({
                     name: name,
                     category: cat,
-                    time: flightInnData[cat][name].timestamp || 0
+                    time: entry.timestamp || 0
                 });
             });
         }
     });
+    
+    // Sort by time (newest first) and take the top 5
     return allEntries.sort((a, b) => b.time - a.time).slice(0, 5);
 }
