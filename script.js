@@ -585,6 +585,12 @@ function saveEntry() {
         timestamp: Date.now()
     };
 
+    database.ref('flightData').set(flightInnData).then(() => {
+        closeEditor();
+        renderHome();
+    });
+}
+
     // 4. Special Logic for Routes (Coordinates)
 
     if (cat === "Routes") {
@@ -1073,4 +1079,35 @@ function renderCompareCard(name, data, cat) {
             </div>
         </div>
     `;
+}
+
+function renderSpotterChecklist() {
+    let totalXP = 0;
+    let html = `
+        <div style="background: linear-gradient(135deg, #002244 0%, #004488 100%); color:white; padding:30px; border-radius:15px; margin-bottom:20px;">
+            <h1 style="margin:0;">📸 Spotter's Log</h1>
+            <p id="total-xp-display" style="font-size:1.5rem; color:#00f2ff; font-weight:bold; margin-top:10px;">Calculating XP...</p>
+        </div>
+        <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap:15px;">
+    `;
+    
+    // Look through your Fleets category for everything you've added
+    const fleet = flightInnData.Fleets || {};
+    
+    for (let name in fleet) {
+        const p = fleet[name];
+        const xp = p.points || 10;
+        totalXP += xp;
+
+        html += `
+            <div style="background:white; padding:15px; border-radius:12px; border:2px solid #e2e8f0; border-left: 5px solid #00f2ff;">
+                <div style="font-size:0.7rem; font-weight:bold; color:#64748b; text-transform:uppercase;">${p.rarity || 'Common'}</div>
+                <b style="color:#002244; font-size:1.1rem;">${name}</b>
+                <div style="margin-top:5px; font-size:0.9rem; color:#2563eb;">+${xp} XP Collected</div>
+            </div>
+        `;
+    }
+
+    document.getElementById('view-port').innerHTML = html + `</div>`;
+    document.getElementById('total-xp-display').innerText = `Total Score: ${totalXP} XP`;
 }
