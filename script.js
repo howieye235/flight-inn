@@ -91,6 +91,7 @@ function renderHome() {
                 </button>
                 
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 15px;">
+<div id="global-hub-map" style="height:300px; width:100%; border-radius:12px; margin-bottom:20px; border:2px solid #002244; box-shadow: inset 0 0 10px rgba(0,0,0,0.1);"></div>
     <h2 class="overview-title" style="margin:0;">System Overview</h2>
     <div style="font-size:0.8rem; background:#e2e8f0; padding:5px 12px; border-radius:20px; color:#475569;">
         <b>Compare:</b> 
@@ -118,6 +119,7 @@ function renderHome() {
     `;
 
     updateHomeClock();
+    initGlobalMap(); // Trigger the pins!
 }
 
 
@@ -1066,4 +1068,30 @@ function renderSpotterChecklist() {
 
     document.getElementById('view-port').innerHTML = html + `</div>`;
     document.getElementById('total-xp-display').innerText = `Total Score: ${totalXP} XP`;
+}
+
+function initGlobalMap() {
+    const mapDiv = document.getElementById('global-hub-map');
+    if (!mapDiv || !flightInnData.Airports) return;
+
+    // Use L.map (Leaflet) which you're already using for Routes
+    const hubMap = L.map('global-hub-map').setView([20, 0], 2);
+
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png').addTo(hubMap);
+
+    // Loop through your Airports and drop pins
+    Object.keys(flightInnData.Airports).forEach(name => {
+        const data = flightInnData.Airports[name];
+        // We'll look for coordinates in the 'extra' field (e.g., "52.17, -106.68")
+        if (data.extra && data.extra.includes(',')) {
+            const coords = data.extra.split(',').map(n => parseFloat(n.trim()));
+            if (coords.length === 2 && !isNaN(coords[0])) {
+                L.marker(coords).addTo(hubMap)
+                 .bindPopup(`<b style="color:#002244;">${name}</b><br><button onclick="openEntry('Airports', '${name}')" style="cursor:pointer; background:#002244; color:white; border:none; padding:3px 8px; border-radius:4px; margin-top:5px;">Open Archive</button>`);
+            }
+        }
+    });
+
+    // Fix for Leaflet rendering in a hidden/new div
+    setTimeout(() => hubMap.invalidateSize(), 400);
 }
