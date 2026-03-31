@@ -72,10 +72,10 @@ function renderHome() {
                 <h1>${greeting}, Archivist</h1>
                 <div id="utc-clock">00:00:00 UTC</div>
             </div>
-            <p class="welcome-text">
+            <p style="margin-top:10px; line-height:1.6; color:#334155;">
                 Welcome to FlightInn! This is an aviation wiki where we store information about airlines, airplanes, airports, and airroutes!<br>
                 Please make yourself at home here and check out some of our entries!<br>
-                We currently have <b>${f + a + ap + r}</b> total entries for you to read!
+                We currently have <b>${(f || 0) + (a || 0) + (ap || 0) + (r || 0)}</b> total entries for you to read!
             </p>
         </div>
 
