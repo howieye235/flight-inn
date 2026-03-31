@@ -1,25 +1,40 @@
+
 // --- CONFIG & INIT ---
 
 const firebaseConfig = {
+
     apiKey: "AIzaSyCkid-KKHmHUUuR0oikBjPGMkha0FJB5Dc",
+
     authDomain: "flightinn-cb4ba.firebaseapp.com",
+
     projectId: "flightinn-cb4ba",
+
     storageBucket: "flightinn-cb4ba.firebasestorage.app",
+
     messagingSenderId: "272507283961",
+
     appId: "1:272507283961:web:e935c63963d1c8dde63528",
+
     databaseURL: "https://flightinn-cb4ba-default-rtdb.firebaseio.com"
 
 };
 
+
+
 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+
 const database = firebase.database();
+
 let flightInnData = {};
+
+
 
 // --- CLOUD SYNC ---
 
 function sync() {
     database.ref('flightData').on('value', (s) => {
         flightInnData = s.val() || {};
+        
         // Only re-render if the user is actually on the Home/Dashboard view
         const viewport = document.getElementById('view-port');
         if (viewport && viewport.querySelector('.welcome-section')) {
@@ -28,96 +43,96 @@ function sync() {
     });
 }
 
+
+
+// --- NAVIGATION & DASHBOARD ---
+
 function renderHome() {
-    // 1. Data Crunching
+    // 1. Calculate stats with safety fallbacks
     const f = (flightInnData.Fleets && Object.keys(flightInnData.Fleets).length) || 0;
     const a = (flightInnData.Airlines && Object.keys(flightInnData.Airlines).length) || 0;
     const r = (flightInnData.Routes && Object.keys(flightInnData.Routes).length) || 0;
     const ap = (flightInnData.Airports && Object.keys(flightInnData.Airports).length) || 0;
     const total = f + a + r + ap;
 
+    // 2. Greeting Logic
     const hour = new Date().getHours();
     const greeting = hour < 12 ? "Good Morning" : hour < 18 ? "Good Afternoon" : "Good Evening";
 
-    // 2. Activity Feed (Shows the last 5 things you archived)
-    const recent = getRecentActivity(); 
+    // 3. Activity Feed Logic
+    const recent = getRecentActivity();
     let recentHtml = recent.map(item => `
-        <div class="log-item" onclick="openEntry('${item.category}', '${item.name}')" style="display:flex; align-items:center; padding:12px; border-bottom:1px solid #edf2f7; cursor:pointer; background:white; transition:0.2s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='white'">
-            <div style="width:4px; height:25px; background:#002244; margin-right:12px; border-radius:2px;"></div>
-            <div style="flex-grow:1;">
-                <div style="font-size:10px; color:#64748b; text-transform:uppercase; font-weight:bold;">${item.category}</div>
-                <div style="font-weight:bold; color:#002244;">${item.name}</div>
-            </div>
-            <span style="font-size:18px; color:#cbd5e1;">›</span>
+        <div class="log-item" onclick="openEntry('${item.category}', '${item.name}')" style="display:flex; align-items:center; padding:10px; border-bottom:1px solid #eee; cursor:pointer; background:white; margin-bottom:5px; border-radius:8px;">
+            <span style="font-size:10px; background:#002244; color:white; padding:3px 8px; border-radius:4px; margin-right:15px; font-weight:bold;">${item.category.toUpperCase()}</span>
+            <span style="font-weight:bold; color:#002244;">${item.name}</span>
         </div>
     `).join('');
 
-    // 3. Main UI Layout
+    // 4. Update the Viewport
     document.getElementById('view-port').innerHTML = `
-        <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:20px; border-bottom:2px solid #002244; padding-bottom:10px;">
-            <div>
-                <h1 style="margin:0; color:#002244; font-size:2rem;">${greeting}, Archivist</h1>
-                <p style="margin:5px 0 0; color:#64748b;">System online | <b style="color:#002244;">${total}</b> entries indexed</p>
+        <div class="welcome-section" style="background:#f1f5f9; padding:30px; border-radius:15px; border-left: 5px solid #002244; margin-bottom:20px;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h1 style="margin:0; color:#002244;">${greeting}, Archivist</h1>
+                <div id="utc-clock" style="font-family:monospace; background:#002244; color:#00f2ff; padding:5px 12px; border-radius:6px; font-weight:bold;">00:00:00 UTC</div>
             </div>
-            <div id="utc-clock" style="font-family:monospace; background:#002244; color:#00f2ff; padding:8px 15px; border-radius:6px; font-weight:bold; font-size:1.2rem; letter-spacing:1px;">00:00:00 UTC</div>
+            <p style="margin-top:15px; line-height:1.6; color:#334155; font-size:1.1rem;">
+                Welcome to <b>FlightInn</b>! This is your central hub for archiving aviation history. 
+                Explore our database of airlines, aircraft, and routes below!
+            </p>
+            <div style="margin-top:10px; font-size:0.9rem; color:#64748b;">
+                Currently indexing <b style="color:#002244;">${total}</b> historical entries.
+            </div>
         </div>
 
-        <div id="global-hub-map" style="height:300px; width:100%; border-radius:12px; margin-bottom:25px; border:1px solid #cbd5e1; background:#f1f5f9; position:relative; overflow:hidden;">
-             <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); color:#cbd5e1; text-align:center;">
-                <p style="margin:0; font-size:40px;">🌐</p>
-                <p style="margin:0; font-size:12px; font-weight:bold;">GLOBAL HUB MONITOR</p>
-             </div>
-        </div>
-
-        <div style="display: grid; grid-template-columns: 1fr 320px; gap: 25px;">
+        <div style="display: grid; grid-template-columns: 1fr 300px; gap: 20px;">
             <div>
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:25px;">
-                    <button onclick="openRandomEntry()" style="padding:20px; background:#ffbb00; color:#002244; border:none; border-radius:12px; font-weight:900; cursor:pointer; font-size:1rem; box-shadow: 0 4px 0 #cc9900;">🎲 EXPLORE DATABASE</button>
-                    <button onclick="openEditor()" style="padding:20px; background:#002244; color:white; border:none; border-radius:12px; font-weight:900; cursor:pointer; font-size:1rem; box-shadow: 0 4px 0 #001122;">+ ADD NEW ENTRY</button>
-                </div>
+                <button onclick="openRandomEntry()" style="width:100%; padding:15px; background:#ffbb00; color:#002244; border:none; border-radius:12px; font-weight:bold; cursor:pointer; margin-bottom:20px; font-size:1.1rem; box-shadow: 0 4px 0 #cc9900; transition:0.1s;" onmousedown="this.style.transform='translateY(2px)'; this.style.boxShadow='0 2px 0 #cc9900'" onmouseup="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 0 #cc9900'">
+                    🎲 DISCOVER RANDOM ENTRY
+                </button>
+                
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 15px;">
+    <h2 class="overview-title" style="margin:0;">System Overview</h2>
+    <div style="font-size:0.8rem; background:#e2e8f0; padding:5px 12px; border-radius:20px; color:#475569;">
+        <b>Compare:</b> 
+        <span onclick="openCompare('Fleets')" style="color:#2563eb; cursor:pointer; margin-left:8px; font-weight:bold;">Fleets</span> | 
+        <span onclick="openCompare('Airlines')" style="color:#2563eb; cursor:pointer; font-weight:bold;">Airlines</span> |
+        <span onclick="openCompare('Airports')" style="color:#2563eb; cursor:pointer; font-weight:bold;">Airports</span>
+    </div>
+</div>
 
-                <h2 style="font-size:1rem; color:#64748b; text-transform:uppercase; letter-spacing:1px; margin-bottom:15px;">Fleet Statistics</h2>
-                <div class="card-grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap:15px;">
-                    <div class="stat-card" onclick="loadDirectory('Fleets')" style="background:white; padding:20px; border-radius:12px; border:1px solid #e2e8f0; text-align:center; cursor:pointer; border-top:5px solid #3b82f6;">
-                        <h3 style="margin:0; font-size:1.8rem; color:#002244;">${f}</h3>
-                        <p style="margin:5px 0 0; color:#64748b; font-weight:bold;">Fleets</p>
-                    </div>
-                    <div class="stat-card" onclick="loadDirectory('Airlines')" style="background:white; padding:20px; border-radius:12px; border:1px solid #e2e8f0; text-align:center; cursor:pointer; border-top:5px solid #10b981;">
-                        <h3 style="margin:0; font-size:1.8rem; color:#002244;">${a}</h3>
-                        <p style="margin:5px 0 0; color:#64748b; font-weight:bold;">Airlines</p>
-                    </div>
-                    <div class="stat-card" onclick="loadDirectory('Airports')" style="background:white; padding:20px; border-radius:12px; border:1px solid #e2e8f0; text-align:center; cursor:pointer; border-top:5px solid #f59e0b;">
-                        <h3 style="margin:0; font-size:1.8rem; color:#002244;">${ap}</h3>
-                        <p style="margin:5px 0 0; color:#64748b; font-weight:bold;">Airports</p>
-                    </div>
-                    <div class="stat-card" onclick="loadDirectory('Routes')" style="background:white; padding:20px; border-radius:12px; border:1px solid #e2e8f0; text-align:center; cursor:pointer; border-top:5px solid #8b5cf6;">
-                        <h3 style="margin:0; font-size:1.8rem; color:#002244;">${r}</h3>
-                        <p style="margin:5px 0 0; color:#64748b; font-weight:bold;">Routes</p>
-                    </div>
+                <div class="card-grid">
+                    <div class="stat-card" onclick="loadDirectory('Fleets')"><h3>${f}</h3><p>Fleets</p></div>
+                    <div class="stat-card" onclick="loadDirectory('Airlines')"><h3>${a}</h3><p>Airlines</p></div>
+                    <div class="stat-card" onclick="loadDirectory('Airports')"><h3>${ap}</h3><p>Airports</p></div>
+                    <div class="stat-card" onclick="loadDirectory('Routes')"><h3>${r}</h3><p>Routes</p></div>
                 </div>
             </div>
             
-            <div style="background:white; border-radius:12px; border:1px solid #e2e8f0; display:flex; flex-direction:column; overflow:hidden;">
-                <div style="background:#f8fafc; padding:15px; border-bottom:1px solid #e2e8f0;">
-                    <h3 style="margin:0; font-size:0.9rem; color:#002244;">RECENT ACTIVITY</h3>
-                </div>
-                <div style="flex-grow:1;">
-                    ${recentHtml || '<div style="padding:40px; text-align:center; color:#94a3b8; font-size:13px;">No entries found.<br>Start by adding an MD-11 or DC-10!</div>'}
+            <div class="activity-feed" style="background:#fff; padding:15px; border-radius:12px; border:1px solid #e2e8f0; height: fit-content;">
+                <h3 style="margin-top:0; color:#002244; border-bottom:2px solid #f1f5f9; padding-bottom:10px;">Recent Logs</h3>
+                <div class="log-container">
+                    ${recentHtml || '<p style="color:#94a3b8; font-size:12px; text-align:center; padding:20px;">No logs found.<br>Add an entry to start tracking!</p>'}
                 </div>
             </div>
         </div>
     `;
 
     updateHomeClock();
-    setTimeout(() => { initGlobalMap(); }, 300);
 }
 
+
 function updateHomeClock() {
+
     const clockEl = document.getElementById('utc-clock');
+
     if (!clockEl) return;
+
     const now = new Date();
+
     clockEl.innerText = now.toISOString().substr(11, 8) + " UTC";
+
     setTimeout(updateHomeClock, 1000);
+
 }
 
 function showTutorial() {
@@ -221,124 +236,261 @@ function showTutorial() {
 }
 
 function loadDirectory(cat) {
+
     let html = `<h2>${cat}</h2><div class="list-container">`;
+
     if (flightInnData[cat]) {
+
         for (let item in flightInnData[cat]) {
+
             html += `<div class="list-item" onclick="openEntry('${cat}', '${item}')">${item}</div>`;
+
         }
+
     }
+
     document.getElementById('view-port').innerHTML = html + `</div>`;
+
 }
 
+
+
 function openEntry(cat, item) {
+
     const data = flightInnData[cat][item];
+
     const img = data.image || "https://placehold.co/800x400?text=No+Photo";
+
+    
+
     let factsHtml = ""; 
+
     const status = data.status || "Active";
+
     const statusColor = status === "Active" ? "#00ff88" : (status === "Retired" ? "#ff4444" : "#ffbb00");
+
+
+
     // 1. Sidebar Rows for non-Route categories
+
    if (cat === "Airlines") {
+
         factsHtml = `
+
             <div class="sidebar-row"><span class="s-label">Country</span><span class="s-value">${data.maker || "—"}</span></div>
+
             <div class="sidebar-row"><span class="s-label">Fleet Size</span><span class="s-value">${data.engines || "—"}</span></div>
+
             <div class="sidebar-row"><span class="s-label">Hubs</span><span class="s-value">${data.hubs || "—"}</span></div>
+
             <div class="sidebar-row"><span class="s-label">Frequent Flyer</span><span class="s-value">${data.freqFlyer || "—"}</span></div>
+
             <div class="sidebar-row"><span class="s-label">Subsidiaries</span><span class="s-value">${data.subsidiaries || "—"}</span></div>
+
             <div class="sidebar-row"><span class="s-label">Destinations</span><span class="s-value">${data.destinations || "—"}</span></div>
+
             <div class="sidebar-row"><span class="s-label">Alliance</span><span class="s-value">${data.extra || "—"}</span></div>
+
             <div class="sidebar-row"><span class="s-label">Established</span><span class="s-value">${data.era || "—"}</span></div>`;
+
     } else if (cat === "Airports") {
+
         factsHtml = `
+
             <div class="sidebar-row"><span class="s-label">City/Country</span><span class="s-value">${data.maker || "—"}</span></div>
+
             <div class="sidebar-row"><span class="s-label">IATA</span><span class="s-value">${data.engines || "—"}</span></div>
+
             <div class="sidebar-row"><span class="s-label">ICAO</span><span class="s-value">${data.extra || "—"}</span></div>
+
             <div class="sidebar-row"><span class="s-label">Hub For</span><span class="s-value">${data.hubFor || "—"}</span></div>
+
             <div class="sidebar-row"><span class="s-label">Opening Date</span><span class="s-value">${data.openingDate || "—"}</span></div>
+
             <div class="sidebar-row"><span class="s-label">Runways</span><span class="s-value">${data.runways || "—"}</span></div>
+
             <div class="sidebar-row"><span class="s-label">Era</span><span class="s-value">${data.era || "—"}</span></div>`;
+
     } else if (cat === "Fleets") {
+
         factsHtml = `
+
             <div class="sidebar-row"><span class="s-label">Manufacturer</span><span class="s-value">${data.maker || "—"}</span></div>
+
             <div class="sidebar-row"><span class="s-label">Engines</span><span class="s-value">${data.engines || "—"}</span></div>
+
             <div class="sidebar-row"><span class="s-label">Era</span><span class="s-value">${data.era || "—"}</span></div>
+
             <div class="sidebar-row"><span class="s-label">Purpose</span><span class="s-value">${data.extra || "—"}</span></div>`;
+
     }
+
+
+
+    // 2. The Wiki Sidebar Layout
+
     // 2. The Wiki Sidebar Layout (Updated to match your CSS)
+
 let html = `
+
     <button class="back-btn" onclick="loadDirectory('${cat}')">← Back</button>
+
+    
+
     <div class="hero" style="background-image: url('${img}')">
+
         <div class="hero-text">
+
             <h1>${item}</h1>
+
             <div class="quick-facts">
+
                 <div class="fact-badge">${status}</div>
+
                 <div class="fact-badge">${cat.slice(0, -1)}</div>
+
             </div>
+
         </div>
+
     </div>
 
+
+
     <div class="wiki-layout">
+
         <div class="article-body">
+
             <h2 class="section-header">Reference Article</h2>
+
             <div class="wiki-content">
+
                 ${typeof marked !== 'undefined' ? marked.parse(wikiLinker(data.info || "No detailed information provided.")) : wikiLinker(data.info || "")}
+
             </div>
 
+            
+
             <div class="article-actions">
+
                 <button onclick="editItem('${cat}', '${item}')" class="edit-btn">Edit Article</button>
+
                 <button onclick="deleteItem('${cat}', '${item}')" class="delete-btn" style="background:#ef4444; color:white;">Delete Entry</button>
+
             </div>
+
         </div>
+
         
+
         <aside class="wiki-sidebar">
+
             <div class="sidebar-header">Quick Facts</div>
+
             <div class="sidebar-content">
+
                 ${factsHtml}
+
                 <div class="sidebar-row">
+
                     <span class="s-label">Status</span>
+
                     <span class="s-value" style="color:${statusColor}; font-weight:bold;">${status}</span>
+
                 </div>
+
             </div>
+
         </aside>
+
     </div>`;
+
+
 
     // 3. YOUR ORIGINAL ROUTE LOGIC (DO NOT CHANGE)
 
     if (cat === "Routes" && data.coords) {
+
         document.getElementById('view-port').innerHTML = html + `<div id="map" style="height:450px; width:100%; border-radius:12px; margin-top:20px;"></div>`;
 
+        
+
         setTimeout(() => {
+
             var container = L.DomUtil.get('map');
+
             if (container != null) { container._leaflet_id = null; }
+
+
+
             var m = L.map('map').setView(data.coords[0], 3);
+
             L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(m);
+
+
+
             var flightPath = L.Polyline.Arc(data.coords[0], data.coords[1], {
+
                 color: '#00f2ff', weight: 4, vertices: 100
+
             }).addTo(m);
+
+
+
             const codes = item.split('-'); 
+
             if(codes.length === 2) {
+
                 [data.coords[0], data.coords[1]].forEach((pos, i) => {
+
                     L.marker(pos, {
+
                         icon: L.divIcon({
+
                             className: 'no-box',
+
                             html: `<span class="badge-style">${codes[i].trim()}</span>`, 
+
                             iconSize: [0, 0], 
+
                             iconAnchor: [20, 10]
+
                         })
+
                     }).addTo(m);
+
                 });
+
             }
+
             m.invalidateSize();
+
             m.fitBounds(flightPath.getBounds(), {padding: [50, 50]});
+
         }, 400);
+
     } else {
+
         document.getElementById('view-port').innerHTML = html;
+
     }
+
 }
+
+
+
 // --- ACTIONS & SEARCH ---
+
 function openEditor() {
+
     const modal = document.getElementById('editor-modal');
+
     const overlay = document.getElementById('modal-overlay');
+
+
+
     modal.classList.add('active');
+
     overlay.style.display = 'block';
 
 
@@ -420,16 +572,6 @@ function saveEntry() {
         timestamp: Date.now()
     };
 
-        // Inside saveEntry() ...
-if (cat === "Airports") {
-    const coordInput = document.getElementById('entry-extra').value; // We can repurpose the "Extra" box for Lat, Lng
-    if (coordInput.includes(',')) {
-        const parts = coordInput.split(',').map(num => parseFloat(num.trim()));
-        if (parts.length === 2 && !isNaN(parts[0])) {
-            entryData.coords = parts; 
-        }
-    }
-}
     // 5. Special Logic for Routes (Coordinates)
     if (cat === "Routes") {
         const parts = info.split('|');
@@ -790,14 +932,15 @@ function getRecentActivity() {
                 allEntries.push({
                     name: name,
                     category: cat,
-                    timestamp: entry.timestamp || 0
+                    time: entry.timestamp || 0
                 });
             });
         }
-    }); // This closing bracket was likely missing
-
-    return allEntries.sort((a, b) => b.timestamp - a.timestamp).slice(0, 5);
-} // This one too
+    });
+    
+    // Sort by time (newest first) and take the top 5
+    return allEntries.sort((a, b) => b.time - a.time).slice(0, 5);
+}
 
 function openRandomEntry() {
     const categories = ['Airlines', 'Fleets', 'Airports', 'Routes'];
@@ -913,77 +1056,4 @@ function renderSpotterChecklist() {
 
     document.getElementById('view-port').innerHTML = html + `</div>`;
     document.getElementById('total-xp-display').innerText = `Total Score: ${totalXP} XP`;
-}
-
-function initGlobalMap() {
-    const mapEl = document.getElementById('global-hub-map');
-    if (!mapEl || !window.L) return;
-
-    // 1. Clean up existing map instance if it exists
-    var container = L.DomUtil.get('global-hub-map');
-    if (container != null) { container._leaflet_id = null; }
-
-    // 2. Initialize Map (Centered on a global view)
-    const globalMap = L.map('global-hub-map', {
-        zoomControl: false,
-        attributionControl: false
-    }).setView([20, 0], 2);
-
-    // 3. Add a "Dark Mode" or "Aviation Style" Tile Layer
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(globalMap);
-
-    // 4. Plot Airports
-    if (flightInnData.Airports) {
-        for (let name in flightInnData.Airports) {
-            const ap = flightInnData.Airports[name];
-            if (ap.coords) {
-                L.circleMarker(ap.coords, {
-                    radius: 5,
-                    fillColor: "#00f2ff",
-                    color: "#002244",
-                    weight: 1,
-                    opacity: 1,
-                    fillOpacity: 0.8
-                }).addTo(globalMap).bindPopup(`<b>${name}</b><br>${ap.maker || ''}`);
-            }
-        }
-    }
-
-    // 5. Plot Routes (Arcs)
-    if (flightInnData.Routes) {
-        for (let name in flightInnData.Routes) {
-            const rt = flightInnData.Routes[name];
-            if (rt.coords && rt.coords.length === 2) {
-                L.Polyline.Arc(rt.coords[0], rt.coords[1], {
-                    color: 'rgba(0, 242, 255, 0.4)',
-                    weight: 2,
-                    vertices: 50
-                }).addTo(globalMap);
-            }
-        }
-    }
-}
-
-    // 6. CRITICAL: Force the map to "awaken" and fill the whole div
-    setTimeout(() => {
-        globalMap.invalidateSize();
-    }, 500);
-}
-
-// --- HELPER: WRAPPER FOR NAVIGATION ---
-function goToHome() {
-    renderHome();
-}
-
-// --- FINAL INITIALIZATION ---
-// This ensures your app starts with the Home dashboard visible
-document.addEventListener('DOMContentLoaded', () => {
-    // Small delay to ensure Firebase data has time to arrive
-    setTimeout(() => {
-        renderHome();
-    }, 1000);
-});
-    }, 500);
-    // Fix for Leaflet rendering in a hidden/new div
-    setTimeout(() => hubMap.invalidateSize(), 400);
 }
