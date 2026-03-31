@@ -523,3 +523,12 @@ body { display: flex; margin: 0; height: 100vh; font-family: 'Inter', sans-serif
     letter-spacing: 1px;
     margin-bottom: 20px;
 }
+
+.sidebar-guide {
+    margin-top: auto; /* Pushes it to the bottom of the sidebar */
+    padding: 15px;
+    background: rgba(255,255,255,0.05);
+    font-size: 0.8rem;
+    color: #94a3b8;
+    border-top: 1px solid #334155;
+}
