@@ -92,7 +92,16 @@ function renderHome() {
                     🎲 DISCOVER RANDOM ENTRY
                 </button>
                 
-                <h2 class="overview-title">System Overview</h2>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 15px;">
+    <h2 class="overview-title" style="margin:0;">System Overview</h2>
+    <div style="font-size:0.8rem; background:#e2e8f0; padding:5px 12px; border-radius:20px; color:#475569;">
+        <b>Compare:</b> 
+        <span onclick="openCompare('Fleets')" style="color:#2563eb; cursor:pointer; margin-left:8px; font-weight:bold;">Fleets</span> | 
+        <span onclick="openCompare('Airlines')" style="color:#2563eb; cursor:pointer; font-weight:bold;">Airlines</span> |
+        <span onclick="openCompare('Airports')" style="color:#2563eb; cursor:pointer; font-weight:bold;">Airports</span>
+    </div>
+</div>
+
                 <div class="card-grid">
                     <div class="stat-card" onclick="loadDirectory('Fleets')"><h3>${f}</h3><p>Fleets</p></div>
                     <div class="stat-card" onclick="loadDirectory('Airlines')"><h3>${a}</h3><p>Airlines</p></div>
@@ -995,6 +1004,7 @@ function openRandomEntry() {
     openEntry(randomCat, randomItem);
 }
 
+// --- FIXED COMPARE LOGIC ---
 function openCompare(cat) {
     const items = Object.keys(flightInnData[cat] || {});
     if (items.length < 2) return alert(`You need at least two ${cat} to compare!`);
@@ -1008,9 +1018,9 @@ function openCompare(cat) {
     const d2 = flightInnData[cat][item2];
 
     let compareHtml = `
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; background:#f1f5f9; padding:15px; border-radius:10px;">
             <h2 style="margin:0; color:#002244;">📊 ${cat} Comparison</h2>
-            <button onclick="renderHome()" style="padding:8px 15px; background:#002244; color:white; border:none; border-radius:8px; cursor:pointer;">Close</button>
+            <button onclick="renderHome()" style="padding:8px 15px; background:#002244; color:white; border:none; border-radius:8px; cursor:pointer;">← Close</button>
         </div>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
             ${renderCompareCard(item1, d1, cat)}
@@ -1023,27 +1033,15 @@ function openCompare(cat) {
 
 function renderCompareCard(name, data, cat) {
     return `
-        <div style="background:white; border-radius:15px; overflow:hidden; border:1px solid #e2e8f0; box-shadow:0 4px 6px -1px rgba(0,0,0,0.1);">
-            <div style="height:150px; background-image:url('${data.image || "https://placehold.co/400x200"}'); background-size:cover; background-position:center;"></div>
+        <div style="background:white; border-radius:15px; overflow:hidden; border:1px solid #e2e8f0; box-shadow:0 4px 6px rgba(0,0,0,0.1);">
+            <div style="height:140px; background-image:url('${data.image || ""}'); background-size:cover; background-position:center; background-color:#002244;"></div>
             <div style="padding:20px;">
                 <h3 style="margin:0 0 15px 0; color:#002244; border-bottom:2px solid #f1f5f9; padding-bottom:10px;">${name}</h3>
-                <div style="display:flex; flex-direction:column; gap:8px;">
-                    <div style="display:flex; justify-content:space-between; font-size:0.9rem;">
-                        <span style="color:#64748b;">${cat === 'Fleets' ? 'Maker' : 'Country/City'}:</span>
-                        <b style="color:#002244;">${data.maker || '—'}</b>
-                    </div>
-                    <div style="display:flex; justify-content:space-between; font-size:0.9rem;">
-                        <span style="color:#64748b;">${cat === 'Fleets' ? 'Engines' : 'Code'}:</span>
-                        <b style="color:#002244;">${data.engines || '—'}</b>
-                    </div>
-                    <div style="display:flex; justify-content:space-between; font-size:0.9rem;">
-                        <span style="color:#64748b;">Era:</span>
-                        <b style="color:#002244;">${data.era || '—'}</b>
-                    </div>
-                    <div style="display:flex; justify-content:space-between; font-size:0.9rem;">
-                        <span style="color:#64748b;">Status:</span>
-                        <b style="color:${data.status === 'Active' ? '#00ff88' : '#ff4444'}">${data.status || 'Active'}</b>
-                    </div>
+                <div style="display:flex; flex-direction:column; gap:10px; font-size:0.9rem;">
+                    <div style="display:flex; justify-content:space-between;"><span>Manufacturer:</span><b>${data.maker || '—'}</b></div>
+                    <div style="display:flex; justify-content:space-between;"><span>Engines/Code:</span><b>${data.engines || '—'}</b></div>
+                    <div style="display:flex; justify-content:space-between;"><span>Era:</span><b>${data.era || '—'}</b></div>
+                    <div style="display:flex; justify-content:space-between;"><span>Status:</span><b style="color:#00ff88;">${data.status || 'Active'}</b></div>
                 </div>
             </div>
         </div>
