@@ -102,38 +102,82 @@ function updateHomeClock() {
 function showTutorial() {
     const viewport = document.getElementById('view-port');
     viewport.innerHTML = `
-        <h1 style="color:var(--primary); margin-bottom: 20px;">FlightInn Archive Manual</h1>
-        
-        <div class="tutorial-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-            
-            <div class="tutorial-card-large" style="background: white; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0;">
-                <h3 style="color:var(--primary);">🔗 Wiki-Linking</h3>
-                <p>To connect two entries together (like linking an Airline to its Fleet), use double brackets:</p>
-                <code style="display:block; background:#f1f5f9; padding:10px; border-radius:5px; margin:10px 0;">
-                    [[Boeing 777]] <br>
-                    [[Air Canada|The National Carrier]]
-                </code>
-                <small>The second version shows "The National Carrier" but clicks through to the Air Canada page.</small>
+        <div class="tutorial-page" style="max-width: 900px; margin: 0 auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--primary); padding-bottom: 10px; margin-bottom: 30px;">
+                <h1 style="color:var(--primary); margin:0;">📖 FlightInn Official Manual</h1>
+                <button onclick="renderHome()" style="padding: 8px 16px; background: var(--primary); color: white; border: none; border-radius: 6px; cursor: pointer;">← Back to Dash</button>
             </div>
 
-            <div class="tutorial-card-large" style="background: white; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0;">
-                <h3 style="color:var(--primary);">🖼️ Adding Images</h3>
-                <p>To add photos of your spotting trips (like <b>9H-SUN</b>), use the image syntax:</p>
-                <code style="display:block; background:#f1f5f9; padding:10px; border-radius:5px; margin:10px 0;">
-                    ![Plane Description](https://link-to-image.jpg)
-                </code>
-                <p><i>Tip: Use a "Max-Height" in your CSS to keep them from getting too big!</i></p>
-            </div>
+            <section style="margin-bottom: 40px;">
+                <h2 style="color:var(--primary);"><span style="color:var(--accent);">01.</span> Managing the Database</h2>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div style="background: white; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0;">
+                        <h3 style="margin-top:0;">🆕 Adding New Assets</h3>
+                        <p>1. Click the <b>+ ADD NEW</b> button in the sidebar.<br>
+                           2. Select the correct <b>Category</b> (Airlines, Fleets, etc).<br>
+                           3. Fill in the <b>Specs</b> (Mfr, Engines, Era).<br>
+                           4. Hit <b>Save to Cloud</b> to sync with Firebase.</p>
+                    </div>
+                    <div style="background: white; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0;">
+                        <h3 style="margin-top:0;">📝 Editing & Deleting</h3>
+                        <p>Open any existing entry. At the bottom of the article, you will find the <b>Edit</b> and <b>Delete</b> buttons. Editing opens the same menu used for new entries.</p>
+                    </div>
+                </div>
+            </section>
 
-            <div class="tutorial-card-large" style="background: white; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0; grid-column: span 2;">
-                <h3 style="color:var(--primary);">🗺️ Mapping Routes</h3>
-                <p>When adding a <b>Route</b>, use the specific Coordinate Format in the "Details" box:</p>
-                <code style="display:block; background:#f1f5f9; padding:10px; border-radius:5px; margin:10px 0;">
-                    Flight Info Text | 52.17, -106.68 | 43.67, -79.62
-                </code>
-                <small>This would map a flight from Saskatoon (YXE) to Toronto (YYZ).</small>
-            </div>
+            <section style="margin-bottom: 40px;">
+                <h2 style="color:var(--primary);"><span style="color:var(--accent);">02.</span> Content Styling</h2>
+                <div style="background: #f8fafc; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0;">
+                    <p>Use these codes in the <b>Article Body</b> to style your text:</p>
+                    <table style="width: 100%; border-collapse: collapse; background: white;">
+                        <tr style="border-bottom: 1px solid #eee;">
+                            <th style="text-align: left; padding: 10px;">Feature</th>
+                            <th style="text-align: left; padding: 10px;">What to type</th>
+                            <th style="text-align: left; padding: 10px;">Result</th>
+                        </tr>
+                        <tr><td style="padding: 10px;"><b>Bold</b></td><td style="padding: 10px;"><code>**Text**</code></td><td style="padding: 10px;"><b>Text</b></td></tr>
+                        <tr><td style="padding: 10px;"><i>Italic</i></td><td style="padding: 10px;"><code>*Text*</code></td><td style="padding: 10px;"><i>Text</i></td></tr>
+                        <tr><td style="padding: 10px;"><strike>Strike</strike></td><td style="padding: 10px;"><code>~~Text~~</code></td><td style="padding: 10px;"><strike>Text</strike></td></tr>
+                        <tr><td style="padding: 10px;">Heading</td><td style="padding: 10px;"><code># Main / ## Sub</code></td><td style="padding: 10px;">Large Headers</td></tr>
+                        <tr><td style="padding: 10px;">Bullet List</td><td style="padding: 10px;"><code>* Item</code></td><td style="padding: 10px;">• Item</td></tr>
+                        <tr><td style="padding: 10px;">Blockquote</td><td style="padding: 10px;"><code>> Text</code></td><td style="padding: 10px; border-left: 3px solid #ccc;">"Quote"</td></tr>
+                    </table>
+                </div>
+            </section>
 
+            <section style="margin-bottom: 40px;">
+                <h2 style="color:var(--primary);"><span style="color:var(--accent);">03.</span> Aviation & Wiki Features</h2>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div style="background: white; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0;">
+                        <h3 style="margin-top:0;">🔗 Internal Wiki-Links</h3>
+                        <p>Link to another entry by name:</p>
+                        <code>[[Boeing 777]]</code>
+                        <p>Link with custom display text:</p>
+                        <code>[[WestJet|The Teal Airline]]</code>
+                    </div>
+                    <div style="background: white; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0;">
+                        <h3 style="margin-top:0;">🖼️ Multimedia</h3>
+                        <p>Embed an image (e.g. from Discord or Imgur):</p>
+                        <code>![9H-SUN at YYZ](URL_HERE)</code>
+                    </div>
+                </div>
+            </section>
+
+            <section style="margin-bottom: 40px;">
+                <h2 style="color:var(--primary);"><span style="color:var(--accent);">04.</span> Route Coordination</h2>
+                <div style="background: #002244; color: white; padding: 25px; border-radius: 12px;">
+                    <h3>📍 How to Map a Flight</h3>
+                    <p>When selecting the <b>Routes</b> category, you must use the Coordinate separator in the body:</p>
+                    <code style="background: rgba(255,255,255,0.1); display: block; padding: 15px; border-radius: 6px; color: #00f2ff;">
+                        Brief Description | Start_Lat, Start_Lng | End_Lat, End_Lng
+                    </code>
+                    <p style="margin-top: 15px; font-size: 0.9rem; opacity: 0.8;">Example: <i>Air Canada 862 | 52.17, -106.68 | 43.67, -79.62</i></p>
+                </div>
+            </section>
+
+            <div style="text-align: center; color: #94a3b8; font-size: 0.8rem; margin-bottom: 50px;">
+                FlightInn System v3.0 | Running on Firebase RTDB
+            </div>
         </div>
     `;
 }
