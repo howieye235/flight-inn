@@ -975,7 +975,17 @@ function goToHome() {
     renderHome();
 }
 
-// --- FINAL INITIALIZATION ---
+// --- 1. This part stays INSIDE the initGlobalMap function ---
+    setTimeout(() => {
+        if (window.hubMap) {
+            window.hubMap.invalidateSize();
+        }
+    }, 500);
+
+    // This closes the initGlobalMap function
+} 
+
+// --- 2. FINAL INITIALIZATION (Outside all functions) ---
 // This ensures your app starts with the Home dashboard visible
 document.addEventListener('DOMContentLoaded', () => {
     // Small delay to ensure Firebase data has time to arrive
@@ -983,7 +993,3 @@ document.addEventListener('DOMContentLoaded', () => {
         renderHome();
     }, 1000);
 });
-    }, 500);
-    // Fix for Leaflet rendering in a hidden/new div
-    setTimeout(() => hubMap.invalidateSize(), 400);
-}
