@@ -1005,14 +1005,17 @@ function openRandomEntry() {
 }
 
 // --- FIXED COMPARE LOGIC ---
+// --- FINAL COMPARISON TOOL LOGIC ---
 function openCompare(cat) {
     const items = Object.keys(flightInnData[cat] || {});
-    if (items.length < 2) return alert(`You need at least two ${cat} to compare!`);
+    if (items.length < 2) return alert(`You need at least two ${cat} entries to compare!`);
 
-    const item1 = prompt(`Enter first ${cat} name:`, items[0]);
-    const item2 = prompt(`Enter second ${cat} name:`, items[1]);
+    const item1 = prompt(`Enter the name of the first ${cat.slice(0,-1)}:`, items[0]);
+    const item2 = prompt(`Enter the name of the second ${cat.slice(0,-1)}:`, items[1]);
 
-    if (!flightInnData[cat][item1] || !flightInnData[cat][item2]) return alert("One of those entries doesn't exist!");
+    if (!flightInnData[cat][item1] || !flightInnData[cat][item2]) {
+        return alert("One or both of those entries could not be found. Check your spelling!");
+    }
 
     const d1 = flightInnData[cat][item1];
     const d2 = flightInnData[cat][item2];
@@ -1020,7 +1023,7 @@ function openCompare(cat) {
     let compareHtml = `
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; background:#f1f5f9; padding:15px; border-radius:10px;">
             <h2 style="margin:0; color:#002244;">📊 ${cat} Comparison</h2>
-            <button onclick="renderHome()" style="padding:8px 15px; background:#002244; color:white; border:none; border-radius:8px; cursor:pointer;">← Close</button>
+            <button onclick="renderHome()" style="padding:8px 15px; background:#002244; color:white; border:none; border-radius:8px; cursor:pointer;">← Close Comparison</button>
         </div>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
             ${renderCompareCard(item1, d1, cat)}
@@ -1032,16 +1035,37 @@ function openCompare(cat) {
 }
 
 function renderCompareCard(name, data, cat) {
+    // Logic to determine labels based on category
+    let labelA = "Manufacturer";
+    let labelB = "Engines/Code";
+    
+    if (cat === "Airports") {
+        labelA = "City/Country";
+        labelB = "IATA/ICAO";
+    } else if (cat === "Airlines") {
+        labelA = "Country";
+        labelB = "Fleet Size";
+    }
+
     return `
         <div style="background:white; border-radius:15px; overflow:hidden; border:1px solid #e2e8f0; box-shadow:0 4px 6px rgba(0,0,0,0.1);">
-            <div style="height:140px; background-image:url('${data.image || ""}'); background-size:cover; background-position:center; background-color:#002244;"></div>
+            <div style="height:160px; background-image:url('${data.image || "https://placehold.co/400x200?text=No+Image"}'); background-size:cover; background-position:center; background-color:#002244;"></div>
             <div style="padding:20px;">
                 <h3 style="margin:0 0 15px 0; color:#002244; border-bottom:2px solid #f1f5f9; padding-bottom:10px;">${name}</h3>
-                <div style="display:flex; flex-direction:column; gap:10px; font-size:0.9rem;">
-                    <div style="display:flex; justify-content:space-between;"><span>Manufacturer:</span><b>${data.maker || '—'}</b></div>
-                    <div style="display:flex; justify-content:space-between;"><span>Engines/Code:</span><b>${data.engines || '—'}</b></div>
-                    <div style="display:flex; justify-content:space-between;"><span>Era:</span><b>${data.era || '—'}</b></div>
-                    <div style="display:flex; justify-content:space-between;"><span>Status:</span><b style="color:#00ff88;">${data.status || 'Active'}</b></div>
+                <div style="display:flex; flex-direction:column; gap:12px; font-size:0.95rem;">
+                    <div style="display:flex; justify-content:space-between; border-bottom:1px solid #f8fafc; padding-bottom:4px;">
+                        <span style="color:#64748b;">${labelA}:</span><b>${data.maker || '—'}</b>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; border-bottom:1px solid #f8fafc; padding-bottom:4px;">
+                        <span style="color:#64748b;">${labelB}:</span><b>${data.engines || '—'}</b>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; border-bottom:1px solid #f8fafc; padding-bottom:4px;">
+                        <span style="color:#64748b;">Era:</span><b>${data.era || '—'}</b>
+                    </div>
+                    <div style="display:flex; justify-content:space-between;">
+                        <span style="color:#64748b;">Status:</span>
+                        <b style="color:${data.status === 'Retired' ? '#ef4444' : '#10b981'};">${data.status || 'Active'}</b>
+                    </div>
                 </div>
             </div>
         </div>
