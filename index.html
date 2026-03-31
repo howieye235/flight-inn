@@ -51,20 +51,20 @@
 
 
     <div id="sidebar">
+    <h1 onclick="renderHome()" style="cursor:pointer;">✈️ FlightInn</h1>
+    
+    <div class="nav-item" onclick="loadDirectory('Airlines')">Airlines</div>
+    <div class="nav-item" onclick="loadDirectory('Fleets')">Fleets</div>
+    <div class="nav-item" onclick="loadDirectory('Airports')">Airports</div>
+    <div class="nav-item" onclick="loadDirectory('Routes')">Routes</div>
+    
+    <div class="nav-item" onclick="showTutorial()" style="color: var(--accent); border-left: 3px solid var(--accent); margin-top: 10px;">
+        📖 User Guide
+    </div>
 
-        <h1 onclick="renderHome()">✈️ FlightInn</h1>
-
-        <div class="nav-item" onclick="loadDirectory('Airlines')">Airlines</div>
-
-        <div class="nav-item" onclick="loadDirectory('Fleets')">Fleets</div>
-
-        <div class="nav-item" onclick="loadDirectory('Airports')">Airports</div>
-
-        <div class="nav-item" onclick="loadDirectory('Routes')">Routes</div>
-
-        <hr style="border:0; border-top:1px solid rgba(255,255,255,0.1); margin:20px 0;">
-
-        <button id="add-btn" onclick="openEditor()">+ ADD NEW</button>
+    <hr style="border:0; border-top:1px solid rgba(255,255,255,0.1); margin:20px 0;">
+    
+    <button id="add-btn" onclick="openEditor()">+ ADD NEW</button>
 
         <div class="sidebar-guide">
         <p><b>WIKI GUIDE</b></p>
