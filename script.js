@@ -32,15 +32,17 @@ let flightInnData = {};
 // --- CLOUD SYNC ---
 
 function sync() {
+
     database.ref('flightData').on('value', (s) => {
+
         flightInnData = s.val() || {};
-        
-        // Only re-render if the user is actually on the Home/Dashboard view
-        const viewport = document.getElementById('view-port');
-        if (viewport && viewport.querySelector('.welcome-section')) {
-            renderHome();
-        }
+
+        // This ensures the dashboard updates whenever the data changes
+
+        renderHome(); 
+
     });
+
 }
 
 
@@ -943,19 +945,18 @@ function getRecentActivity() {
 }
 
 function openRandomEntry() {
-    const categories = ['Airlines', 'Fleets', 'Airports', 'Routes'];
-    
-    // Filter to only include categories that actually have entries
-    const validCats = categories.filter(cat => 
-        flightInnData[cat] && Object.keys(flightInnData[cat]).length > 0
-    );
+    const categories = Object.keys(flightInnData);
+    if (categories.length === 0) return alert("Archive is empty!");
 
-    if (validCats.length === 0) return alert("The archive is currently empty!");
-
+    // 1. Pick a random category that actually has items
+    const validCats = categories.filter(cat => Object.keys(flightInnData[cat]).length > 0);
     const randomCat = validCats[Math.floor(Math.random() * validCats.length)];
+
+    // 2. Pick a random item from that category
     const items = Object.keys(flightInnData[randomCat]);
     const randomItem = items[Math.floor(Math.random() * items.length)];
 
+    // 3. Open it!
     openEntry(randomCat, randomItem);
 }
 
